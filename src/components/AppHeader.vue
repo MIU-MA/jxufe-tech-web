@@ -58,21 +58,23 @@ const closeMenu = () => {
 
     <nav :class="{ 'menu-open': isMenuOpen }">
       <ul>
+        <li><a href="/" @click="closeMenu">首页</a></li>
         <li
           class="dropdown-trigger"
           @mouseenter="openDropdown"
           @mouseleave="closeDropdown"
         >
           <a href="#" class="dropdown-label" @click="toggleDropdown">
-            社团简介
+            协会简介
             <span class="arrow">&#9662;</span>
           </a>
           <ul class="dropdown-menu" :class="{ 'dropdown-open': isDropdownOpen }">
             <li><RouterLink to="/presidents" @click="closeMenu">历届负责人</RouterLink></li>
             <li><RouterLink to="/members" @click="closeMenu">优秀成员</RouterLink></li>
+            <li><RouterLink to="/details" @click="closeMenu">关于协会</RouterLink></li>
           </ul>
         </li>
-        <li><RouterLink :to="{ path: '/', hash: '#news-hero' }" @click="closeMenu">最新动态</RouterLink></li>
+        <li><a href="#news-hero" @click="closeMenu">最新动态</a></li>
         <li><a href="/members" @click="closeMenu">加入我们</a></li>
       </ul>
     </nav>

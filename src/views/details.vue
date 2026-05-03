@@ -1,5 +1,11 @@
 <script setup>
+import { ref, useTemplateRef } from 'vue';
 import { useScrollReveal } from '../composables/useScrollReveal';
+
+const contributors = ref ([
+  { name: "MIUMA",  img: "/images/jt.jpg", url: "https://github.com/MIU-MA" },
+  { name: "TangTangChu",img:"https://avatars.githubusercontent.com/u/61231159?v=4", url: "https://github.com/TangTangChu" },
+]);
 
 useScrollReveal();
 </script>
@@ -22,7 +28,7 @@ useScrollReveal();
         <div class="dept-card">
           <div class="dept-icon">📢</div>
           <h3>宣传部</h3>
-          <p>负责社团形象的塑造与推广，运营公众号、制作海报和宣传物料，让更多人了解数智技术协会。</p>
+          <p>负责社团形象的塑造与推广，制作海报和宣传物料，让更多人了解数智技术协会。</p>
         </div>
         <div class="dept-card">
           <div class="dept-icon">📋</div>
@@ -37,9 +43,19 @@ useScrollReveal();
       </div>
     </section>
 
-    <!-- <section class="section fade-in-on-scroll">
-        <div>剩下的慢慢写</div>
-    </section> -->
+    <section class="section fade-in-on-scroll">
+         <h2 class="section-title">Contributors</h2>
+          <p>
+           感谢各位大佬对本网站上线的大力支持！
+           如果你也想参与到网站的维护和更新中来，
+           欢迎<a href="https://github.com/MIU-MA/vue3-js-jxufe-tech" style="color: blue;">查看详细</a>
+          </p>
+          <div class="contributor-list">
+            <a v-for="contributor in contributors" :key="contributor.name" :href="contributor.url" target="_blank" :title="contributor.name">
+              <img :src="contributor.img" :alt="contributor.name" class="member-photo" style="width: 80px; height: 80px; margin: 0;">
+            </a>
+          </div>
+    </section>
 
   </main>
 </template>
@@ -104,6 +120,21 @@ useScrollReveal();
   font-size: 0.93em;
   line-height: 1.6;
   margin: 0;
+}
+
+.contributor-list {
+  display: flex;
+  justify-content: left;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.contributor-list a {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+.contributor-list a:hover {
+  transform: scale(1.1);
 }
 
 @media (max-width: 768px) {

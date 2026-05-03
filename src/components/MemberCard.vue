@@ -50,22 +50,6 @@ defineProps({
   box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.member-photo {
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin: 0 auto 20px;
-  border: 4px solid #e0f7fa;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-}
-
-.member-card:hover .member-photo {
-  border-color: #003a7a;
-  transform: scale(1.05);
-}
-
 .member-card h3 {
   color: #003a7a;
   font-size: 1.5rem;
