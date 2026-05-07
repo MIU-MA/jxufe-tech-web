@@ -131,13 +131,16 @@ header .logo img {
 /* 移动端菜单 */
 header nav {
     position: absolute;
-    top: 60px; left: 0; width: 100%;
+    top: 60px; right: 0; width: 100%;
     max-height: 0; overflow: hidden;
-    background-color: #003a7a; 
+    background-color: #17589d; 
     transition: max-height 0.3s ease-in-out;
     box-shadow: 0 4px 8px rgba(0, 58, 122, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2); 
+    border-radius: 0 0 8px 8px;
+    max-width: 300px; 
 }
-header nav.menu-open { max-height: 500px; }
+header nav.menu-open { max-height: 500px;  }
 header nav ul { list-style: none; padding: 0; margin: 0; text-align: center; }
 header nav ul li a {
     color: white; display: block; padding: 15px;
@@ -160,7 +163,8 @@ header nav ul li a:hover { background-color: #002a5a; }
 .dropdown-menu {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 0 auto;
+  max-width: 220px;
   max-height: 0;
   overflow: hidden;
   transition: max-height 0.25s ease;
@@ -169,8 +173,8 @@ header nav ul li a:hover { background-color: #002a5a; }
   max-height: 200px;
 }
 .dropdown-menu li a {
-  padding-left: 30px !important;
-  font-size: 0.9em;
+  padding: 8px 15px 8px 30px !important;
+  font-size: 0.88em;
 }
 
 /* PC 端适配 */
