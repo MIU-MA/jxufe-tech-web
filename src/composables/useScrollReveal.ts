@@ -1,6 +1,6 @@
 import { onMounted } from 'vue'
 
-export function useScrollReveal() {
+export function useScrollReveal(): void {
   onMounted(() => {
     const elements = document.querySelectorAll('.fade-in-on-scroll')
     if (!elements.length) return
