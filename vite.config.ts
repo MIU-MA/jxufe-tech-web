@@ -3,7 +3,7 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import tailwindcss from '@tailwindcss/vite'
 import Pages from 'vite-plugin-pages'
-import { newsData } from './src/data/newsData.js'
+import { newsData } from './src/data/newsData'
 
 export default defineConfig({
   plugins: [

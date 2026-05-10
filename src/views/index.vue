@@ -4,7 +4,7 @@ import { RouterLink } from 'vue-router';
 import CodeCard from '../components/CodeCard.vue';
 import BackgroundIcons from '../components/BackgroundIcons.vue';
 import { useScrollReveal } from '../composables/useScrollReveal';
-import { newsData } from '../data/newsData.js';
+import { newsData } from '../data/newsData';
 
 const newsList = computed(() =>
   [...newsData]
