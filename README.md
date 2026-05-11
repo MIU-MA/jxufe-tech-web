@@ -1,10 +1,12 @@
 # 欢迎新生饱饱们先从简单的vue3开始上手
+![GitHub commit activity](https://img.shields.io/github/commit-activity/m/MIU-MA/jxufe-tech-web)
+![GitHub last commit](https://img.shields.io/github/last-commit/MIU-MA/jxufe-tech-web?style=flat-square)
 
-## 项目运行
-1. 克隆项目：`git clone https://github.com/MIU-MA/jxufe-tech-web.git`
-2. 安装依赖：`npm install`
-3. 本地开发：`npm run dev`
-4. 还是直接fork吧
+>## 项目运行
+>1. 克隆项目：`git clone https://github.com/MIU-MA/jxufe-tech-web.git`
+>2. 安装依赖：`npm install`
+>3. 本地开发：`npm run dev`
+>4. 还是直接fork吧
 
 ## 技术栈
 - Vue 3 (Vite)
