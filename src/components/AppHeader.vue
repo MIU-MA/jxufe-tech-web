@@ -74,7 +74,7 @@ const closeMenu = () => {
             <li><RouterLink to="/details" @click="closeMenu">关于协会</RouterLink></li>
           </ul>
         </li>
-        <li><a href="#news-hero" @click="closeMenu">最新动态</a></li>
+        <li><RouterLink to="/#news-hero" @click="closeMenu">最新动态</RouterLink></li>
         <li><a href="/members" @click="closeMenu">加入我们</a></li>
       </ul>
     </nav>
@@ -133,14 +133,16 @@ header nav {
     position: absolute;
     top: 60px; right: 0; width: 100%;
     max-height: 0; overflow: hidden;
-    background-color: #17589d; 
+    background-color: #17589d;
     transition: max-height 0.3s ease-in-out;
-    box-shadow: 0 4px 8px rgba(0, 58, 122, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.2); 
     border-radius: 0 0 8px 8px;
-    max-width: 300px; 
+    max-width: 300px;
 }
-header nav.menu-open { max-height: 500px;  }
+header nav.menu-open {
+    max-height: 500px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 8px rgba(0, 58, 122, 0.2);
+}
 header nav ul { list-style: none; padding: 0; margin: 0; text-align: center; }
 header nav ul li a {
     color: white; display: block; padding: 15px;
@@ -187,6 +189,7 @@ header nav ul li a:hover { background-color: #002a5a; }
         box-shadow: none; width: auto; display: flex;
     }
     header nav ul { display: flex; }
+    header nav ul li { white-space: nowrap; }
     header nav ul li a { border: none; padding: 0 15px; opacity: 0.9; }
     header nav ul li a:hover { background: transparent; opacity: 1; }
     header nav ul li a.router-link-exact-active,
