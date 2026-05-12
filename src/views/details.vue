@@ -64,22 +64,23 @@ useScrollReveal();
 .section {
   max-width: 800px;
   margin: 0 auto 60px;
-  background: white;
+  background: var(--color-bg-card);
   border-radius: 16px;
   padding: 40px;
-  box-shadow: 0 4px 20px rgba(0, 58, 122, 0.06);
+  box-shadow: 0 4px 20px var(--color-shadow);
+  transition: background-color 0.3s ease;
 }
 
 .section-title {
   font-size: 1.8em;
-  color: #ff6f00;
+  color: var(--color-accent);
   margin: 0 0 20px;
   text-align: center;
 }
 
 .section-text {
   font-size: 1.05em;
-  color: #475569;
+  color: var(--color-text-secondary);
   line-height: 1.8;
   text-align: center;
 }
@@ -95,13 +96,13 @@ useScrollReveal();
   text-align: center;
   padding: 30px 20px;
   border-radius: 12px;
-  background: #f8fafc;
+  background: var(--color-bg-alt);
   transition: transform 0.3s, box-shadow 0.3s;
 }
 
 .dept-card:hover {
   transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 58, 122, 0.1);
+  box-shadow: 0 8px 24px var(--color-shadow);
 }
 
 .dept-icon {
@@ -110,13 +111,13 @@ useScrollReveal();
 }
 
 .dept-card h3 {
-  color: #003a7a;
+  color: var(--color-text-heading);
   margin: 0 0 10px;
   font-size: 1.2em;
 }
 
 .dept-card p {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 0.93em;
   line-height: 1.6;
   margin: 0;

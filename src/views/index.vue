@@ -143,14 +143,13 @@ console.log('MIUMA');
 
 #hero {
     height: calc(100vh - 60px);
-    background: #fff;
-    background: linear-gradient(125deg, #ffffff 0%, #f0f4ff 30%, #e0ebff 70%, #ffffff 100%);
+    background: var(--hero-gradient);
     background-size: 400% 400%;
     animation: gradientFlow 15s ease infinite;
 }
 
-#about-us-hero { min-height: 80vh; background-color: #f0f8ff; padding: 60px 20px; }
-#news-hero { min-height: 80vh; background-color: #f7f9fc; padding: 80px 20px; }
+#about-us-hero { min-height: 80vh; background-color: var(--color-bg-alt); padding: 60px 20px; transition: background-color 0.3s ease; }
+#news-hero { min-height: 80vh; background-color: var(--color-bg); padding: 80px 20px; transition: background-color 0.3s ease; }
 
 /* ==================== 2. 核心内容层级与居中 ==================== */
 .z-index-content {
@@ -183,24 +182,25 @@ console.log('MIUMA');
     box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.5), 0 10px 20px rgba(0,0,0,0.1); display: block;
 }
 .hero-title {
-    display: flex; flex-direction: column; align-items: center; margin: 10px 0 15px 0; color: #003a7a; font-weight: 700;
+    display: flex; flex-direction: column; align-items: center; margin: 10px 0 15px 0; color: var(--color-text-heading); font-weight: 700;
 }
 .hero-line-1 { font-size: 2.5em; margin-bottom: 5px; letter-spacing: 0.05em; }
-.hero-line-2 { font-size: 1.8em; color: #002a5a; letter-spacing: 0.1em; }
-.hero-subtitle { font-size: 1.2em; margin-bottom: 40px; color: #ff6f00; font-weight: 500; }
+.hero-line-2 { font-size: 1.8em; color: var(--color-text-heading); letter-spacing: 0.1em; }
+.hero-subtitle { font-size: 1.2em; margin-bottom: 40px; color: var(--color-accent); font-weight: 500; }
 
 /* About Card */
 .about-us-card {
-    max-width: 800px; background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 20px; padding: 50px; box-shadow: 0 10px 40px rgba(0, 58, 122, 0.1);
+    max-width: 800px; background-color: var(--color-bg-card);
+    border-radius: 20px; padding: 50px; box-shadow: 0 10px 40px var(--color-shadow);
+    transition: background-color 0.3s ease;
 }
 .about-us-card h2, .about-us-card h3, .join-link { text-align: center; }
-.about-us-card h2 { font-size: 2.2em; color: #ff6f00; margin-bottom: 20px; }
-.about-us-card h3 { font-size: 1.5em; color: #003a7a; margin-bottom: 15px; }
-.join-link { display: block; margin: 20px auto 0; color: #ff6f00; font-weight: bold; }
+.about-us-card h2 { font-size: 2.2em; color: var(--color-accent); margin-bottom: 20px; }
+.about-us-card h3 { font-size: 1.5em; color: var(--color-text-heading); margin-bottom: 15px; }
+.join-link { display: block; margin: 20px auto 0; color: var(--color-accent); font-weight: bold; }
 
 /* News Card */
-.news-hero-content  h2 { font-size: 2em; color: #003a7a; margin-bottom: 40px;text-align: center; }
+.news-hero-content  h2 { font-size: 2em; color: var(--color-text-heading); margin-bottom: 40px;text-align: center; }
 .news-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; }
 .news-card { width: 300px; height: 260px; perspective: 1000px; background: transparent; margin: 0 auto; }
 .news-card-inner {
@@ -209,11 +209,11 @@ console.log('MIUMA');
 }
 .news-card:hover .news-card-inner { transform: rotateY(180deg); }
 .news-card-front, .news-card-back {
-    position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 15px; box-shadow: 0 5px 15px var(--color-shadow-card);
 }
-.news-card-front { background-color: white; display: flex; align-items: center; justify-content: center; }
+.news-card-front { background-color: var(--color-bg-card); display: flex; align-items: center; justify-content: center; transition: background-color 0.3s ease; }
 .news-card-back {
-    background: linear-gradient(135deg, #003a7a, #005a9a); color: white;
+    background: linear-gradient(135deg, var(--color-primary), var(--color-primary-light)); color: white;
     transform: rotateY(180deg); display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 25px;
 }
 .news-card-back a {
@@ -223,16 +223,16 @@ console.log('MIUMA');
 
 /* Common & Nav */
 .scroll-down {
-    position: absolute; bottom: 30px; font-size: 2em; animation: bounce 2s infinite; color: #003a7a; cursor: pointer; z-index: 10;
+    position: absolute; bottom: 30px; font-size: 2em; animation: bounce 2s infinite; color: var(--color-text-heading); cursor: pointer; z-index: 10;
 }
 .side-nav {
     position: fixed; right: 30px; top: 50%; transform: translateY(-50%); z-index: 100; display: flex; flex-direction: column; gap: 20px;
 }
 .nav-dot {
-    width: 12px; height: 12px; border-radius: 50%; background-color: rgba(0, 58, 122, 0.2); transition: all 0.3s ease; border: 2px solid transparent; position: relative;
+    width: 12px; height: 12px; border-radius: 50%; background-color: var(--color-border); transition: all 0.3s ease; border: 2px solid transparent; position: relative;
 }
-.nav-dot:hover { background-color: #ff6f00; transform: scale(1.3); box-shadow: 0 0 10px rgba(255, 111, 0, 0.5); }
-.nav-dot:hover::before { content: attr(title); position: absolute; right: 25px; top: 50%; transform: translateY(-50%); background: #003a7a; color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; white-space: nowrap; }
+.nav-dot:hover { background-color: var(--color-accent); transform: scale(1.3); box-shadow: 0 0 10px rgba(255, 111, 0, 0.5); }
+.nav-dot:hover::before { content: attr(title); position: absolute; right: 25px; top: 50%; transform: translateY(-50%); background: var(--color-primary); color: white; padding: 4px 8px; border-radius: 4px; font-size: 12px; white-space: nowrap; }
 
 /* 动画定义 */
 @keyframes bounce { 0%, 20%, 50%, 80%, 100% {transform: translateY(0);} 40% {transform: translateY(-10px);} 60% {transform: translateY(-5px);} }

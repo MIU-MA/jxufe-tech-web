@@ -27,13 +27,14 @@ import MemberCard from '../components/MemberCard.vue';
     text-align: center;
     margin-bottom: 40px;
     padding: 20px;
-    background-color: white;
+    background-color: var(--color-bg-card);
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 4px var(--color-shadow);
+    transition: background-color 0.3s ease;
 }
 
 .members-header h1 {
-    color: #ff6f00;
+    color: var(--color-accent);
     font-size: 2em;
     margin: 0;
 }
@@ -43,9 +44,9 @@ import MemberCard from '../components/MemberCard.vue';
 }
 
 .term-title {
-    color: #003a7a;
+    color: var(--color-text-heading);
     font-size: 1.8em;
-    border-bottom: 3px solid #e0f7fa;
+    border-bottom: 3px solid var(--color-border-light);
     padding-bottom: 10px;
     margin-bottom: 20px;
     font-weight: 700;

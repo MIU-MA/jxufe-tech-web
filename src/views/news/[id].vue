@@ -42,12 +42,12 @@ loadArticle();
 </script>
 
 <template>
-  <main class="min-h-screen bg-gray-50 pt-50 pb-12 px-4 sm:px-6">
+  <main class="min-h-screen bg-gray-50 dark:bg-slate-900 pt-50 pb-12 px-4 sm:px-6 transition-colors">
 
-    <div v-if="article" class="article-wrapper max-w-4xl mx-auto bg-white p-8 shadow-sm rounded-2xl">
-      <header class="mb-8 border-b border-gray-100 pb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-4">{{ article.title }}</h1>
-        <div class="flex items-center text-gray-500 text-sm">
+    <div v-if="article" class="article-wrapper max-w-4xl mx-auto bg-white dark:bg-slate-800 p-8 shadow-sm rounded-2xl transition-colors">
+      <header class="mb-8 border-b border-gray-100 dark:border-slate-700 pb-8">
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-4">{{ article.title }}</h1>
+        <div class="flex items-center text-gray-500 dark:text-slate-400 text-sm">
           <i class="far fa-calendar-alt mr-2"></i>
           <span>发布日期: {{ article.date }}</span>
         </div>
@@ -57,13 +57,13 @@ loadArticle();
         <img :src="article.cover" :alt="article.title" class="w-full h-auto rounded-xl shadow-md mx-auto">
       </div>
 
-      <blockquote class="border-l-4 border-blue-500 bg-blue-50 p-4 mb-8 text-gray-700 italic">
+      <blockquote class="border-l-4 border-blue-500 bg-blue-50 dark:bg-slate-700 dark:border-blue-400 p-4 mb-8 text-gray-700 dark:text-slate-300 italic">
         {{ article.intro }}
       </blockquote>
 
       <div
           v-if="!isLoading && !loadError"
-          class="prose prose-blue max-w-none prose-img:rounded-xl prose-headings:text-slate-900"
+          class="prose prose-blue dark:prose-invert max-w-none prose-img:rounded-xl prose-headings:text-slate-900 dark:prose-headings:text-slate-100"
           v-html="parsedHtml"
       ></div>
 
@@ -74,15 +74,15 @@ loadArticle();
         <button @click="loadArticle" class="text-blue-600 hover:text-blue-800 underline">重新加载</button>
       </div>
 
-      <div class="mt-12 pt-8 border-t border-gray-100">
-        <RouterLink to="/" class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+      <div class="mt-12 pt-8 border-t border-gray-100 dark:border-slate-700">
+        <RouterLink to="/" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
           <span class="mr-2">«</span> 返回首页
         </RouterLink>
       </div>
     </div>
 
     <div v-else class="text-center py-20">
-      <h2 class="text-2xl font-semibold text-gray-600">文章不见了</h2>
+      <h2 class="text-2xl font-semibold text-gray-600 dark:text-slate-400">文章不见了</h2>
       <RouterLink to="/" class="text-blue-500 mt-4 inline-block">回到首页</RouterLink>
     </div>
   </main>

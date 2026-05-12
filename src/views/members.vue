@@ -53,9 +53,10 @@ useScrollReveal();
     text-align: center;
     margin-bottom: 50px;
     padding: 30px;
-    background-color: white;
+    background-color: var(--color-bg-card);
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 58, 122, 0.08);
+    box-shadow: 0 4px 12px var(--color-shadow);
+    transition: background-color 0.3s ease;
 }
 
 .members-grid {

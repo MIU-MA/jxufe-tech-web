@@ -105,10 +105,11 @@ const contactInfo = {
 <style scoped>
 .site-footer {
   width: 100%;
-  background-color: #f8f9fa;
-  color: #555;
-  border-top: 1px solid #e9ecef;
+  background-color: var(--color-bg-footer);
+  color: var(--color-text-footer);
+  border-top: 1px solid var(--color-border-light);
   margin-top: 0;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* 1. 主要内容区布局 */
@@ -141,20 +142,20 @@ const contactInfo = {
 .brand-name {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #003a7a;
+  color: var(--color-text-heading);
 }
 
 .brand-desc {
   font-size: 0.95rem;
   line-height: 1.7;
-  color: #666;
+  color: var(--color-text-muted);
   max-width: 90%;
 }
 
 /* --- 通用标题样式 --- */
 .footer-heading {
   font-size: 1.1rem;
-  color: #2c3e50;
+  color: var(--color-text);
   margin-bottom: 25px;
   font-weight: 600;
   position: relative;
@@ -169,7 +170,7 @@ const contactInfo = {
   top: 4px;
   bottom: 4px;
   width: 4px;
-  background-color: #ff6f00; /* 橙色点缀 */
+  background-color: var(--color-accent);
   border-radius: 2px;
 }
 
@@ -195,13 +196,13 @@ const contactInfo = {
 }
 
 .contact-list a {
-  color: #555;
+  color: var(--color-text-footer);
   text-decoration: none;
   transition: color 0.2s;
 }
 
 .contact-list a:hover {
-  color: #003a7a;
+  color: var(--color-primary);
   text-decoration: underline;
 }
 
@@ -216,11 +217,11 @@ const contactInfo = {
   display: flex;
   align-items: center;
   text-decoration: none;
-  color: #555;
+  color: var(--color-text-footer);
   font-size: 0.95rem;
   padding: 8px 12px;
-  background-color: #fff; /* 白色卡片背景 */
-  border: 1px solid #e0e0e0;
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   transition: all 0.2s ease;
 }
@@ -230,21 +231,20 @@ const contactInfo = {
   height: 20px;
   margin-right: 10px;
   border-radius: 50%;
-
-  filter: none; 
+  filter: none;
 }
 
 .link-row:hover {
-  background-color: #fff;
-  border-color: #003a7a;
-  color: #003a7a;
-  transform: translateX(5px); /* 悬停右移效果 */
-  box-shadow: 0 2px 8px rgba(0, 58, 122, 0.1);
+  background-color: var(--color-bg-card);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateX(5px);
+  box-shadow: 0 2px 8px var(--color-shadow);
 }
 
 /* 2. 底部版权条 */
 .footer-bottom {
-  background-color: #003a7a;
+  background-color: var(--color-bg-footer-bottom);
   color: rgba(255, 255, 255, 0.8);
   padding: 12px 20px;
   font-size: 0.85rem;
@@ -254,6 +254,7 @@ const contactInfo = {
   justify-content: center;
   text-align: center;
   gap: 12px;
+  transition: background-color 0.3s ease;
 }
 
 .beian-row {

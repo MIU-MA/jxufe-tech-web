@@ -25,9 +25,12 @@
 
 .floating-icons-bg li {
   position: absolute; display: block; list-style: none;
-  color: rgba(0, 58, 122, 0.1);
+  color: rgba(0, 58, 122, 0.08);
   bottom: -100px; animation: floatUp 20s linear infinite;
   font-weight: bold; font-size: 1.5em;
+}
+html.dark .floating-icons-bg li {
+  color: rgba(148, 163, 184, 0.08);
 }
 
 @keyframes floatUp {

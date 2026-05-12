@@ -1,6 +1,10 @@
 <script setup>
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
+import { useTheme } from '../composables/useTheme';
+import { Sun, Moon, Home, Link, LayoutDashboard } from 'lucide-vue-next';
+
+const { theme, toggleTheme } = useTheme();
 
 // 控制移动端菜单开关的状态
 const isMenuOpen = ref(false);
@@ -58,14 +62,14 @@ const closeMenu = () => {
 
     <nav :class="{ 'menu-open': isMenuOpen }">
       <ul>
-        <li><RouterLink to="/" @click="closeMenu">首页</RouterLink></li>
+        <li><RouterLink to="/" @click="closeMenu" class="nav-link"><Home :size="18" />首页</RouterLink></li>
         <li
           class="dropdown-trigger"
           @mouseenter="openDropdown"
           @mouseleave="closeDropdown"
         >
-          <a href="#" class="dropdown-label" @click="toggleDropdown">
-            协会简介
+          <a href="#" class="dropdown-label nav-link" @click="toggleDropdown">
+            <LayoutDashboard :size="18" />协会简介
             <span class="arrow">&#9662;</span>
           </a>
           <ul class="dropdown-menu" :class="{ 'dropdown-open': isDropdownOpen }">
@@ -74,26 +78,34 @@ const closeMenu = () => {
             <li><RouterLink to="/details" @click="closeMenu">关于协会</RouterLink></li>
           </ul>
         </li>
-        <li><RouterLink to="/welcome" @click="closeMenu">加入我们</RouterLink></li>
+        <li><RouterLink to="/welcome" @click="closeMenu"class="nav-link"><Link :size="18" />加入我们</RouterLink></li>
+       
       </ul>
     </nav>
+
+     <button class="theme-toggle" @click="toggleTheme" :aria-label="theme === 'dark' ? '切换到亮色模式' : '切换到暗色模式'">
+        <Sun v-if="theme === 'dark'" :size="18"color="white" />
+        <Moon v-else :size="18" color="white" />
+      </button>
+        
   </header>
 </template>
 
 <style scoped>
 header {
-    background-color: #003a7a; 
+    background-color: var(--color-bg-header);
     position: fixed;
     top: 0;
     width: 100%;
-    padding: 0 20px; 
+    padding: 0 20px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     box-sizing: border-box;
-    box-shadow: 0 2px 8px rgba(0, 58, 122, 0.2);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
     z-index: 2000;
     height: 60px;
+    transition: background-color 0.3s ease;
 }
 header .logo {
     display: flex;
@@ -132,8 +144,8 @@ header nav {
     position: absolute;
     top: 60px; right: 0; width: 100%;
     max-height: 0; overflow: hidden;
-    background-color: #17589d; 
-    transition: max-height 0.3s ease-in-out;
+    background-color: var(--color-nav-bg);
+    transition: max-height 0.3s ease-in-out, background-color 0.3s ease;
     border-radius: 0 0 8px 8px;
     max-width: 300px;
 }
@@ -152,6 +164,11 @@ header nav ul li a {
     border-bottom: 1px solid #002a5a;
 }
 header nav ul li a:hover { background-color: #002a5a; }
+.nav-link {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 6px;
+}
 
 /* 下拉菜单（移动端） */
 .dropdown-trigger {
@@ -189,7 +206,7 @@ header nav ul li a:hover { background-color: #002a5a; }
     header nav {
         position: static; max-height: none; overflow: visible;
         background: transparent;
-        box-shadow: none; width: auto; display: flex;
+        box-shadow: none; flex: 1; display: flex; justify-content: center;
     }
     header nav ul { display: flex; }
     header nav ul li { white-space: nowrap; }
@@ -205,7 +222,7 @@ header nav ul li a:hover { background-color: #002a5a; }
       top: 100%;
       left: 0;
       min-width: 140px;
-      background-color: #003a7a;
+      background-color: var(--color-bg-header);
       border-radius: 0 0 6px 6px;
       box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
       max-height: none;
@@ -221,5 +238,26 @@ header nav ul li a:hover { background-color: #002a5a; }
     .dropdown-menu li a:hover {
       background-color: #002a5a;
     }
+}
+
+/* 主题切换按钮 */
+.theme-toggle {
+  background: none;
+
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1em;
+  line-height: 1;
+  padding: 0;
+  margin-left: 12px;
+  flex-shrink: 0;
+  transition: background-color 0.3s;
+}
+.theme-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.15);
 }
 </style>
