@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useRoute } from 'vue-router';
 import { marked } from 'marked';
@@ -26,7 +26,8 @@ async function loadArticle() {
     const module = markdownModules[key];
 
     if (module) {
-      parsedHtml.value = marked.parse(module.default || module);
+      const raw = (module as { default?: string }).default ?? (module as string);
+      parsedHtml.value = await marked.parse(raw) as string;
     } else {
       loadError.value = true;
     }

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import MemberCard from '../components/MemberCard.vue';
 </script>
 
