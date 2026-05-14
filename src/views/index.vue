@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { computed, onMounted } from 'vue';
 import { RouterLink } from 'vue-router';
 import CodeCard from '../components/CodeCard.vue';
@@ -9,7 +9,7 @@ import { newsData } from '../data/newsData';
 const newsList = computed(() =>
   [...newsData]
     .sort((a, b) => {
-      const parse = (d) => d.date.match(/\d+/g).map(Number);
+      const parse = (d: { date: string }) => d.date.match(/\d+/g)!.map(Number);
       const [ay, am, ad] = parse(a);
       const [by, bm, bd] = parse(b);
       return by - ay || bm - am || bd - ad;
@@ -33,12 +33,13 @@ const floatingCodes = [
 useScrollReveal();
 
 onMounted(() => {
-  const typeWriter = (elementId, text, speed) => {
+  const typeWriter = (elementId: string, text: string, speed: number) => {
     let i = 0;
     const element = document.getElementById(elementId);
     if (!element) return;
     element.textContent = '';
     function type() {
+      if (!element) return;
       if (i < text.length) { element.textContent += text.charAt(i); i++; setTimeout(type, speed); }
       else { element.style.borderRight = 'none'; }
     }

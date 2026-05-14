@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref, useTemplateRef } from 'vue';
 import { useScrollReveal } from '../composables/useScrollReveal';
 

@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 defineProps({
   img: { type: String, required: true },
   name: { type: String, required: true },

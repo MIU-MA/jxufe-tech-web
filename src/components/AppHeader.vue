@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useTheme } from '../composables/useTheme';
@@ -29,7 +29,7 @@ const closeDropdown = () => {
   }
 };
 
-const toggleDropdown = (e) => {
+const toggleDropdown = (e: Event) => {
   e.preventDefault();
   e.stopPropagation();
   isDropdownOpen.value = !isDropdownOpen.value;
