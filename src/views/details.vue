@@ -14,41 +14,40 @@ useScrollReveal();
   <main class="page-container">
     <!-- 协会简介 -->
     <section class="section fade-in-on-scroll">
-      <h2 class="section-title">协会简介</h2>
+      <h2 class="section-title">{{ $t('details.aboutAssociation') }}</h2>
       <p class="section-text">
-        江西财经大学<strong>数智技术协会</strong>隶属于信息管理与数学学院，
-        专注于数据科学、人工智能和项目开发实践，致力于打造全校最专业的技术交流平台。
+        {{ $t('details.aboutIntro') }}
       </p>
     </section>
 
     <!-- 部门介绍 -->
     <section class="section fade-in-on-scroll">
-      <h2 class="section-title">部门设置</h2>
+      <h2 class="section-title">{{ $t('details.departmentSetup') }}</h2>
       <div class="dept-grid">
         <div class="dept-card">
           <div class="dept-icon">📢</div>
-          <h3>宣传部</h3>
-          <p>负责社团形象的塑造与推广，制作海报和宣传物料，让更多人了解数智技术协会。</p>
+          <h3>{{ $t('details.publicDept') }}</h3>
+          <p>{{ $t('details.publicDeptDesc') }}</p>
         </div>
         <div class="dept-card">
           <div class="dept-icon">📋</div>
-          <h3>组织部</h3>
-          <p>策划并执行社团的各项精彩活动，包括讲座、分享会、比赛等，确保每场活动顺利落地。</p>
+          <h3>{{ $t('details.orgDept') }}</h3>
+          <p>{{ $t('details.orgDeptDesc') }}</p>
         </div>
         <div class="dept-card">
           <div class="dept-icon">💻</div>
-          <h3>学习部</h3>
-          <p>深入研究前沿技术，组织技术分享和培训，带领成员学习 Python、AI、Web 开发等实用技能。</p>
+          <h3>{{ $t('details.studyDept') }}</h3>
+          <p>{{ $t('details.studyDeptDesc') }}</p>
         </div>
       </div>
     </section>
 
     <section class="section fade-in-on-scroll">
-         <h2 class="section-title">Contributors</h2>
+         <h2 class="section-title">{{ $t('details.contributors') }}</h2>
           <p>
-           感谢各位大佬对本网站上线的大力支持！
-           如果你也想参与到网站的维护和更新中来，
-           欢迎<a href="https://github.com/MIU-MA/vue3-js-jxufe-tech" style="color: blue;">查看详细</a>
+           {{ $t('details.contributorsText1') }}
+           {{ $t('details.contributorsText2') }}
+           欢迎<a href="https://github.com/MIU-MA/vue3-js-jxufe-tech" style="color: blue;">{{ $t('details.viewDetails') }}</a>
           </p>
           <div class="contributor-list">
             <a v-for="contributor in contributors" :key="contributor.name" :href="contributor.url" target="_blank" :title="contributor.name">

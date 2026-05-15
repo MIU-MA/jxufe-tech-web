@@ -50,7 +50,7 @@ loadArticle();
         <h1 class="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-4">{{ article.title }}</h1>
         <div class="flex items-center text-gray-500 dark:text-slate-400 text-sm">
           <i class="far fa-calendar-alt mr-2"></i>
-          <span>发布日期: {{ article.date }}</span>
+          <span>{{ $t('news.publishDate') }} {{ article.date }}</span>
         </div>
       </header>
 
@@ -68,23 +68,23 @@ loadArticle();
           v-html="parsedHtml"
       ></div>
 
-      <div v-if="isLoading" class="py-20 text-center text-gray-400">正在努力加载中...</div>
+      <div v-if="isLoading" class="py-20 text-center text-gray-400">{{ $t('news.loading') }}</div>
 
       <div v-if="loadError" class="py-20 text-center">
-        <p class="text-red-500 mb-4">文章加载失败，请稍后重试。</p>
-        <button @click="loadArticle" class="text-blue-600 hover:text-blue-800 underline">重新加载</button>
+        <p class="text-red-500 mb-4">{{ $t('news.loadError') }}</p>
+        <button @click="loadArticle" class="text-blue-600 hover:text-blue-800 underline">{{ $t('news.reload') }}</button>
       </div>
 
       <div class="mt-12 pt-8 border-t border-gray-100 dark:border-slate-700">
         <RouterLink to="/" class="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors">
-          <span class="mr-2">«</span> 返回首页
+          <span class="mr-2">«</span> {{ $t('news.backHome') }}
         </RouterLink>
       </div>
     </div>
 
     <div v-else class="text-center py-20">
-      <h2 class="text-2xl font-semibold text-gray-600 dark:text-slate-400">文章不见了</h2>
-      <RouterLink to="/" class="text-blue-500 mt-4 inline-block">回到首页</RouterLink>
+      <h2 class="text-2xl font-semibold text-gray-600 dark:text-slate-400">{{ $t('news.articleMissing') }}</h2>
+      <RouterLink to="/" class="text-blue-500 mt-4 inline-block">{{ $t('news.backHome2') }}</RouterLink>
     </div>
   </main>
 </template>

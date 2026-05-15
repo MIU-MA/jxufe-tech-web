@@ -1,0 +1,81 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "presidents": "Past Presidents",
+    "members": "Members",
+    "aboutUs": "About Us",
+    "joinUs": "Join Us"
+  },
+  "footer": {
+    "brandName": "DSA Association",
+    "tagline1": "Rooted in campus, exploring the frontier.",
+    "tagline2": "We are dedicated to building the most professional data science and AI exchange platform campus-wide, unlocking every student's technical potential.",
+    "contactUs": "Contact Us",
+    "friendLinks": "Related Links",
+    "school": "School of Information Management & Mathematics",
+    "address": "169 Shuanggang East Street, Changbei Economic Development Zone, Nanchang, Jiangxi",
+    "copyright": "© {year} JXUFE Digital & Smart Technology Association. All Rights Reserved."
+  },
+  "home": {
+    "title1": "Jiangxi University of Finance",
+    "title2": "and Economics",
+    "subtitle": "Explore the mysteries of AI — start your tech journey here.",
+    "aboutUs": "About Us",
+    "aboutCollege": "JXUFE School of Information Management & Mathematics",
+    "aboutDesc": "Focused on data science, artificial intelligence and project development.",
+    "dept1Name": "Publicity Department",
+    "dept1Desc": "Shaping and promoting the association's image.",
+    "dept2Name": "Organization Department",
+    "dept2Desc": "Planning and executing all association events.",
+    "dept3Name": "Academic Department",
+    "dept3Desc": "Researching cutting-edge tech and organizing knowledge sharing.",
+    "more": "More »",
+    "recentNews": "Recent News",
+    "eventDetails": "Event Details",
+    "viewDetails": "View Details →"
+  },
+  "details": {
+    "aboutAssociation": "About the Association",
+    "aboutIntro": "The JXUFE Digital & Smart Technology Association is affiliated with the School of Information Management & Mathematics, focusing on data science, artificial intelligence and project development, striving to build the most professional tech exchange platform on campus.",
+    "departmentSetup": "Departments",
+    "publicDept": "Publicity Department",
+    "publicDeptDesc": "Responsible for shaping and promoting the association's image, creating posters and promotional materials to let more people know about DSA.",
+    "orgDept": "Organization Department",
+    "orgDeptDesc": "Plans and executes all exciting activities, including lectures, sharing sessions, competitions, and more to ensure every event runs smoothly.",
+    "studyDept": "Academic Department",
+    "studyDeptDesc": "Deeply researches cutting-edge technologies, organizes tech sharing and training, and leads members to learn practical skills in Python, AI, Web development, and more.",
+    "contributors": "Contributors",
+    "contributorsText1": "Thank you to all contributors for your tremendous support in launching this site!",
+    "contributorsText2": "If you'd like to participate in maintaining and updating the site,",
+    "viewDetails": "View Details"
+  },
+  "welcome": {
+    "title": "Welcome to the DSA Association!",
+    "text1": "The recruitment group will be set up in the new academic year~",
+    "text2": "We look forward to having you with us!"
+  },
+  "presidents": {
+    "title": "Past Presidents",
+    "term2025": "Class of 2025"
+  },
+  "members": {
+    "title": "MEMBERS"
+  },
+  "news": {
+    "publishDate": "Published:",
+    "loading": "Loading...",
+    "loadError": "Failed to load the article. Please try again later.",
+    "reload": "Reload",
+    "backHome": "← Back to Home",
+    "articleMissing": "Article Not Found",
+    "backHome2": "Back to Home"
+  },
+  "theme": {
+    "switchLight": "Switch to light mode",
+    "switchDark": "Switch to dark mode"
+  },
+  "lang": {
+    "switch": "切换到中文"
+  }
+}

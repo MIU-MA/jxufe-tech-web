@@ -60,9 +60,9 @@ console.log('MIUMA');
 <template>
   <div>
     <nav class="side-nav">
-      <a href="#hero" class="nav-dot" title="首页"></a>
-      <a href="#about-us-hero" class="nav-dot" title="关于我们"></a>
-      <a href="#news-hero" class="nav-dot" title="最新动态"></a>
+      <a href="#hero" class="nav-dot" :title="$t('nav.home')"></a>
+      <a href="#about-us-hero" class="nav-dot" :title="$t('home.aboutUs')"></a>
+      <a href="#news-hero" class="nav-dot" :title="$t('home.recentNews')"></a>
     </nav>
 
     <section id="hero">
@@ -74,7 +74,7 @@ console.log('MIUMA');
                 <span id="typing-text-1" class="hero-line-1"></span>
                 <span id="typing-text-2" class="hero-line-2"></span>
             </h1>
-            <p class="hero-subtitle">探索人工智能的奥秘，从这里开始你的技术之旅。</p>
+            <p class="hero-subtitle">{{ $t('home.subtitle') }}</p>
         </div>
         <a href="#about-us-hero" class="scroll-down z-index-content">&#8659;</a>
     </section>
@@ -91,22 +91,22 @@ console.log('MIUMA');
           </div>
 
           <div class="about-us-card fade-in-on-scroll">
-              <h2>关于我们</h2>
-              <h3>江西财经大学信息管理与数学学院</h3>
-              <p><strong>数智技术协会</strong>专注于数据科学、人工智能和项目开发实践。</p>
+              <h2>{{ $t('home.aboutUs') }}</h2>
+              <h3>{{ $t('home.aboutCollege') }}</h3>
+              <p><strong>{{ $t('footer.brandName') }}</strong>{{ $t('home.aboutDesc') }}</p>
               <ul>
-                  <li><strong>宣传部</strong> 负责社团形象的塑造与推广。</li>
-                  <li><strong>组织部</strong> 策划并执行社团的各项精彩活动。</li>
-                  <li><strong>学习部</strong> 深入研究前沿技术并组织技术分享。</li>
+                  <li><strong>{{ $t('home.dept1Name') }}</strong> {{ $t('home.dept1Desc') }}</li>
+                  <li><strong>{{ $t('home.dept2Name') }}</strong> {{ $t('home.dept2Desc') }}</li>
+                  <li><strong>{{ $t('home.dept3Name') }}</strong> {{ $t('home.dept3Desc') }}</li>
               </ul>
-              <RouterLink to="/details" class="join-link">更多»</RouterLink>
+              <RouterLink to="/details" class="join-link">{{ $t('home.more') }}</RouterLink>
           </div>
       </section>
 
       <section id="news-hero">
           <BackgroundIcons />
           <div class="news-hero-content fade-in-on-scroll">
-              <h2>近期动态</h2>
+              <h2>{{ $t('home.recentNews') }}</h2>
               <div class="news-grid">
                   <div v-for="news in newsList" :key="news.id" class="news-card">
                       <div class="news-card-inner">
@@ -117,9 +117,9 @@ console.log('MIUMA');
                               </div>
                           </div>
                           <div class="news-card-back">
-                              <h4>活动详情</h4>
+                              <h4>{{ $t('home.eventDetails') }}</h4>
                               <p>{{ news.summary }}</p>
-                              <a :href="news.link">了解详情 &rarr;</a>
+                              <a :href="news.link">{{ $t('home.viewDetails') }}</a>
                           </div>
                       </div>
                   </div>

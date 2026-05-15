@@ -5,11 +5,11 @@ import MemberCard from '../components/MemberCard.vue';
 <template>
   <main class="page-container">
     <section class="members-header">
-      <h1>历届负责人</h1>
+      <h1>{{ $t('presidents.title') }}</h1>
     </section>
 
     <section class="term-section">
-      <div class="term-title">2025届</div>
+      <div class="term-title">{{ $t('presidents.term2025') }}</div>
       <div class="members-grid">
         <MemberCard
           img="/images/jt.jpg"

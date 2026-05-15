@@ -1,7 +1,12 @@
 import { ViteSSG } from 'vite-ssg'
+import { createI18n } from 'vue-i18n'
 import type { RouteLocationNormalized } from 'vue-router'
 import App from './App.vue'
 import routes from '~pages'
+
+import zh from './locales/zh.json'
+import en from './locales/en.json'
+import { getInitialLocale } from './composables/useLocale'
 
 import './assets/main.css'
 
@@ -14,6 +19,13 @@ export const createApp = ViteSSG(
       return { top: 0 }
     }
   },
-  ({ app, router, isClient }) => {
+  ({ app, isClient }) => {
+    const i18n = createI18n({
+      legacy: false,
+      locale: isClient ? getInitialLocale() : 'zh',
+      fallbackLocale: 'zh',
+      messages: { zh, en }
+    })
+    app.use(i18n)
   }
 )

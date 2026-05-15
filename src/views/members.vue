@@ -22,7 +22,7 @@ useScrollReveal();
   <main class="page-container">
       <div class="members-header fade-in-on-scroll">
         <div class="title-wrap">
-          <h1>MEMBERS</h1>
+          <h1>{{ $t('members.title') }}</h1>
         </div>
       </div>
     <div class="members-grid fade-in-on-scroll">
