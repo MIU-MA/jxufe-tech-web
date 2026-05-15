@@ -26,9 +26,7 @@ const friendLinks = ref([
 ]);
 
 const contactInfo = {
-  email: "2117410945@qq.com",
-  address: "江西省南昌市昌北经济技术开发区双港东大街169号",
-  school: "信息管理与数学学院"
+  email: "2117410945@qq.com"
 };
 </script>
 
@@ -41,16 +39,16 @@ const contactInfo = {
         <div class="footer-col brand-col">
           <div class="brand-header">
             <img src="/logo.jpg" alt="Logo" class="footer-logo-img" />
-            <span class="brand-name">数智技术协会</span>
+            <span class="brand-name">{{ $t('footer.brandName') }}</span>
           </div>
           <p class="brand-desc">
-            立足校园，探索前沿。<br>
-            我们致力于打造全校最专业的数据科学与人工智能交流平台，激发每一位同学的技术潜能。
+            {{ $t('footer.tagline1') }}<br>
+            {{ $t('footer.tagline2') }}
           </p>
         </div>
 
         <div class="footer-col contact-col">
-          <h4 class="footer-heading">联系我们</h4>
+          <h4 class="footer-heading">{{ $t('footer.contactUs') }}</h4>
           <ul class="contact-list">
             <li>
               <span class="icon">📧</span>
@@ -58,17 +56,17 @@ const contactInfo = {
             </li>
             <li>
               <span class="icon">🏫</span>
-              <span>{{ contactInfo.school }}</span>
+              <span>{{ $t('footer.school') }}</span>
             </li>
             <li>
               <span class="icon">📍</span>
-              <span>{{ contactInfo.address }}</span>
+              <span>{{ $t('footer.address') }}</span>
             </li>
           </ul>
         </div>
 
         <div class="footer-col links-col">
-          <h4 class="footer-heading">友情链接</h4>
+          <h4 class="footer-heading">{{ $t('footer.friendLinks') }}</h4>
           <div class="vertical-links">
             <a 
               v-for="(item, index) in friendLinks" 
@@ -88,7 +86,7 @@ const contactInfo = {
 
     <div class="footer-bottom">
      
-        <p>&copy; {{ new Date().getFullYear() }} 江西财经大学 数智技术协会. All Rights Reserved.</p>
+        <p>&copy; {{ $t('footer.copyright', { year: new Date().getFullYear() }) }}</p>
         <div class="beian-row">
           <a href="https://beian.miit.gov.cn/" target="_blank">赣ICP备2025074452号</a>
           <span class="divider">|</span>

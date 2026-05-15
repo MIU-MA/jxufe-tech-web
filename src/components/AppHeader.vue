@@ -2,9 +2,11 @@
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useTheme } from '../composables/useTheme';
-import { Sun, Moon, Home, Link, LayoutDashboard } from 'lucide-vue-next';
+import { useLocale } from '../composables/useLocale';
+import { Sun, Moon, Home, Link, LayoutDashboard, Languages } from 'lucide-vue-next';
 
 const { theme, toggleTheme } = useTheme();
+const { toggleLocale } = useLocale();
 
 // 控制移动端菜单开关的状态
 const isMenuOpen = ref(false);
@@ -48,7 +50,7 @@ const closeMenu = () => {
   <header>
     <div class="logo">
       <img src="/logo.jpg" alt="数智技术协会会徽">
-      江西财经大学数智技术协会
+      {{ $t('footer.brandName') }}
     </div>
     
     <button 
@@ -62,32 +64,37 @@ const closeMenu = () => {
 
     <nav :class="{ 'menu-open': isMenuOpen }">
       <ul>
-        <li><RouterLink to="/" @click="closeMenu" class="nav-link"><Home :size="18" />首页</RouterLink></li>
+        <li><RouterLink to="/" @click="closeMenu" class="nav-link"><Home :size="18" />{{ $t('nav.home') }}</RouterLink></li>
         <li
           class="dropdown-trigger"
           @mouseenter="openDropdown"
           @mouseleave="closeDropdown"
         >
           <a href="#" class="dropdown-label nav-link" @click="toggleDropdown">
-            <LayoutDashboard :size="18" />协会简介
+            <LayoutDashboard :size="18" />{{ $t('nav.about') }}
             <span class="arrow">&#9662;</span>
           </a>
           <ul class="dropdown-menu" :class="{ 'dropdown-open': isDropdownOpen }">
-            <li><RouterLink to="/presidents" @click="closeMenu">历届负责人</RouterLink></li>
-            <li><RouterLink to="/members" @click="closeMenu">优秀成员</RouterLink></li>
-            <li><RouterLink to="/details" @click="closeMenu">关于协会</RouterLink></li>
+            <li><RouterLink to="/presidents" @click="closeMenu">{{ $t('nav.presidents') }}</RouterLink></li>
+            <li><RouterLink to="/members" @click="closeMenu">{{ $t('nav.members') }}</RouterLink></li>
+            <li><RouterLink to="/details" @click="closeMenu">{{ $t('nav.aboutUs') }}</RouterLink></li>
           </ul>
         </li>
-        <li><RouterLink to="/welcome" @click="closeMenu"class="nav-link"><Link :size="18" />加入我们</RouterLink></li>
+        <li><RouterLink to="/welcome" @click="closeMenu"class="nav-link"><Link :size="18" />{{ $t('nav.joinUs') }}</RouterLink></li>
        
       </ul>
     </nav>
 
-     <button class="theme-toggle" @click="toggleTheme" :aria-label="theme === 'dark' ? '切换到亮色模式' : '切换到暗色模式'">
-        <Sun v-if="theme === 'dark'" :size="18"color="white" />
+    <div class="headbutton">
+     <button class="theme-toggle" @click="toggleTheme" :aria-label="theme === 'dark' ? $t('theme.switchLight') : $t('theme.switchDark')">
+        <Sun v-if="theme === 'dark'" :size="18" color="white" />
         <Moon v-else :size="18" color="white" />
       </button>
-        
+      <button class="theme-toggle" @click="toggleLocale" :aria-label="$t('lang.switch')">
+        <Languages :size="18" color="white" />
+      </button>
+      </div>
+
   </header>
 </template>
 
@@ -212,7 +219,7 @@ header nav ul li a:hover { background-color: #002a5a; }
     header nav ul li { white-space: nowrap; }
     header nav ul li a { border: none; padding: 0 15px; opacity: 0.9; }
     header nav ul li a:hover { background: transparent; opacity: 1; }
-    header nav ul li a.router-link-exact-active,
+    /* header nav ul li a.router-link-exact-active, */
     header nav ul li a.router-link-active { background: linear-gradient(135deg, #17589d, #005a9a); border-radius: 4px; }
 
     /* PC 端下拉菜单 */
@@ -241,9 +248,12 @@ header nav ul li a:hover { background-color: #002a5a; }
 }
 
 /* 主题切换按钮 */
+.headbutton {
+  display: flex;
+  align-items: center;
+}
 .theme-toggle {
   background: none;
-
   width: 36px;
   height: 36px;
   display: flex;

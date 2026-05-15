@@ -3,10 +3,10 @@
 
 <template>
   <main class="welcome-container">
-    <h1 class="welcome-title">欢迎来到数智技术协会！</h1>
+    <h1 class="welcome-title">{{ $t('welcome.title') }}</h1>
     <p class="welcome-text">
-        招新群会等到新的一年再建立哦~
-        我们随时欢迎你的到来！
+        {{ $t('welcome.text1') }}
+        {{ $t('welcome.text2') }}
     </p>
   </main>
 </template>
