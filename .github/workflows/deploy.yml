@@ -18,14 +18,17 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
 
-      - name: Install dependencies and Build
+      # ==========================================
+      # 🎯 阶段一：前端打包与部署
+      # ==========================================
+      - name: Build Frontend
         run: |
-          npm ci
+          cd frontend
+          npm install
           npm run build
 
-      - name: Deploy frontend to server
+      - name: Deploy Frontend to Server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
@@ -36,28 +39,39 @@ jobs:
           strip_components: 2
           overwrite: true
 
-      - name: Deploy backend dist to server
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: root
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          target: /www/wwwroot/jxufe-tech/backend/dist
-          source: "backend/dist/**"
-          strip_components: 2
-          overwrite: true
+      # ==========================================
+      # 🎯 阶段二：后端打包与部署
+      # ==========================================
+      - name: Build Backend
+        run: |
+          cd backend
+          npm install
+          npm run build
 
-      - name: Deploy backend config to server
+      - name: Deploy Backend Dist & Package
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
           target: /www/wwwroot/jxufe-tech/backend
-          source: "backend/package.json,ecosystem.config.js"
+          source: "backend/dist/**,backend/package.json"
           strip_components: 1
           overwrite: true
 
+      - name: Deploy PM2 Config (根目录文件单独传)
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          target: /www/wwwroot/jxufe-tech/backend
+          source: "ecosystem.config.js"
+          overwrite: true
+
+      # ==========================================
+      # 🎯 阶段三：服务器初始化与重启
+      # ==========================================
       - name: Install deps and restart backend
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -66,7 +80,10 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
             cd /www/wwwroot/jxufe-tech/backend
+            # 确保静态资源目录存在
             mkdir -p public/uploads public/music
-            npm install --production
+            # 只安装生产依赖，保护内存
+            npm install --omit=dev
+            # 用 PM2 启动或重启进程
             pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
             pm2 save
