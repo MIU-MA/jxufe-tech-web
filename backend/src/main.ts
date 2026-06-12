@@ -18,10 +18,8 @@ async function bootstrap() {
     credentials: true,
   });
 
-  // 2. 静态资源 (图片、音乐、api-docs.html)
   app.useStaticAssets(join(__dirname, '..', 'public'));
 
-  // 3. OpenAPI 文档 JSON
   const config = new DocumentBuilder()
     .setTitle('博客后台 API')
     .setDescription('文章、音乐、上传接口文档')
@@ -29,12 +27,12 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
-
-  // 注入到全局，AppController 返回给 /api-json
   (globalThis as any).__openapi_document = document;
 
-  await app.listen(3003);
-  console.log('后端运行在: http://localhost:3003');
-  console.log('API 文档:   http://localhost:3003/docs.html');
+  const port = process.env.PORT || 3003;
+  await app.listen(port);
+  
+  console.log(`后端运行在: http://localhost:${port}`);
+  console.log(`API 文档:   http://localhost:${port}/docs.html`);
 }
 bootstrap();
