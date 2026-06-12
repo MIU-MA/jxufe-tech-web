@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API 文档</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          mono: ['SF Mono', 'Fira Code', 'Consolas', 'monospace'],
+        },
+      },
+    },
+  }
+</script>
+</head>
+<body class="bg-slate-50 text-slate-700 dark:bg-slate-950 dark:text-slate-300 transition-colors">
+
+<!-- 主题切换 -->
+<button
+  onclick="toggleTheme()" title="切换主题"
+  class="fixed top-4 right-4 z-10 w-10 h-10 flex items-center justify-center text-lg rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+>🌓</button>
+
+<!-- 头部 -->
+<div class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 mb-8">
+  <div class="max-w-4xl mx-auto px-6 py-10">
+    <div class="flex items-center gap-3 mb-4">
+      <span class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white text-lg">📘</span>
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-slate-100">API 文档</h1>
+    </div>
+    <div class="flex flex-wrap gap-x-6 gap-y-1 text-sm text-slate-400">
+      <span>基地址：<b class="text-slate-700 dark:text-slate-300" id="baseUrl">—</b></span>
+      <span>认证：<b class="text-slate-700 dark:text-slate-300">JWT Bearer Token</b></span>
+      <span>版本：<b class="text-slate-700 dark:text-slate-300">1.0</b></span>
+    </div>
+  </div>
+</div>
+
+<!-- 加载 -->
+<div id="loading" class="max-w-4xl mx-auto px-6 py-20 text-center text-slate-400">
+  <div class="w-7 h-7 mx-auto mb-4 border-3 border-slate-200 dark:border-slate-700 border-t-indigo-500 rounded-full animate-spin"></div>
+  加载 API 文档…
+</div>
+
+<!-- 内容 -->
+<div id="content" class="max-w-4xl mx-auto px-6 pb-8"></div>
+
+<!-- 页脚 -->
+<div class="max-w-4xl mx-auto px-6 pb-10 text-center text-xs text-slate-300 dark:text-slate-600">
+  MIUMA Blog API · 首次启动自动创建 admin / admin123
+</div>
+
+<script>
+const state = { currentPath: null };
+
+function toggleTheme() {
+  const isDark = document.documentElement.classList.toggle('dark');
+  localStorage.setItem('api-docs-theme', isDark ? 'dark' : 'light');
+}
+
+// 初始化主题
+(function () {
+  const stored = localStorage.getItem('api-docs-theme');
+  const preferDark = window.matchMedia('(prefers-color-scheme:dark)').matches;
+  if (stored === 'dark' || (!stored && preferDark)) {
+    document.documentElement.classList.add('dark');
+  }
+})();
+
+function toggleGroup(btn) {
+  const body = btn.nextElementSibling;
+  const arrow = btn.querySelector('.group-arrow');
+  if (body) body.classList.toggle('hidden');
+  if (arrow) arrow.classList.toggle('rotate-180');
+}
+
+function toggleDetail(key) {
+  const detail = document.getElementById('detail-' + key);
+  if (!detail) return;
+  if (state.currentPath === key) {
+    detail.classList.add('hidden');
+    state.currentPath = null;
+  } else {
+    const prev = state.currentPath ? document.getElementById('detail-' + state.currentPath) : null;
+    if (prev) prev.classList.add('hidden');
+    detail.classList.remove('hidden');
+    state.currentPath = key;
+    detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✓ 已复制';
+    btn.classList.remove('opacity-70');
+    btn.classList.add('!bg-emerald-600', '!text-white');
+    setTimeout(() => {
+      btn.textContent = '复制';
+      btn.classList.add('opacity-70');
+      btn.classList.remove('!bg-emerald-600', '!text-white');
+    }, 2000);
+  });
+}
+
+function resolveRef(ref, spec) {
+  if (!ref) return null;
+  const path = ref.replace('#/', '').split('/');
+  let obj = spec;
+  for (const k of path) obj = obj?.[k];
+  return obj;
+}
+
+function methodColors(m) {
+  const map = {
+    GET:    'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400',
+    POST:   'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400',
+    PATCH:  'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400',
+    DELETE: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
+  };
+  return map[m] || 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400';
+}
+
+function buildCurl(baseUrl, item, spec) {
+  let curl = `curl -X ${item.method} "${baseUrl}${item.path}"`;
+  if (item.security) curl += ' \\\n  -H "Authorization: Bearer YOUR_TOKEN"';
+  if (item.requestBody) {
+    const content = item.requestBody.content?.['application/json'];
+    if (content?.schema) {
+      const schema = resolveRef(content.schema.$ref, spec) || content.schema;
+      const example = {};
+      if (schema?.properties) {
+        for (const [k, v] of Object.entries(schema.properties)) {
+          if (v.example) example[k] = v.example;
+          else if (v.type === 'string') example[k] = 'string';
+          else if (v.type === 'number') example[k] = 0;
+          else if (v.type === 'boolean') example[k] = true;
+        }
+      }
+      curl += ` \\\n  -H "Content-Type: application/json" \\\n  -d '${JSON.stringify(example)}'`;
+    }
+  }
+  return curl;
+}
+
+function esc(text) {
+  return text.replace(/`/g, '\\`').replace(/\$/g, '\\$').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+async function init() {
+  try {
+    const res = await fetch('/api-json');
+    const spec = await res.json();
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('baseUrl').textContent = window.location.origin;
+
+    const groups = new Map();
+    for (const [path, methods] of Object.entries(spec.paths || {})) {
+      for (const [method, detail] of Object.entries(methods)) {
+        if (method === 'parameters') continue;
+        const tag = detail.tags?.[0] || '其他';
+        if (!groups.has(tag)) groups.set(tag, []);
+        groups.get(tag).push({
+          path, method: method.toUpperCase(),
+          summary: detail.summary || '',
+          security: detail.security,
+          requestBody: detail.requestBody,
+          responses: detail.responses,
+          parameters: detail.parameters,
+          operationId: detail.operationId,
+        });
+      }
+    }
+
+    let html = '';
+    for (const [tag, items] of groups) {
+      html += /*html*/`
+      <div class="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 overflow-hidden mb-4">
+        <button onclick="toggleGroup(this)" class="w-full flex items-center justify-between px-5 py-4 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors text-left">
+          <span class="text-lg font-semibold text-slate-900 dark:text-slate-100">${tag}</span>
+          <span class="flex items-center gap-3 text-sm text-slate-400">
+            ${items.length} 个接口
+            <svg class="group-arrow w-4 h-4 transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </span>
+        </button>
+        <div>`;
+
+      for (const item of items) {
+        const key = (item.operationId || (item.method + item.path).replace(/[^a-zA-Z0-9]/g, '_'));
+        html += /*html*/`
+          <div onclick="toggleDetail('${key}')" class="flex items-center gap-3 px-5 py-3 border-t border-slate-100 dark:border-slate-800 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
+            <span class="shrink-0 text-[11px] font-bold font-mono px-2.5 py-1 rounded-md tracking-wide ${methodColors(item.method)}">${item.method}</span>
+            <code class="text-sm font-mono text-slate-600 dark:text-slate-400 flex-1 break-all">${item.path}</code>
+            <span class="text-xs text-slate-400 hidden sm:inline truncate max-w-[220px]">${item.summary}</span>
+            ${item.security?.length ? '<span class="text-amber-500 shrink-0">🔒</span>' : ''}
+          </div>
+
+          <div id="detail-${key}" class="hidden border-t border-slate-100 dark:border-slate-800 px-5 py-5 bg-slate-50/50 dark:bg-slate-800/20">
+            ${item.summary ? `<p class="text-sm text-slate-500 dark:text-slate-400 mb-4">${item.summary}</p>` : ''}
+            ${item.security?.length ? `
+            <div class="flex items-center gap-2 mb-4 p-3 rounded-lg bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 text-sm text-amber-700 dark:text-amber-400">
+              🔒 需要 Bearer Token：<code class="px-1.5 py-0.5 rounded bg-amber-100 dark:bg-amber-900/30 text-xs font-mono">Authorization: Bearer YOUR_TOKEN</code>
+            </div>` : ''}
+            ${item.parameters?.length ? `
+            <h4 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2">路径参数</h4>
+            <div class="overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700 mb-4">
+              <table class="w-full text-sm">
+                <thead class="bg-slate-100 dark:bg-slate-800"><tr>
+                  <th class="text-left px-3 py-2 font-medium text-slate-500 dark:text-slate-400">参数</th>
+                  <th class="text-left px-3 py-2 font-medium text-slate-500 dark:text-slate-400">必填</th>
+                  <th class="text-left px-3 py-2 font-medium text-slate-500 dark:text-slate-400">说明</th>
+                </tr></thead>
+                <tbody>${item.parameters.map(p => `<tr class="border-t border-slate-100 dark:border-slate-700"><td class="px-3 py-2 font-mono text-slate-700 dark:text-slate-300">${p.name}</td><td class="px-3 py-2">${p.required ? '是' : '否'}</td><td class="px-3 py-2 text-slate-500">${p.description || '—'}</td></tr>`).join('')}</tbody>
+              </table>
+            </div>` : ''}
+            ${item.requestBody ? `
+            <h4 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2 mt-4 first:mt-0">请求体</h4>
+            <pre class="relative bg-slate-900 dark:bg-slate-950 rounded-lg p-4 overflow-x-auto text-sm text-slate-300 font-mono leading-relaxed mb-4">${esc(JSON.stringify(resolveRef(item.requestBody.content?.['application/json']?.schema?.$ref, spec) || item.requestBody.content?.['application/json']?.schema || {}, null, 2))}</pre>` : ''}
+            ${item.responses && Object.keys(item.responses).length ? `
+            <h4 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2 mt-4 first:mt-0">响应</h4>
+            <div class="flex flex-wrap gap-2 mb-4">
+              ${Object.entries(item.responses).map(([code, r]) => {
+                const ok = String(code).startsWith('2');
+                return `<span class="${ok ? 'text-emerald-600 bg-emerald-50 border-emerald-200 dark:text-emerald-400 dark:bg-emerald-900/20 dark:border-emerald-800' : 'text-red-600 bg-red-50 border-red-200 dark:text-red-400 dark:bg-red-900/20 dark:border-red-800'} inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold border">${code} ${r.description || ''}</span>`;
+              }).join('')}
+            </div>` : ''}
+            ${(() => {
+              const curl = buildCurl(window.location.origin, item, spec);
+              const method = item.method.toLowerCase();
+              const hasAuth = item.security?.length;
+              let vueCode = hasAuth ? `import { useApi } from '~/composables/useApi';\nconst api = useApi();\n\n` : '';
+              vueCode += hasAuth ? `await api.${method}('${item.path}'` : `await $fetch('${item.path}'`;
+              if (['post','patch','put'].includes(method) && item.requestBody) vueCode += ', { /* body */ }';
+              vueCode += ');';
+              return `
+            <h4 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2 mt-4 first:mt-0">cURL</h4>
+            <div class="relative mb-4">
+              <button onclick="copyText('${esc(curl).replace(/'/g, "\\'")}', this)" class="opacity-70 absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-slate-400 hover:text-white px-2.5 py-1 rounded-md text-xs transition-colors">复制</button>
+              <pre class="bg-slate-900 dark:bg-slate-950 rounded-lg p-4 overflow-x-auto text-sm text-slate-300 font-mono leading-relaxed">${esc(curl)}</pre>
+            </div>
+            <h4 class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-2 mt-4 first:mt-0">前端调用（Vue / Nuxt）</h4>
+            <div class="relative">
+              <button onclick="copyText('${esc(vueCode).replace(/'/g, "\\'")}', this)" class="opacity-70 absolute top-2 right-2 bg-white/10 hover:bg-white/20 text-slate-400 hover:text-white px-2.5 py-1 rounded-md text-xs transition-colors">复制</button>
+              <pre class="bg-slate-900 dark:bg-slate-950 rounded-lg p-4 overflow-x-auto text-sm text-slate-300 font-mono leading-relaxed">${esc(vueCode)}</pre>
+            </div>`;
+            })()}
+          </div>`;
+      }
+
+      html += `</div></div>`;
+    }
+
+    document.getElementById('content').innerHTML = html;
+  } catch {
+    document.getElementById('loading').innerHTML =
+      '<div class="text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg px-4 py-3 inline-block">⚠️ 无法加载 API 文档，请确认后端已启动</div>';
+  }
+}
+
+init();
+</script>
+</body>
+</html>

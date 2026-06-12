@@ -1,0 +1,81 @@
+{
+  "nav": {
+    "home": "首页",
+    "about": "协会简介",
+    "presidents": "历届负责人",
+    "members": "优秀成员",
+    "aboutUs": "关于协会",
+    "joinUs": "加入我们"
+  },
+  "footer": {
+    "brandName": "数智技术协会",
+    "tagline1": "立足校园，探索前沿。",
+    "tagline2": "我们致力于打造全校最专业的数据科学与人工智能交流平台，激发每一位同学的技术潜能。",
+    "contactUs": "联系我们",
+    "friendLinks": "友情链接",
+    "school": "信息管理与数学学院",
+    "address": "江西省南昌市昌北经济技术开发区双港东大街169号",
+    "copyright": "© {year} 江西财经大学 数智技术协会. All Rights Reserved."
+  },
+  "home": {
+    "title1": "江西财经大学",
+    "title2": "数智技术协会",
+    "subtitle": "探索人工智能的奥秘，从这里开始你的技术之旅。",
+    "aboutUs": "关于我们",
+    "aboutCollege": "江西财经大学信息管理与数学学院",
+    "aboutDesc": "专注于数据科学、人工智能和项目开发实践。",
+    "dept1Name": "宣传部",
+    "dept1Desc": "负责社团形象的塑造与推广。",
+    "dept2Name": "组织部",
+    "dept2Desc": "策划并执行社团的各项精彩活动。",
+    "dept3Name": "学习部",
+    "dept3Desc": "深入研究前沿技术并组织技术分享。",
+    "more": "更多»",
+    "recentNews": "近期动态",
+    "eventDetails": "活动详情",
+    "viewDetails": "了解详情 →"
+  },
+  "details": {
+    "aboutAssociation": "协会简介",
+    "aboutIntro": "江西财经大学数智技术协会隶属于信息管理与数学学院，专注于数据科学、人工智能和项目开发实践，致力于打造全校最专业的技术交流平台。",
+    "departmentSetup": "部门设置",
+    "publicDept": "宣传部",
+    "publicDeptDesc": "负责社团形象的塑造与推广，制作海报和宣传物料，让更多人了解数智技术协会。",
+    "orgDept": "组织部",
+    "orgDeptDesc": "策划并执行社团的各项精彩活动，包括讲座、分享会、比赛等，确保每场活动顺利落地。",
+    "studyDept": "学习部",
+    "studyDeptDesc": "深入研究前沿技术，组织技术分享和培训，带领成员学习 Python、AI、Web 开发等实用技能。",
+    "contributors": "Contributors",
+    "contributorsText1": "感谢各位大佬对本网站上线的大力支持！",
+    "contributorsText2": "如果你也想参与到网站的维护和更新中来，",
+    "viewDetails": "查看详细"
+  },
+  "welcome": {
+    "title": "欢迎来到数智技术协会！",
+    "text1": "招新群会等到新的一年再建立哦~",
+    "text2": "我们随时欢迎你的到来！"
+  },
+  "presidents": {
+    "title": "历届负责人",
+    "term2025": "2025届"
+  },
+  "members": {
+    "title": "MEMBERS"
+  },
+  "news": {
+    "publishDate": "发布日期:",
+    "loading": "正在努力加载中...",
+    "loadError": "文章加载失败，请稍后重试。",
+    "reload": "重新加载",
+    "backHome": "返回首页",
+    "articleMissing": "文章不见了",
+    "backHome2": "回到首页"
+  },
+  "theme": {
+    "switchLight": "切换到亮色模式",
+    "switchDark": "切换到暗色模式"
+  },
+  "lang": {
+    "switch": "Switch to English"
+  }
+}

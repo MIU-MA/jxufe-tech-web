@@ -1,0 +1,72 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    if: github.repository == 'jxufe-tech/jxufe-tech-web'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+
+      - name: Install dependencies and Build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy frontend to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          target: /www/wwwroot/jxufe-tech/frontend
+          source: "frontend/dist/**"
+          strip_components: 2
+          overwrite: true
+
+      - name: Deploy backend dist to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          target: /www/wwwroot/jxufe-tech/backend/dist
+          source: "backend/dist/**"
+          strip_components: 2
+          overwrite: true
+
+      - name: Deploy backend config to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          target: /www/wwwroot/jxufe-tech/backend
+          source: "backend/package.json,ecosystem.config.js"
+          strip_components: 1
+          overwrite: true
+
+      - name: Install deps and restart backend
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /www/wwwroot/jxufe-tech/backend
+            mkdir -p public/uploads public/music
+            npm install --production
+            pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
+            pm2 save
