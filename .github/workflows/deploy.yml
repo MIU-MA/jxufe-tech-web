@@ -9,6 +9,8 @@ jobs:
   build-and-deploy:
     if: github.repository == 'jxufe-tech/jxufe-tech-web'
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     steps:
       - name: Checkout code
@@ -48,14 +50,14 @@ jobs:
           npm install
           npm run build
 
-      - name: Deploy Backend Dist & Package
+      - name: Deploy Backend Dist, Package & Env
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
           target: /www/wwwroot/jxufe-tech/backend
-          source: "backend/dist/**,backend/package.json"
+          source: "backend/dist/**,backend/package.json,backend/.env"
           strip_components: 1
           overwrite: true
 
@@ -73,7 +75,7 @@ jobs:
       # 🎯 阶段三：服务器初始化与重启
       # ==========================================
       - name: Install deps and restart backend
-        uses: appleboy/ssh-action@v1.0.3
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SERVER_IP }}
           username: root
@@ -87,3 +89,34 @@ jobs:
             # 用 PM2 启动或重启进程
             pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
             pm2 save
+
+      - name: Verify SSE & API connectivity
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            echo "========== 检查 .env 是否部署 =========="
+            if [ -f /www/wwwroot/jxufe-tech/backend/.env ]; then
+              echo "✅ .env 已存在"
+            else
+              echo "❌ .env 缺失！请手动创建: echo 'DEEPSEEK_API_KEY=sk-xxx' >> /www/wwwroot/jxufe-tech/backend/.env"
+            fi
+
+            echo "========== 检查后端进程 =========="
+            pm2 list | grep jxufe-backend || echo "❌ PM2 进程未启动"
+
+            echo "========== 检查 Nginx SSE 配置 =========="
+            NGINX_CONF=$(grep -rl "proxy_pass.*3003\|proxy_pass.*jxufe" /etc/nginx /www/server 2>/dev/null | head -1)
+            if [ -n "$NGINX_CONF" ]; then
+              echo "找到 Nginx 配置: $NGINX_CONF"
+              if grep -q "proxy_buffering[[:space:]]*off" "$NGINX_CONF" 2>/dev/null; then
+                echo "✅ SSE 流已配置 (proxy_buffering off)"
+              else
+                echo "⚠️  未配置 proxy_buffering off，SSE 流可能被 Nginx 缓冲"
+                echo "   请在 location /api/ 块中添加: proxy_buffering off; proxy_cache off;"
+              fi
+            else
+              echo "未自动找到 Nginx 配置，请手动确认 location /api/ 是否设置了 proxy_buffering off;"
+            fi
