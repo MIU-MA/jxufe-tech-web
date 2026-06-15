@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useTheme } from '../composables/useTheme';
 import { useLocale } from '../composables/useLocale';
-import { Sun, Moon, Home, Link, LayoutDashboard, Languages } from 'lucide-vue-next';
+import { Sun, Moon, Home, Link, LayoutDashboard, Languages, MessageCircle } from 'lucide-vue-next';
 
 const { theme, toggleTheme } = useTheme();
 const { toggleLocale } = useLocale();
@@ -46,6 +46,11 @@ const closeAll = () => { isMenuOpen.value = false; isDropdownOpen.value = false;
           <li><RouterLink to="/members"   class="text-white block py-3 px-5 text-[0.88em] whitespace-nowrap hover:bg-[#002a5a]">{{ $t('nav.members') }}</RouterLink></li>
           <li><RouterLink to="/details"   class="text-white block py-3 px-5 text-[0.88em] whitespace-nowrap hover:bg-[#002a5a]">{{ $t('nav.aboutUs') }}</RouterLink></li>
         </ul>
+      </li>
+      <li>
+        <RouterLink to="/chat" class="text-white flex items-center gap-1.5 px-[15px] opacity-90 hover:opacity-100">
+          <MessageCircle :size="18" />AI 对话
+        </RouterLink>
       </li>
       <li>
         <RouterLink to="/welcome" class="text-white flex items-center gap-1.5 px-[15px] opacity-90 hover:opacity-100">
@@ -96,6 +101,11 @@ const closeAll = () => { isMenuOpen.value = false; isDropdownOpen.value = false;
           <li><RouterLink to="/members"   @click="closeAll" class="text-white block py-2 px-[30px] text-[0.88em] hover:bg-[#002a5a] border-b border-[#002a5a]">{{ $t('nav.members') }}</RouterLink></li>
           <li><RouterLink to="/details"   @click="closeAll" class="text-white block py-2 px-[30px] text-[0.88em] hover:bg-[#002a5a] border-b border-[#002a5a]">{{ $t('nav.aboutUs') }}</RouterLink></li>
         </ul>
+      </li>
+      <li>
+        <RouterLink to="/chat" @click="closeAll" class="text-white flex items-center justify-center gap-1.5 py-[15px] px-[15px] hover:bg-[#002a5a] border-b border-[#002a5a]">
+          <MessageCircle :size="18" />AI 对话
+        </RouterLink>
       </li>
       <li>
         <RouterLink to="/welcome" @click="closeAll" class="text-white flex items-center justify-center gap-1.5 py-[15px] px-[15px] hover:bg-[#002a5a]">

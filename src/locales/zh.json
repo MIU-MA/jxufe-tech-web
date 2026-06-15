@@ -77,22 +77,5 @@
   },
   "lang": {
     "switch": "Switch to English"
-  },
-  "chat": {
-    "title": "AI 智能对话",
-    "subtitle": "基于 DeepSeek · 数智技术协会",
-    "newChat": "新对话",
-    "clearConfirm": "确认清空",
-    "cancel": "取消",
-    "welcomeTitle": "欢迎来到江西财经大学！",
-    "welcomeDesc": "我是数智技术协会的 AI 助手，可以回答关于学校/协会的相关问题，或者进行一些有趣的对话哦！",
-    "hints": [
-      "📖 想看分数线",
-      "🎓 想了解大学",
-      "🏫 想了解协会"
-    ],
-    "placeholder": "输入你的问题... (Enter 发送，Shift+Enter 换行)",
-    "send": "发送",
-    "hint": "AI 生成内容仅供参考 · Ctrl+N 开新对话"
   }
 }

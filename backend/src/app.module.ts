@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ArticlesModule } from './articles/articles.module';
 import { MusicModule } from './music/music.module';
+import { ChatModule } from './chat/chat.module';
 import { UploadController } from './upload/upload.controller';
 import { Article } from './articles/entities/article.entity';
 import { Music } from './music/entities/music.entity';
@@ -21,6 +22,7 @@ import { Music } from './music/entities/music.entity';
     AuthModule,
     ArticlesModule,
     MusicModule,
+    ChatModule,
   ],
   controllers: [AppController, UploadController],
   providers: [AppService],

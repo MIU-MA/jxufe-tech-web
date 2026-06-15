@@ -2,7 +2,11 @@ name: Deploy to Server
 
 on:
   push:
+<<<<<<< HEAD
     branches:
+=======
+    branches: 
+>>>>>>> upstream/test
       - main
 
 jobs:
@@ -18,6 +22,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+<<<<<<< HEAD
 
       # ==========================================
       # 🎯 阶段一：前端打包与部署
@@ -29,11 +34,22 @@ jobs:
           npm run build
 
       - name: Deploy Frontend to Server
+=======
+          cache: 'npm'
+
+      - name: Install dependencies and Build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Deploy dist to server
+>>>>>>> upstream/test
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
+<<<<<<< HEAD
           target: /www/wwwroot/jxufe-tech/frontend
           source: "frontend/dist/**"
           strip_components: 2
@@ -87,3 +103,9 @@ jobs:
             # 用 PM2 启动或重启进程
             pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
             pm2 save
+=======
+          target: /www/wwwroot/www.jxufe-tech.top/jxufe-site/dist
+          source: "dist/*"
+          strip_components: 1
+          overwrite: true
+>>>>>>> upstream/test

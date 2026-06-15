@@ -77,22 +77,5 @@
   },
   "lang": {
     "switch": "切换到中文"
-  },
-  "chat": {
-    "title": "AI Chat",
-    "subtitle": "Powered by DeepSeek · DSA Association",
-    "newChat": "New Chat",
-    "clearConfirm": "Confirm Clear",
-    "cancel": "Cancel",
-    "welcomeTitle": "How can I help you?",
-    "welcomeDesc": "I'm the AI assistant of the DSA Association. Feel free to ask me anything — from programming and AI learning to association news.",
-    "hints": [
-      "📖 Check admission scores",
-      "🎓 About the university",
-      "🏫 About the association"
-    ],
-    "placeholder": "Type your message... (Enter to send, Shift+Enter for new line)",
-    "send": "Send",
-    "hint": "AI content is for reference only · Ctrl+N for new chat"
   }
 }
