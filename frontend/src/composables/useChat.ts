@@ -37,7 +37,6 @@ const SYSTEM_PROMPT = `你是"数智技术协会"的 AI 助手。
 5. 回复简洁有力，不要长篇大论（控制在 100 字以内）
 6. 涉及协会专业问题时，体现技术社团的专业素养`
 
-// ==================== localStorage 工具（防 SSR 崩溃） ====================
 function loadHistory(): ChatMessage[] {
   try {
     const saved = localStorage.getItem(STORAGE_KEY)
@@ -45,17 +44,26 @@ function loadHistory(): ChatMessage[] {
       const parsed = JSON.parse(saved)
       if (Array.isArray(parsed)) return parsed
     }
-  } catch {
-    /* localStorage 不可用或数据损坏 */
-  }
+  } catch {}
   return []
 }
 
 function saveHistory(messages: readonly ChatMessage[]): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
+  } catch {}
+}
+
+let chatToken = ''
+
+async function fetchToken(): Promise<string> {
+  try {
+    const res = await fetch('/api/chat/token')
+    if (!res.ok) throw new Error('获取令牌失败')
+    const data = await res.json()
+    return data.token || ''
   } catch {
-    /* 静默忽略（如 quota 超限） */
+    return ''
   }
 }
 
@@ -65,7 +73,10 @@ export function useChat() {
   const containerRef = ref<HTMLElement | null>(null)
   let abortController: AbortController | null = null
 
-  // 滚动到底部
+  if (!chatToken) {
+    fetchToken().then(t => { chatToken = t })
+  }
+
   async function scrollToBottom() {
     await nextTick()
     if (containerRef.value) {
@@ -73,13 +84,11 @@ export function useChat() {
     }
   }
 
-  // 清空对话
   function clearMessages() {
     messages.value = []
     saveHistory([])
   }
 
-  // 构建发送给 API 的消息列表（system + 最近 20 条）
   function buildApiMessages(): ApiMessage[] {
     const recent = messages.value.slice(-20)
     const apiMessages: ApiMessage[] = [
@@ -94,12 +103,10 @@ export function useChat() {
     return apiMessages
   }
 
-  // 发送消息
   async function send(content: string) {
     const text = content.trim()
     if (!text || isThinking.value) return
 
-    // 用户消息
     const userMsg: ChatMessage = {
       id: `u-${Date.now()}`,
       role: 'user',
@@ -107,10 +114,9 @@ export function useChat() {
       timestamp: Date.now(),
     }
     messages.value.push(userMsg)
-    saveHistory(messages.value) // ✅ 立即写入
+    saveHistory(messages.value)
     await scrollToBottom()
 
-    // 创建 AI 消息占位
     const aiMsg: ChatMessage = {
       id: `a-${Date.now()}`,
       role: 'assistant',
@@ -127,10 +133,15 @@ export function useChat() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages: buildApiMessages() }),
+        body: JSON.stringify({ messages: buildApiMessages(), token: chatToken }),
         signal: abortController.signal,
       })
 
+      if (response.status === 403) {
+        chatToken = await fetchToken()
+        if (!chatToken) throw new Error('会话验证失败，请刷新页面后重试')
+        throw new Error('令牌已刷新，请重新发送消息')
+      }
       if (!response.ok) {
         throw new Error(`API 请求失败: ${response.status} ${response.statusText}`)
       }
@@ -154,7 +165,7 @@ export function useChat() {
           const trimmed = line.trim()
           if (!trimmed || !trimmed.startsWith('data: ')) continue
 
-          const data = trimmed.slice(6) // 去掉 "data: " 前缀
+          const data = trimmed.slice(6)
 
           if (data === '[DONE]') continue
 
@@ -163,7 +174,6 @@ export function useChat() {
             const delta = parsed?.choices?.[0]?.delta?.content
             if (delta) {
               aiMsg.content += delta
-              // 节流保存：最频繁每 200ms 写一次，避免卡顿
               const now = Date.now()
               if (now - lastSave > 200) {
                 saveHistory(messages.value)
@@ -171,17 +181,13 @@ export function useChat() {
               }
               await scrollToBottom()
             }
-          } catch {
-            // 跳过无法解析的行
-          }
+          } catch {}
         }
       }
 
-      // 流结束后最终保存
       saveHistory(messages.value)
     } catch (err) {
       if ((err as Error).name === 'AbortError') {
-        // 用户取消请求
         if (!aiMsg.content) {
           messages.value.pop()
         }

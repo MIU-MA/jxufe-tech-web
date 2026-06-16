@@ -1,23 +1,54 @@
-import { Controller, Post, Body, Res, Logger } from '@nestjs/common'
+import { Controller, Post, Get, Body, Res, Req, Logger, UseGuards } from '@nestjs/common'
 import { ApiTags, ApiOperation } from '@nestjs/swagger'
-import type { Response } from 'express'
+import type { Request, Response } from 'express'
 import { ChatService, ChatMessage } from './chat.service'
+import { TokenService } from './token.service'
+import { AntiAbuseGuard } from '../common/anti-abuse.guard'
 
 @ApiTags('AI 聊天')
 @Controller('api/chat')
 export class ChatController {
   private readonly logger = new Logger(ChatController.name)
 
-  constructor(private readonly chatService: ChatService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly tokenService: TokenService,
+  ) {}
+
+  private getIp(req: Request): string {
+    return (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim()
+      || (req.headers['x-real-ip'] as string)
+      || req.ip
+      || 'unknown';
+  }
+
+  @Get('token')
+  @ApiOperation({ summary: '获取聊天会话令牌（反滥用）' })
+  getToken(@Req() req: Request) {
+    const ip = this.getIp(req);
+    const token = this.tokenService.generate(ip);
+    return { token };
+  }
 
   @Post()
+  @UseGuards(AntiAbuseGuard)
   @ApiOperation({ summary: '发送消息（SSE 流式返回）' })
-  async chat(@Body() body: { messages: ChatMessage[] }, @Res() res: Response) {
-    // 设置 SSE 流式响应头
+  async chat(
+    @Body() body: { messages: ChatMessage[]; token?: string },
+    @Res() res: Response,
+    @Req() req: Request,
+  ) {
+    const ip = this.getIp(req);
+
+    if (!body.token || !this.tokenService.validate(ip, body.token)) {
+      res.status(403).json({ error: '无效或过期的会话令牌，请刷新页面后重试' });
+      return;
+    }
+
     res.setHeader('Content-Type', 'text/event-stream')
     res.setHeader('Cache-Control', 'no-cache')
     res.setHeader('Connection', 'keep-alive')
-    res.setHeader('X-Accel-Buffering', 'no') // 禁用 Nginx 缓冲
+    res.setHeader('X-Accel-Buffering', 'no')
 
     try {
       const stream = await this.chatService.chat(body.messages)
@@ -38,11 +69,10 @@ export class ChatController {
 
             buffer += decoder.decode(value, { stream: true })
             const lines = buffer.split('\n')
-            buffer = lines.pop() || '' // 最后一个不完整块，留到下次
+            buffer = lines.pop() || ''
 
             for (const line of lines) {
               if (line.startsWith('data: ')) {
-                // 直接转发 DeepSeek 的 SSE 数据块
                 res.write(line + '\n')
               }
             }
@@ -63,7 +93,6 @@ export class ChatController {
           (cause ? ` [cause: ${cause.message}]` : ''),
       )
 
-      // 根据错误类型给用户友好的提示
       let userMessage = '抱歉，请求 AI 服务时出现了错误，请稍后重试。'
       if (message.includes('timeout') || message.includes('aborted')) {
         userMessage = 'AI 服务响应超时（30 秒），请尝试缩短问题后重试。'

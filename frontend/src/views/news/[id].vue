@@ -56,12 +56,10 @@ watch(() => route.params.id, (newId) => {
 <template>
   <main class="min-h-screen bg-gray-50 dark:bg-slate-900 pt-50 pb-12 px-4 sm:px-6 transition-colors">
 
-    <!-- 加载中 -->
     <div v-if="isLoading" class="article-wrapper max-w-4xl mx-auto bg-white dark:bg-slate-800 p-8 shadow-sm rounded-2xl transition-colors">
       <div class="py-20 text-center text-gray-400">{{ $t('news.loading') }}</div>
     </div>
 
-    <!-- 加载失败 -->
     <div v-else-if="loadError" class="article-wrapper max-w-4xl mx-auto bg-white dark:bg-slate-800 p-8 shadow-sm rounded-2xl transition-colors">
       <div class="py-20 text-center">
         <p class="text-red-500 mb-4">{{ $t('news.loadError') }}</p>
@@ -69,7 +67,6 @@ watch(() => route.params.id, (newId) => {
       </div>
     </div>
 
-    <!-- 文章内容 -->
     <div v-else-if="article" class="article-wrapper max-w-4xl mx-auto bg-white dark:bg-slate-800 p-8 shadow-sm rounded-2xl transition-colors">
       <header class="mb-8 border-b border-gray-100 dark:border-slate-700 pb-8">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-4">{{ article.title }}</h1>
@@ -95,7 +92,6 @@ watch(() => route.params.id, (newId) => {
       </div>
     </div>
 
-    <!-- 文章不存在 -->
     <div v-else class="text-center py-20">
       <h2 class="text-2xl font-semibold text-gray-600 dark:text-slate-400">{{ $t('news.articleMissing') }}</h2>
       <RouterLink to="/" class="text-blue-500 mt-4 inline-block">{{ $t('news.backHome2') }}</RouterLink>

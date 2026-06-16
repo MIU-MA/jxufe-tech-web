@@ -31,7 +31,6 @@ function handleKeydown(e: KeyboardEvent) {
     e.preventDefault()
     handleSend()
   }
-  // Ctrl+N 新对话
   if (e.key === 'n' && (e.ctrlKey || e.metaKey)) {
     e.preventDefault()
     handleClear()
@@ -100,7 +99,6 @@ const messageGroups = computed(() => {
     class="flex flex-col mx-auto min-h-[calc(100vh-60px)] transition-colors duration-300"
     :style="{ backgroundColor: 'var(--color-bg)' }"
   >
-    <!-- ==================== 顶部栏 ==================== -->
     <header
       class="sticky top-[60px] z-30 flex items-center justify-between px-5 py-3 border-b backdrop-blur-sm transition-colors duration-300"
       :style="{
@@ -115,14 +113,6 @@ const messageGroups = computed(() => {
         >
           <Sparkles :size="18" color="#fff" />
         </div>
-        <!-- <div>
-          <h1 class="text-base font-semibold" :style="{ color: 'var(--color-text-heading)' }">
-            {{ $t('chat.title') }}
-          </h1>
-          <p class="text-xs" :style="{ color: 'var(--color-text-muted)' }">
-            {{ $t('chat.subtitle') }}
-          </p>
-        </div> -->
       </div>
 
       <div class="flex items-center gap-2">
@@ -142,12 +132,10 @@ const messageGroups = computed(() => {
       </div>
     </header>
 
-    <!-- ==================== 消息区域 ==================== -->
     <div
       ref="containerRef"
       class="flex-1 overflow-y-auto"
     >
-      <!-- 空状态 -->
       <div
         v-if="!hasMessages && !isThinking"
         class="flex flex-col items-center justify-center min-h-[calc(100vh-300px)] px-5 text-center"
@@ -181,10 +169,8 @@ const messageGroups = computed(() => {
         </div>
       </div>
 
-      <!-- 消息列表 -->
       <div v-else class="max-w-3xl mx-auto w-full px-4 py-6">
         <template v-for="group in messageGroups" :key="group.label">
-          <!-- 日期分隔 -->
           <div class="flex items-center gap-3 my-6">
             <div class="flex-1 h-px" :style="{ backgroundColor: 'var(--color-border-light)' }"></div>
             <span class="text-xs px-3 py-1 rounded-full" :style="{ color: 'var(--color-text-muted)', backgroundColor: 'var(--color-bg-alt)' }">
@@ -193,13 +179,11 @@ const messageGroups = computed(() => {
             <div class="flex-1 h-px" :style="{ backgroundColor: 'var(--color-border-light)' }"></div>
           </div>
 
-          <!-- 消息气泡 -->
           <template v-for="msg in group.items" :key="msg.id">
             <div
               class="mb-5"
               :class="msg.role === 'user' ? 'flex justify-end' : 'flex gap-3'"
             >
-              <!-- AI 头像 -->
               <div v-if="msg.role === 'assistant'" class="shrink-0">
                 <div
                   class="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -245,7 +229,6 @@ const messageGroups = computed(() => {
                   ></span>
                 </div>
 
-                <!-- 时间 -->
                 <p class="text-[11px] mt-1 px-1" :class="msg.role === 'user' ? 'text-right' : 'text-left'" :style="{ color: 'var(--color-text-muted)' }">
                   {{ formatTime(msg.timestamp) }}
                 </p>

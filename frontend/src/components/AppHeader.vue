@@ -19,13 +19,11 @@ const closeAll = () => { isMenuOpen.value = false; isDropdownOpen.value = false;
     class="fixed top-0 w-full h-[60px] px-5 md:px-[5%] flex justify-between items-center shadow-md z-[2000] transition-colors duration-300 box-border"
     :style="{ backgroundColor: 'var(--color-bg-header)' }"
   >
-    <!-- Logo -->
     <div class="flex items-center text-white text-[1.2em] font-medium shrink overflow-hidden whitespace-nowrap text-ellipsis">
       <img src="/logo.jpg" alt="数智技术协会会徽" class="h-[35px] w-[35px] mr-2 rounded-full bg-white">
       {{ $t('footer.brandName') }}
     </div>
 
-    <!-- ==================== PC 端导航 ==================== -->
     <ul class="hidden md:flex list-none p-0 m-0 text-center gap-0">
       <li>
         <RouterLink to="/" class="text-white flex items-center gap-1.5 px-[15px] opacity-90 hover:opacity-100">
@@ -59,7 +57,6 @@ const closeAll = () => { isMenuOpen.value = false; isDropdownOpen.value = false;
       </li>
     </ul>
 
-    <!-- ==================== 主题 & 语言 ==================== -->
     <div class="flex items-center ml-auto md:ml-0 gap-3">
       <button class="bg-transparent w-9 h-9 flex items-center justify-center cursor-pointer text-[1.1em] p-0 shrink-0 transition-colors hover:bg-white/15" @click="toggleTheme">
         <Sun v-if="theme === 'dark'" :size="18" color="white" />
@@ -69,7 +66,6 @@ const closeAll = () => { isMenuOpen.value = false; isDropdownOpen.value = false;
         <Languages :size="18" color="white" />
       </button>
 
-      <!-- ======= 移动端汉堡按钮 ======= -->
       <button
         class="md:hidden bg-transparent border border-white text-white text-[1.5em] cursor-pointer py-[5px] px-2.5 rounded hover:bg-[#002a5a]"
         @click="isMenuOpen = !isMenuOpen"
@@ -79,7 +75,6 @@ const closeAll = () => { isMenuOpen.value = false; isDropdownOpen.value = false;
     </div>
   </nav>
 
-  <!-- ==================== 移动端下拉菜单 ==================== -->
   <div
     v-show="isMenuOpen"
     class="md:hidden fixed top-[60px] right-0 w-full max-w-[300px] z-[1999] rounded-bl-lg shadow-lg"

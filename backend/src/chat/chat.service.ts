@@ -7,7 +7,6 @@ export interface ChatMessage {
   content: string
 }
 
-// ==================== 手动加载 .env（零依赖） ====================
 function loadEnvFile(): Record<string, string> {
   const envPath = resolve(__dirname, '../../.env')
   try {
@@ -30,18 +29,15 @@ function loadEnvFile(): Record<string, string> {
 
 const env = { ...process.env, ...loadEnvFile() }
 
-// ==================== 配置 ====================
 const API_URL = 'https://api.deepseek.com/v1/chat/completions'
-const REQUEST_TIMEOUT_MS = 30_000   // 单次请求超时
-const MAX_RETRIES = 1               // 网络错误重试次数
+const REQUEST_TIMEOUT_MS = 30_000
+const MAX_RETRIES = 1
 
-// ==================== 判断是否为可重试的网络错误 ====================
 function isRetryableError(err: unknown): boolean {
   const msg = (err as Error).message?.toLowerCase() || ''
   const cause = (err as { cause?: Error })?.cause
   const causeMsg = cause?.message?.toLowerCase() || ''
 
-  // Node.js fetch 在 TCP/DNS/TLS 层面的瞬时故障
   const retryablePatterns = [
     'fetch failed',
     'network error',
@@ -61,7 +57,6 @@ function isRetryableError(err: unknown): boolean {
   )
 }
 
-// ==================== 带超时的 fetch ====================
 async function fetchWithTimeout(
   url: string,
   options: RequestInit,
@@ -143,7 +138,6 @@ export class ChatService {
       } catch (err) {
         lastError = err as Error
 
-        // 结构化日志，方便排查
         const cause = (err as { cause?: Error })?.cause
         this.logger.error(
           `请求失败 (尝试 ${attempt + 1}/${MAX_RETRIES + 1}): ` +
@@ -151,26 +145,22 @@ export class ChatService {
             (cause ? ` [cause: ${cause.message}]` : ''),
         )
 
-        // 非网络错误不重试
         if (!isRetryableError(err)) {
           throw err
         }
 
-        // 最后一次尝试也失败，抛出
         if (attempt === MAX_RETRIES) {
           throw new Error(
             `DeepSeek API 请求失败（已重试 ${MAX_RETRIES} 次）: ${lastError.message}`,
           )
         }
 
-        // 重试前等待一小段时间（指数退避）
         const delay = Math.min(1000 * Math.pow(2, attempt), 3000)
         this.logger.warn(`将在 ${delay}ms 后重试...`)
         await new Promise((r) => setTimeout(r, delay))
       }
     }
 
-    // 理论上不会到这里，但 TypeScript 需要
     throw lastError ?? new Error('未知错误')
   }
 }

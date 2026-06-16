@@ -11,7 +11,6 @@ const uploading = ref(false)
 const uploadMsg = ref('')
 const copied = ref('')
 
-// ====== 加载图片库 ======
 async function loadImages() {
   loading.value = true
   try {
@@ -22,7 +21,6 @@ async function loadImages() {
   finally { loading.value = false }
 }
 
-// ====== 上传图片 ======
 const fileInput = ref<HTMLInputElement>()
 
 async function handleUpload(e: Event) {
@@ -30,7 +28,6 @@ async function handleUpload(e: Event) {
   const file = target.files?.[0]
   if (!file) return
 
-  // 校验类型
   if (!file.type.startsWith('image/')) {
     uploadMsg.value = '只支持图片文件（jpg/png/webp/gif）'
     return
@@ -48,7 +45,7 @@ async function handleUpload(e: Event) {
     if (!res.ok) throw new Error('上传失败')
     const json = await res.json()
     uploadMsg.value = `上传成功: ${json.url}`
-    target.value = '' // 清空 input
+    target.value = ''
     await loadImages()
   } catch {
     uploadMsg.value = '上传失败，请重试'
@@ -57,14 +54,12 @@ async function handleUpload(e: Event) {
   }
 }
 
-// ====== 复制 URL ======
 function copyUrl(url: string) {
   navigator.clipboard.writeText(url)
   copied.value = url
   setTimeout(() => copied.value = '', 2000)
 }
 
-// ====== 删除图片 ======
 async function deleteImage(filename: string) {
   if (!confirm('确定删除该图片？')) return
   try {
@@ -76,7 +71,6 @@ async function deleteImage(filename: string) {
   } catch { /* ignore */ }
 }
 
-// ====== 格式化文件大小 ======
 function fmtSize(bytes: number) {
   if (bytes < 1024) return bytes + ' B'
   if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB'
@@ -93,7 +87,6 @@ onMounted(loadImages)
   >
     <h2 class="m-0 mb-5 text-[1.15em]" :style="{ color: 'var(--color-text-heading)' }">🖼 图片管理</h2>
 
-    <!-- 上传区域 -->
     <div class="mb-5">
       <input
         ref="fileInput"
@@ -111,7 +104,6 @@ onMounted(loadImages)
       <span v-if="uploadMsg" class="ml-4 text-sm" :class="uploadMsg.startsWith('上传成功') ? 'text-green-600' : 'text-[#c0392b]'">{{ uploadMsg }}</span>
     </div>
 
-    <!-- 图片库 -->
     <div v-if="loading" class="text-center py-6" :style="{ color: 'var(--color-text-muted)' }">加载中…</div>
     <div v-else-if="images.length === 0" class="text-center py-6" :style="{ color: 'var(--color-text-muted)' }">暂无上传的图片</div>
     <div v-else class="grid gap-3" style="grid-template-columns: repeat(auto-fill, minmax(160px, 1fr))">

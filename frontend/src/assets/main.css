@@ -1,14 +1,8 @@
-/* ==================== 1. 导入 ==================== */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
-/* ==================== 2. 暗色模式变体 ==================== */
 @variant dark (&:where(.dark, .dark *));
-
-/* ==================== 3. Tailwind v4 @theme — 注册自定义色值 ==================== */
-/* 注意：@theme 只注册给 Tailwind 生成 utility，不产生 CSS 变量。*/
-/*       var(--color-*) 引用需要下面的 :root / html.dark 来提供值。    */
 @theme {
   --color-primary: #003a7a;
   --color-primary-light: #005a9a;
@@ -31,7 +25,6 @@
   --color-nav-bg: #17589d;
 }
 
-/* ==================== 4. CSS 变量 (var() 引用必须) ==================== */
 :root {
   --color-primary: #003a7a;
   --color-primary-light: #005a9a;
@@ -55,7 +48,6 @@
   --hero-gradient: linear-gradient(125deg, #ffffff 0%, #f0f4ff 30%, #e0ebff 70%, #ffffff 100%);
 }
 
-/* ==================== 5. 暗色主题覆盖 ==================== */
 html.dark {
   --color-primary: #003a7a;
   --color-primary-light: #005a9a;
@@ -79,7 +71,6 @@ html.dark {
   --hero-gradient: linear-gradient(125deg, #0a1628 0%, #0e1b30 40%, #111d35 100%);
 }
 
-/* ==================== 5. 基础重置 ==================== */
 body {
   font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   margin: 0;
@@ -91,7 +82,6 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* ==================== 6. 滚动条 ==================== */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -111,7 +101,6 @@ body {
   color: #fff;
 }
 
-/* ==================== 7. 全局 @keyframes ==================== */
 @keyframes floatUp {
   0%   { transform: translateY(0); opacity: 1; }
   100% { transform: translateY(-120vh); opacity: 0; }
@@ -135,13 +124,11 @@ body {
   60% { transform: translateY(-5px); }
 }
 
-/* ==================== 8. 导航 active 链接 ==================== */
 .router-link-active {
   background: linear-gradient(135deg, #17589d, #005a9a);
   border-radius: 4px;
 }
 
-/* ==================== 9. 滚动显示动画辅助类 ==================== */
 .fade-in-on-scroll {
   opacity: 0;
   transform: translateY(40px);

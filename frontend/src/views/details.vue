@@ -4,7 +4,7 @@ import { Megaphone, ClipboardList, Monitor } from 'lucide-vue-next';
 import { useScrollReveal } from '../composables/useScrollReveal';
 
 const contributors = ref ([
-  { name: "MIUMA",  img: "https://www.miuma.top/images/jt.svg", url: "https://github.com/MIU-MA" },
+  { name: "MIUMA",  img: "https://avatars.githubusercontent.com/u/249093234?v=4", url: "https://github.com/MIU-MA" },
   { name: "TangTangChu",img:"https://avatars.githubusercontent.com/u/61231159?v=4", url: "https://github.com/TangTangChu" },
 ]);
 
@@ -13,7 +13,6 @@ useScrollReveal();
 
 <template>
   <main class="max-w-6xl mx-auto px-5 pt-20 pb-10 min-h-[calc(100vh-350px)]">
-    <!-- 协会简介 -->
     <section
       class="fade-in-on-scroll max-w-[800px] mx-auto mb-16 p-10 rounded-2xl shadow-md transition-colors duration-300"
       :style="{ backgroundColor: 'var(--color-bg-card)', boxShadow: '0 4px 20px var(--color-shadow)' }"
@@ -24,7 +23,6 @@ useScrollReveal();
       </p>
     </section>
 
-    <!-- 部门介绍 -->
     <section
       class="fade-in-on-scroll max-w-[800px] mx-auto mb-16 p-10 rounded-2xl shadow-md transition-colors duration-300"
       :style="{ backgroundColor: 'var(--color-bg-card)', boxShadow: '0 4px 20px var(--color-shadow)' }"
@@ -58,7 +56,6 @@ useScrollReveal();
       </div>
     </section>
 
-    <!-- Contributors -->
     <section
       class="fade-in-on-scroll max-w-[800px] mx-auto mb-16 p-10 rounded-2xl shadow-md transition-colors duration-300"
       :style="{ backgroundColor: 'var(--color-bg-card)', boxShadow: '0 4px 20px var(--color-shadow)' }"
@@ -72,7 +69,7 @@ useScrollReveal();
       <div class="flex justify-start gap-5 flex-wrap mt-5">
         <a v-for="contributor in contributors" :key="contributor.name" :href="contributor.url" target="_blank" :title="contributor.name"
           class="inline-block transition-transform duration-300 hover:scale-110">
-          <img :src="contributor.img" :alt="contributor.name" class="w-20 h-20 m-0 object-cover">
+          <img :src="contributor.img" :alt="contributor.name" class="w-30 h-30 m-0 rounded-full object-cover">
         </a>
       </div>
     </section>

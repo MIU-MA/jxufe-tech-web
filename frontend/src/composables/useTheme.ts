@@ -20,14 +20,12 @@ function applyTheme(t: 'light' | 'dark') {
   }
 }
 
-// 首次加载：localStorage > 系统偏好 > light
 const theme = ref<'light' | 'dark'>(
   getStoredTheme() ?? getSystemTheme()
 )
 
 applyTheme(theme.value)
 
-// 客户端：监听系统偏好变化
 if (isClient) {
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
     if (!localStorage.getItem(THEME_KEY)) {

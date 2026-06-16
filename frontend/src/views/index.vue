@@ -83,14 +83,12 @@ onMounted(() => {
 
 <template>
   <div>
-    <!-- 侧边导航点 -->
     <nav class="fixed right-[30px] top-1/2 -translate-y-1/2 z-[100] flex flex-col gap-5">
       <a href="#hero" class="nav-dot" :title="$t('nav.home')"></a>
       <a href="#about-us-hero" class="nav-dot" :title="$t('home.aboutUs')"></a>
       <a href="#news-hero" class="nav-dot" :title="$t('home.recentNews')"></a>
     </nav>
 
-    <!-- ===== Hero ===== -->
     <section
       id="hero"
       class="relative flex flex-col justify-center items-center w-full box-border h-[calc(100vh-60px)] bg-[length:400%_400%]"
@@ -113,10 +111,8 @@ onMounted(() => {
       <a href="#about-us-hero" class="absolute bottom-[30px] text-[2em] z-10 cursor-pointer" :style="{ color: 'var(--color-text-heading)', animation: 'bounce 2s infinite' }">&#8659;</a>
     </section>
 
-    <!-- ===== Main Content ===== -->
     <main class="max-w-6xl mx-auto px-5 pt-20 pb-10 min-h-[calc(100vh-350px)]">
 
-      <!-- ===== About Us ===== -->
       <section
         id="about-us-hero"
         class="relative flex flex-col justify-center items-center w-full box-border min-h-[80vh] py-[60px] px-5 transition-colors duration-300"
@@ -124,7 +120,6 @@ onMounted(() => {
       >
         <BackgroundIcons />
 
-        <!-- 浮动代码卡片 -->
         <div class="floating-code-container hidden lg:block absolute inset-0 pointer-events-none z-[4]">
           <div
             v-for="(item, index) in floatingCodes"
@@ -156,7 +151,6 @@ onMounted(() => {
         </div>
       </section>
 
-      <!-- ===== News ===== -->
       <section
         id="news-hero"
         class="relative flex flex-col justify-center items-center w-full box-border min-h-[80vh] py-20 px-5 transition-colors duration-300"
@@ -173,7 +167,6 @@ onMounted(() => {
           <div v-else class="flex flex-wrap justify-center gap-[30px] mt-5">
             <div v-for="news in newsList" :key="news.id" class="news-card w-[300px] h-[260px] mx-auto bg-transparent">
               <div class="news-card-inner relative w-full h-full text-center">
-                <!-- 卡片正面 -->
                 <div
                   class="news-card-front absolute inset-0 rounded-[15px] flex items-center justify-center transition-colors duration-300"
                   :style="{ backgroundColor: 'var(--color-bg-card)', boxShadow: '0 5px 15px var(--color-shadow-card)' }"
@@ -183,7 +176,6 @@ onMounted(() => {
                     <p class="text-sm mt-2">{{ news.date }}</p>
                   </div>
                 </div>
-                <!-- 卡片背面 -->
                 <div
                   class="news-card-back absolute inset-0 rounded-[15px] text-white flex flex-col justify-center items-center p-[25px]"
                   :style="{ background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-light))', boxShadow: '0 5px 15px var(--color-shadow-card)' }"
@@ -204,7 +196,6 @@ onMounted(() => {
 </template>
 
 <style>
-/* ===== 3D 翻转新闻卡片 ===== */
 .news-card { perspective: 1000px; }
 .news-card-inner {
   transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
@@ -215,7 +206,6 @@ onMounted(() => {
 .news-card-back { backface-visibility: hidden; }
 .news-card-back { transform: rotateY(180deg); }
 
-/* ===== 浮动代码卡片 ===== */
 .floating-card-wrapper { transition: all 0.5s ease; }
 .floating-card-wrapper:hover {
   opacity: 1 !important;
@@ -224,7 +214,6 @@ onMounted(() => {
   filter: drop-shadow(0 20px 40px rgba(0, 58, 122, 0.4));
 }
 
-/* ===== 侧边导航点 ===== */
 .nav-dot {
   display: block;
   width: 12px; height: 12px;

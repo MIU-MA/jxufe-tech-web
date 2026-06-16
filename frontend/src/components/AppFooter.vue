@@ -20,7 +20,6 @@ const contactInfo = { email: "2117410945@qq.com" };
     <div class="py-[60px]">
       <div class="max-w-6xl mx-auto px-5 grid grid-cols-1 md:grid-cols-[2fr_1.5fr_1fr] gap-10 md:gap-10">
 
-        <!-- 品牌栏 -->
         <div>
           <div class="flex items-center gap-3 mb-5">
             <img src="/logo.jpg" alt="Logo" class="w-12 h-12 rounded-full shadow-sm" />
@@ -32,7 +31,6 @@ const contactInfo = { email: "2117410945@qq.com" };
           </p>
         </div>
 
-        <!-- 联系栏 -->
         <div>
           <h4 class="text-[1.1rem] font-semibold mb-6 relative pl-3" :style="{ color: 'var(--color-text)' }">
             <span class="absolute left-0 top-0 bottom-0 w-1 rounded-sm" :style="{ backgroundColor: 'var(--color-accent)' }"></span>
@@ -54,7 +52,6 @@ const contactInfo = { email: "2117410945@qq.com" };
           </ul>
         </div>
 
-        <!-- 友情链接栏 -->
         <div>
           <h4 class="text-[1.1rem] font-semibold mb-6 relative pl-3" :style="{ color: 'var(--color-text)' }">
             <span class="absolute left-0 top-0 bottom-0 w-1 rounded-sm" :style="{ backgroundColor: 'var(--color-accent)' }"></span>
@@ -82,7 +79,6 @@ const contactInfo = { email: "2117410945@qq.com" };
       </div>
     </div>
 
-    <!-- 底部版权栏 -->
     <div
       class="text-white/80 py-3 px-5 text-sm flex flex-wrap items-center justify-center text-center gap-3 transition-colors duration-300"
       :style="{ backgroundColor: 'var(--color-bg-footer-bottom)' }"

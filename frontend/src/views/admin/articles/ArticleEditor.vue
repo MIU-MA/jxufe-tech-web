@@ -19,7 +19,6 @@ const content = ref('')
 const summary = ref('')
 const publishedAt = ref('')
 
-// edit 模式下同步文章数据
 watch(() => props.article, (a) => {
   if (props.mode === 'edit' && a) {
     title.value = a.title
@@ -29,7 +28,6 @@ watch(() => props.article, (a) => {
   }
 }, { immediate: true })
 
-// create 模式下清空
 watch(() => props.mode, (m) => {
   if (m === 'create') { title.value = ''; content.value = ''; summary.value = ''; publishedAt.value = '' }
 })

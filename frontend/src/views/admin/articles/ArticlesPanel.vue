@@ -8,7 +8,6 @@ import DeleteModal from '../DeleteModal.vue'
 
 const token = inject<Ref<string>>('token')!
 
-// ==================== Articles ====================
 const articles = ref<Article[]>([])
 const articlesLoading = ref(false)
 const articlesError = ref('')
@@ -18,7 +17,6 @@ async function loadArticles() {
   try { articles.value = await fetchArticles() } catch { articlesError.value = '加载失败' } finally { articlesLoading.value = false }
 }
 
-// ==================== Editor ====================
 const editorMode = ref<'create' | 'edit'>('create')
 const editingArticle = ref<Article | null>(null)
 const saving = ref(false)
@@ -51,7 +49,6 @@ async function handleSave(payload: { title: string; content: string; summary: st
   } catch (e: any) { saveError.value = e.message || '保存失败' } finally { saving.value = false }
 }
 
-// ==================== Delete ====================
 const deleting = ref(false)
 const deleteError = ref('')
 const deleteConfirmId = ref<number | null>(null)
@@ -70,13 +67,11 @@ async function doDelete() {
   } catch (e: any) { deleteError.value = e.message || '删除失败' } finally { deleting.value = false }
 }
 
-// ====== 初始加载 ======
 loadArticles()
 </script>
 
 <template>
   <div>
-    <!-- 顶栏按钮 -->
     <div class="flex gap-2.5 flex-wrap mb-6">
       <button
         class="border-none rounded-lg py-2.5 px-6 text-[0.92em] cursor-pointer text-white transition-opacity duration-200 hover:opacity-85"
@@ -90,7 +85,6 @@ loadArticles()
       >刷新</button>
     </div>
 
-    <!-- 加载 / 错误 -->
     <p v-if="articlesLoading" class="text-center py-10" :style="{ color: 'var(--color-text-muted)' }">加载中…</p>
     <p v-else-if="articlesError" class="text-[#c0392b] text-[0.9em] mt-1">{{ articlesError }}</p>
 
