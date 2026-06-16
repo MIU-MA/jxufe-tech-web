@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, provide, type Component } from 'vue'
+import { FileText, Image, LogOut } from 'lucide-vue-next'
 import AdminLogin from './AdminLogin.vue'
 import ArticlesPanel from './articles/ArticlesPanel.vue'
 import ImagesPanel from './images/ImagesPanel.vue'
@@ -7,9 +8,13 @@ import ImagesPanel from './images/ImagesPanel.vue'
 // ==================== Tabs ====================
 interface Tab { key: string; label: string; icon: string; panel: Component }
 const tabs: Tab[] = [
-  { key: 'articles', label: '文章管理', icon: '📝', panel: ArticlesPanel },
-  { key: 'images',   label: '图片管理', icon: '🖼', panel: ImagesPanel  },
+  { key: 'articles', label: '文章管理', icon: 'FileText', panel: ArticlesPanel },
+  { key: 'images',   label: '图片管理', icon: 'Image', panel: ImagesPanel  },
 ]
+function getTabIcon(iconName: string) {
+  const map: Record<string, any> = { FileText, Image }
+  return map[iconName]
+}
 const activeTab = ref('articles')
 
 // ==================== Auth ====================
@@ -80,7 +85,7 @@ function logout() {
               : { backgroundColor: 'transparent', color: 'var(--color-text-secondary)' }"
             @click="activeTab = tab.key"
           >
-            <span class="text-lg">{{ tab.icon }}</span>
+            <component :is="getTabIcon(tab.icon)" :size="20" />
             {{ tab.label }}
           </button>
         </nav>
@@ -92,7 +97,7 @@ function logout() {
             :style="{ backgroundColor: 'transparent', color: 'var(--color-text-muted)' }"
             @click="logout"
           >
-            <span class="text-lg">🚪</span>
+            <LogOut :size="20" />
             退出登录
           </button>
         </div>

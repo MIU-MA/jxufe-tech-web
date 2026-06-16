@@ -69,7 +69,7 @@ onMounted(() => {
       if (i < text.length) { el.textContent += text.charAt(i); i++; setTimeout(type, speed) }
       else { el.style.borderRight = 'none' }
     }
-    el.style.borderRight = '0.15em solid #ff6f00'; el.style.animation = 'blink-caret .75s step-end infinite'; type()
+    el.style.borderRight = '0.15em solid var(--color-accent)'; el.style.animation = 'blink-caret .75s step-end infinite'; type()
   }
   if (document.getElementById('typing-text-1')) {
     typeWriter('typing-text-1', "江西财经大学", 100)
@@ -79,9 +79,7 @@ onMounted(() => {
       typeWriter('typing-text-2', "数智技术协会", 100)
     }, "江西财经大学".length * 100 + 500)
   }
-})
-console.log('MIUMA')
-</script>
+})</script>
 
 <template>
   <div>

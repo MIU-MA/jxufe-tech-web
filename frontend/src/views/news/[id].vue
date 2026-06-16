@@ -2,6 +2,7 @@
 import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import MarkdownIt from 'markdown-it';
+import { Calendar } from 'lucide-vue-next';
 import { fetchArticle, type Article } from '../../api/articles';
 
 const md = new MarkdownIt();
@@ -73,7 +74,7 @@ watch(() => route.params.id, (newId) => {
       <header class="mb-8 border-b border-gray-100 dark:border-slate-700 pb-8">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-slate-100 mb-4">{{ article.title }}</h1>
         <div class="flex items-center text-gray-500 dark:text-slate-400 text-sm">
-          <i class="far fa-calendar-alt mr-2"></i>
+          <Calendar :size="16" class="mr-2" />
           <span>{{ $t('news.publishDate') }} {{ getDate(article) }}</span>
         </div>
       </header>

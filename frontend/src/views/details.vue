@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, useTemplateRef } from 'vue';
+import { Megaphone, ClipboardList, Monitor } from 'lucide-vue-next';
 import { useScrollReveal } from '../composables/useScrollReveal';
 
 const contributors = ref ([
@@ -34,7 +35,7 @@ useScrollReveal();
           class="text-center py-8 px-5 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
           :style="{ backgroundColor: 'var(--color-bg-alt)' }"
         >
-          <div class="text-[2.5em] mb-3">📢</div>
+          <Megaphone :size="36" class="mx-auto mb-3" :style="{ color: 'var(--color-accent)' }" />
           <h3 class="text-[1.2em] mb-2.5" :style="{ color: 'var(--color-text-heading)' }">{{ $t('details.publicDept') }}</h3>
           <p class="text-[0.93em] leading-relaxed m-0" :style="{ color: 'var(--color-text-muted)' }">{{ $t('details.publicDeptDesc') }}</p>
         </div>
@@ -42,7 +43,7 @@ useScrollReveal();
           class="text-center py-8 px-5 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
           :style="{ backgroundColor: 'var(--color-bg-alt)' }"
         >
-          <div class="text-[2.5em] mb-3">📋</div>
+          <ClipboardList :size="36" class="mx-auto mb-3" :style="{ color: 'var(--color-accent)' }" />
           <h3 class="text-[1.2em] mb-2.5" :style="{ color: 'var(--color-text-heading)' }">{{ $t('details.orgDept') }}</h3>
           <p class="text-[0.93em] leading-relaxed m-0" :style="{ color: 'var(--color-text-muted)' }">{{ $t('details.orgDeptDesc') }}</p>
         </div>
@@ -50,7 +51,7 @@ useScrollReveal();
           class="text-center py-8 px-5 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
           :style="{ backgroundColor: 'var(--color-bg-alt)' }"
         >
-          <div class="text-[2.5em] mb-3">💻</div>
+          <Monitor :size="36" class="mx-auto mb-3" :style="{ color: 'var(--color-accent)' }" />
           <h3 class="text-[1.2em] mb-2.5" :style="{ color: 'var(--color-text-heading)' }">{{ $t('details.studyDept') }}</h3>
           <p class="text-[0.93em] leading-relaxed m-0" :style="{ color: 'var(--color-text-muted)' }">{{ $t('details.studyDeptDesc') }}</p>
         </div>

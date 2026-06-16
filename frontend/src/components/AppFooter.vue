@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue';
+import { Mail, Building2, MapPin } from 'lucide-vue-next';
 
 const friendLinks = ref([
     { name: "程序设计协会", url: "https://jxufe-acm.cn", logo: "https://jxufe-acm.cn/images/logo.png" },
@@ -39,15 +40,15 @@ const contactInfo = { email: "2117410945@qq.com" };
           </h4>
           <ul class="list-none p-0 m-0 space-y-4 text-[0.95rem]">
             <li class="flex items-start gap-2.5 leading-relaxed">
-              <span class="text-[1.1rem] opacity-80">📧</span>
+              <Mail :size="18" class="mt-0.5 shrink-0 opacity-60" />
               <a :href="`mailto:${contactInfo.email}`" class="hover:underline transition-colors" :style="{ color: 'var(--color-text-footer)' }">{{ contactInfo.email }}</a>
             </li>
             <li class="flex items-start gap-2.5 leading-relaxed">
-              <span class="text-[1.1rem] opacity-80">🏫</span>
+              <Building2 :size="18" class="mt-0.5 shrink-0 opacity-60" />
               <span>{{ $t('footer.school') }}</span>
             </li>
             <li class="flex items-start gap-2.5 leading-relaxed">
-              <span class="text-[1.1rem] opacity-80">📍</span>
+              <MapPin :size="18" class="mt-0.5 shrink-0 opacity-60" />
               <span>{{ $t('footer.address') }}</span>
             </li>
           </ul>

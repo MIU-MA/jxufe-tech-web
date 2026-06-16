@@ -12,7 +12,7 @@
 @theme {
   --color-primary: #003a7a;
   --color-primary-light: #005a9a;
-  --color-accent: #ff6f00;
+  --color-accent: #d97828;
   --color-bg: #f7f9fc;
   --color-bg-alt: #f0f8ff;
   --color-bg-card: #ffffff;
@@ -35,7 +35,7 @@
 :root {
   --color-primary: #003a7a;
   --color-primary-light: #005a9a;
-  --color-accent: #ff6f00;
+  --color-accent: #d97828;
   --color-bg: #f7f9fc;
   --color-bg-alt: #f0f8ff;
   --color-bg-card: #ffffff;
@@ -59,24 +59,24 @@
 html.dark {
   --color-primary: #003a7a;
   --color-primary-light: #005a9a;
-  --color-accent: #ff6f00;
-  --color-bg: #0f172a;
-  --color-bg-alt: #111827;
-  --color-bg-card: #1e293b;
-  --color-bg-header: #0a1628;
-  --color-bg-footer: #111827;
-  --color-bg-footer-bottom: #0a1628;
+  --color-accent: #d97828;
+  --color-bg: #0a1628;
+  --color-bg-alt: #0e1b30;
+  --color-bg-card: #152238;
+  --color-bg-header: #060f1e;
+  --color-bg-footer: #0e1b30;
+  --color-bg-footer-bottom: #060f1e;
   --color-text: #cbd5e1;
   --color-text-heading: #93c5fd;
   --color-text-secondary: #94a3b8;
   --color-text-muted: #64748b;
   --color-text-footer: #94a3b8;
-  --color-border: #334155;
-  --color-border-light: #1e293b;
-  --color-shadow: rgba(0, 0, 0, 0.3);
-  --color-shadow-card: rgba(0, 0, 0, 0.4);
-  --color-nav-bg: #0a1628;
-  --hero-gradient: linear-gradient(125deg, #0f172a 0%, #111827 40%, #1a2332 100%);
+  --color-border: #1e2e4a;
+  --color-border-light: #152238;
+  --color-shadow: rgba(0, 0, 0, 0.4);
+  --color-shadow-card: rgba(0, 0, 0, 0.5);
+  --color-nav-bg: #060f1e;
+  --hero-gradient: linear-gradient(125deg, #0a1628 0%, #0e1b30 40%, #111d35 100%);
 }
 
 /* ==================== 5. 基础重置 ==================== */
@@ -103,7 +103,7 @@ body {
   border: 2px solid var(--color-bg);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #ff6f00, #ffca28);
+  background: linear-gradient(to bottom, #d97828, #f0b848);
 }
 
 ::selection {
