@@ -8,6 +8,7 @@ import { Repository } from 'typeorm';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import { User } from './entities/user.entity';
+import { BCRYPT_ROUNDS } from './auth.constants';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +24,8 @@ export class AuthService {
       throw new ConflictException('用户名已存在');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    // 入库前 bcrypt 加盐哈希，永不存明文
+    const hashedPassword = await bcrypt.hash(password, BCRYPT_ROUNDS);
     const user = this.userRepo.create({ username, password: hashedPassword });
     await this.userRepo.save(user);
 
@@ -36,6 +38,7 @@ export class AuthService {
       throw new UnauthorizedException('用户名或密码错误');
     }
 
+    // 比对哈希值，不触碰明文；bcrypt 自适应 rounds（兼容旧的 10-rounds 哈希）
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       throw new UnauthorizedException('用户名或密码错误');

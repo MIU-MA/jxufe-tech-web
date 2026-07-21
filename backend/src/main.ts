@@ -1,3 +1,9 @@
+import { loadEnv, assertSecretsOrExit } from './common/env.config';
+
+// 必须在 NestFactory 之前加载，确保所有模块读到 .env
+loadEnv();
+assertSecretsOrExit();
+
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';

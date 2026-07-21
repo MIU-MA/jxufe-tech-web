@@ -7,13 +7,9 @@ import { AuthService } from './auth.service';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('register')
-  @ApiOperation({ summary: '用户注册' })
-  @ApiResponse({ status: 201, description: '注册成功，返回 token' })
-  @ApiResponse({ status: 409, description: '用户名已存在' })
-  register(@Body() body: { username: string; password: string }) {
-    return this.authService.register(body.username, body.password);
-  }
+  // 注：注册接口已移除。公开注册对一个"仅管理员发文章"的站点是安全风险
+  // （任何人都能创建账号）。管理员账号由 SeedService 在启动时创建。
+  // 如需新增管理员，请通过服务端 seed 脚本或受保护的管理接口。
 
   @Post('login')
   @ApiOperation({ summary: '用户登录' })

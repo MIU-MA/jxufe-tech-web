@@ -1,14 +1,10 @@
 <script setup lang="ts">
 import { ref, nextTick, computed } from 'vue'
 import { useChat } from '../composables/useChat'
-import MarkdownIt from 'markdown-it'
+import { createSafeMarkdown } from '../utils/markdown'
 import { Send, Sparkles, Plus } from 'lucide-vue-next'
 
-const md = new MarkdownIt({
-  html: false,
-  linkify: true,
-  breaks: true,
-})
+const md = createSafeMarkdown()
 
 const { messages, isThinking, containerRef, send, clearMessages } = useChat()
 

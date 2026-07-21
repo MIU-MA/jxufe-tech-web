@@ -8,7 +8,6 @@ import {
   UploadedFile,
   UseGuards,
   BadRequestException,
-  NotFoundException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -27,6 +26,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Article } from '../articles/entities/article.entity';
 import { Music } from '../music/entities/music.entity';
+import { safeResolveUploadPath } from '../common/path-guard';
 
 /** 生成唯一文件名 */
 function uniqueFileName(file: Express.Multer.File): string {
@@ -191,8 +191,9 @@ export class UploadController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除图片（需登录）' })
   deleteImage(@Param('filename') filename: string) {
-    const filePath = join('./public/uploads', filename);
-    if (!existsSync(filePath)) throw new NotFoundException('文件不存在');
+    const filePath = safeResolveUploadPath('uploads', filename, [
+      '.jpg', '.jpeg', '.png', '.webp', '.gif', '.svg',
+    ]);
     unlinkSync(filePath);
     return { code: 200, message: '已删除' };
   }
@@ -202,8 +203,9 @@ export class UploadController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除音乐文件（需登录）' })
   deleteMusic(@Param('filename') filename: string) {
-    const filePath = join('./public/music', filename);
-    if (!existsSync(filePath)) throw new NotFoundException('文件不存在');
+    const filePath = safeResolveUploadPath('music', filename, [
+      '.mp3', '.wav', '.ogg', '.flac', '.m4a', '.aac',
+    ]);
     unlinkSync(filePath);
     return { code: 200, message: '已删除' };
   }
@@ -213,8 +215,7 @@ export class UploadController {
   @ApiBearerAuth()
   @ApiOperation({ summary: '删除 Markdown 文件（需登录）' })
   deleteMarkdown(@Param('filename') filename: string) {
-    const filePath = join('./public/uploads', filename);
-    if (!existsSync(filePath)) throw new NotFoundException('文件不存在');
+    const filePath = safeResolveUploadPath('uploads', filename, ['.md']);
     unlinkSync(filePath);
     return { code: 200, message: '已删除' };
   }

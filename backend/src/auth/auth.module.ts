@@ -13,7 +13,7 @@ import { User } from './entities/user.entity';
     TypeOrmModule.forFeature([User]),
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'secret-key-change-in-production',
+      secret: process.env.JWT_SECRET!,
       signOptions: { expiresIn: '7d' },
     }),
   ],

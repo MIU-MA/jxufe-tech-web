@@ -36,6 +36,9 @@ export class TokenService {
 
     if (Date.now() - timestamp > this.TTL_MS) return false;
 
+    // token 必须是服务端签发的（防伪造）
+    if (!this.tokens.has(token)) return false;
+
     const expectedHmac = createHmac('sha256', this.SECRET)
       .update(`${ip}:${timestamp}`)
       .digest('hex')

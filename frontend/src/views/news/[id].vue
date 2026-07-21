@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { ref, watch, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import MarkdownIt from 'markdown-it';
 import { Calendar } from 'lucide-vue-next';
+import { createSafeMarkdown } from '../../utils/markdown';
 import { fetchArticle, type Article } from '../../api/articles';
 
-const md = new MarkdownIt();
+const md = createSafeMarkdown();
 
 const route = useRoute();
 const article = ref<Article | null>(null);
