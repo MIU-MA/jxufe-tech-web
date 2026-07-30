@@ -4,7 +4,7 @@ import { Mail, Building2, MapPin } from 'lucide-vue-next';
 
 const friendLinks = ref([
     { name: "程序设计协会", url: "https://jxufe-acm.cn", logo: "https://jxufe-acm.cn/images/logo.png" },
-    { name: "计算机协会",   url: "https://qm.qq.com/q/vh2EE5qytM", logo: "https://jxufe-acm.cn/images/jsjxh.png" },
+    { name: "计算机协会",   url: "https://www.jxufe-cs.top/", logo: "https://jxufe-acm.cn/images/jsjxh.png" },
     { name: "网络安全协会", url: "https://csec.jxufe.edu.cn", logo: "https://csec.jxufe.edu.cn/favicon.svg" },
     { name: "江西财经大学", url: "https://www.jxufe.edu.cn/", logo: "https://jxufe-acm.cn/jxufe.png" }
 ]);
