@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { adminFetch } from '../../../api/adminAuth'
 
 const props = defineProps<{ token: string }>()
 
@@ -37,7 +38,7 @@ async function handleUpload(e: Event) {
   try {
     const form = new FormData()
     form.append('image', file)
-    const res = await fetch('/api/upload/image', {
+    const res = await adminFetch('/api/upload/image', {
       method: 'POST',
       headers: { Authorization: `Bearer ${props.token}` },
       body: form,
@@ -63,7 +64,7 @@ function copyUrl(url: string) {
 async function deleteImage(filename: string) {
   if (!confirm('确定删除该图片？')) return
   try {
-    await fetch(`/api/upload/image/${encodeURIComponent(filename)}`, {
+    await adminFetch(`/api/upload/image/${encodeURIComponent(filename)}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${props.token}` },
     })

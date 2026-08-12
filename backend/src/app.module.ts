@@ -8,13 +8,14 @@ import { ChatModule } from "./chat/chat.module";
 import { UploadController } from "./upload/upload.controller";
 import { RebuildModule } from "./rebuild/rebuild.module";
 import { Article } from "./articles/entities/article.entity";
+import { resolveDbPath } from "./common/db-path";
 import { join } from "path";
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
       type: "better-sqlite3",
-      database: process.env.DB_PATH ?? "data.db",
+      database: resolveDbPath(),
       autoLoadEntities: true,
       synchronize: process.env.NODE_ENV !== "production",
       migrations: [join(__dirname, "migrations", "*")],

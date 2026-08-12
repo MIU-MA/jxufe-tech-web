@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, inject, type Ref } from 'vue'
 import { fetchArticles, type Article } from '../../../api/articles'
+import { adminFetch } from '../../../api/adminAuth'
 import ArticleEditor from './ArticleEditor.vue'
 import ArticleTable from './ArticleTable.vue'
 import MarkdownUploader from './MarkdownUploader.vue'
@@ -30,14 +31,14 @@ async function handleSave(payload: { title: string; content: string; summary: st
   saving.value = true; saveError.value = ''
   try {
     if (editorMode.value === 'create') {
-      const res = await fetch('/api/articles', {
+      const res = await adminFetch('/api/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token.value}` },
         body: JSON.stringify(payload)
       })
       if (!res.ok) throw new Error('创建失败')
     } else if (editingArticle.value) {
-      const res = await fetch(`/api/articles/${editingArticle.value.id}`, {
+      const res = await adminFetch(`/api/articles/${editingArticle.value.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token.value}` },
         body: JSON.stringify(payload)
@@ -60,7 +61,7 @@ async function doDelete() {
   if (deleteConfirmId.value === null) return
   deleting.value = true; deleteError.value = ''
   try {
-    const res = await fetch(`/api/articles/${deleteConfirmId.value}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token.value}` } })
+    const res = await adminFetch(`/api/articles/${deleteConfirmId.value}`, { method: 'DELETE', headers: { Authorization: `Bearer ${token.value}` } })
     if (!res.ok) throw new Error('删除失败')
     deleteConfirmId.value = null
     await loadArticles()

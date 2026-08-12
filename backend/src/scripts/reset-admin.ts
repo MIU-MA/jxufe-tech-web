@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { loadEnv } from "../common/env.config";
+import { resolveDbPath } from "../common/db-path";
 import { DataSource } from "typeorm";
-import { resolve } from "path";
 import * as bcrypt from "bcryptjs";
 import { User } from "../auth/entities/user.entity";
 import { BCRYPT_ROUNDS } from "../auth/auth.constants";
@@ -25,8 +25,7 @@ async function main() {
     process.exit(1);
   }
 
-  const database =
-    process.env.DB_PATH || resolve(__dirname, "..", "..", "data.db");
+  const database = resolveDbPath();
 
   const dataSource = new DataSource({
     type: "better-sqlite3",

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, provide, type Component } from 'vue'
 import { FileText, Image, LogOut } from 'lucide-vue-next'
+import { decodeJwtExp } from '../../api/adminAuth'
 import AdminLogin from './AdminLogin.vue'
 import ArticlesPanel from './articles/ArticlesPanel.vue'
 import ImagesPanel from './images/ImagesPanel.vue'
@@ -24,7 +25,21 @@ const loginError = ref('')
 
 onMounted(() => {
   const saved = localStorage.getItem('admin_token')
-  if (saved) token.value = saved
+  if (saved) {
+    const exp = decodeJwtExp(saved)
+    if (exp !== null && exp <= Date.now()) {
+      localStorage.removeItem('admin_token')
+      loginError.value = '登录已过期，请重新登录'
+    } else {
+      token.value = saved
+    }
+  }
+
+  const msg = sessionStorage.getItem('admin-logout-msg')
+  if (msg) {
+    loginError.value = msg
+    sessionStorage.removeItem('admin-logout-msg')
+  }
 })
 
 async function onLogin(username: string, password: string) {
@@ -49,6 +64,7 @@ async function onLogin(username: string, password: string) {
 function logout() {
   token.value = ''
   localStorage.removeItem('admin_token')
+  sessionStorage.removeItem('admin-logout-msg')
 }
 </script>
 

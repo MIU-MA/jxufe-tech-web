@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import { adminFetch } from '../../../api/adminAuth'
 
 const props = defineProps<{ token: string }>()
 const emit = defineEmits<{ done: [] }>()
@@ -30,7 +31,7 @@ async function handleUpload(e: Event) {
   try {
     const form = new FormData()
     form.append('file', file)
-    const res = await fetch('/api/upload/markdown', {
+    const res = await adminFetch('/api/upload/markdown', {
       method: 'POST',
       headers: { Authorization: `Bearer ${props.token}` },
       body: form,
