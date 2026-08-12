@@ -1,4 +1,5 @@
 import MarkdownIt from 'markdown-it';
+import type { MarkdownIt as MarkdownItInstance } from 'markdown-it';
 
 /**
  * 安全的 markdown 渲染配置。
@@ -14,7 +15,7 @@ import MarkdownIt from 'markdown-it';
  */
 const SAFE_PROTOCOLS = /^(https?:|ftp:|mailto:|tel:)/i;
 
-export function createSafeMarkdown(): MarkdownIt {
+export function createSafeMarkdown(): MarkdownItInstance {
   const md = new MarkdownIt({
     html: false,
     linkify: true,
@@ -30,12 +31,13 @@ export function createSafeMarkdown(): MarkdownIt {
   // 覆盖 link_open：校验协议 + 加安全属性
   md.renderer.rules.link_open = (tokens, idx, options, env, self) => {
     const token = tokens[idx];
-    const hrefIndex = token.attrIndex('href');
-    if (hrefIndex >= 0) {
-      const href: string = token.attrs[hrefIndex][1] || '';
+    const attrs = token.attrs;
+    const hrefIndex = attrs ? token.attrIndex('href') : -1;
+    if (hrefIndex >= 0 && attrs) {
+      const href = String(attrs[hrefIndex][1] || '');
       // 非白名单协议：移除 href，降级为纯文本样式
       if (href && !SAFE_PROTOCOLS.test(href) && !href.startsWith('#') && !href.startsWith('/')) {
-        token.attrs[hrefIndex][1] = '#';
+        attrs[hrefIndex][1] = '#';
       }
     }
     // 外链加安全属性

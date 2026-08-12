@@ -20,16 +20,33 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: npm
 
       # ==========================================
-      # 🎯 阶段一：前端打包与部署
+      # 🎯 阶段一：构建 + 校验（全部从仓库根目录执行）
+      #    任何一项失败即停止上线，不部署
       # ==========================================
-      - name: Build Frontend
-        run: |
-          cd frontend
-          npm install
-          npm run build
+      - name: Install dependencies (npm ci)
+        run: npm ci
 
+      - name: Build (frontend SSG + backend)
+        run: npm run build
+        env:
+          # SSG 构建时从线上 API 抓取 CMS 文章，展开 /news/:id 静态页
+          VITE_SSG_API_BASE: https://api.jxufe-tech.top
+
+      - name: Unit tests
+        run: npm test -- --runInBand
+
+      - name: Frontend typecheck (vue-tsc)
+        run: npx vue-tsc --noEmit -p frontend/tsconfig.json
+
+      - name: Backend lint (eslint, no --fix)
+        run: cd backend && npx eslint "{src,test}/**/*.ts"
+
+      # ==========================================
+      # 🎯 阶段二：部署产物
+      # ==========================================
       - name: Deploy Frontend to Server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -41,38 +58,33 @@ jobs:
           strip_components: 2
           overwrite: true
 
-      # ==========================================
-      # 🎯 阶段二：后端打包与部署
-      # ==========================================
-      - name: Build Backend
-        run: |
-          cd backend
-          npm install
-          npm run build
-
-      - name: Deploy Backend Dist, Package & Env
+      - name: Deploy Backend Dist to Server
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
           target: /www/wwwroot/jxufe-tech/backend
-          source: "backend/dist/**,backend/package.json,backend/.env"
-          strip_components: 1
+          source: "backend/dist/**"
+          strip_components: 2
           overwrite: true
 
-      - name: Deploy PM2 Config (根目录文件单独传)
+      # 根目录的 package.json / package-lock.json 是唯一依赖清单，
+      # 部署到仓库根，供服务器在根目录执行 npm ci --omit=dev
+      - name: Deploy Manifests & PM2 Config to Root
         uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.SERVER_IP }}
           username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
-          target: /www/wwwroot/jxufe-tech/backend
-          source: "ecosystem.config.js"
+          target: /www/wwwroot/jxufe-tech
+          source: "package.json,package-lock.json,ecosystem.config.js"
           overwrite: true
 
       # ==========================================
-      # 🎯 阶段三：服务器初始化与重启
+      # 🎯 阶段三：服务器安装依赖并重启
+      #   注意：不再从 Git 仓库复制 backend/.env。
+      #   .env 由服务器单独维护（或密钥注入），部署前须已存在。
       # ==========================================
       - name: Install deps and restart backend
         uses: appleboy/ssh-action@v1.2.0
@@ -81,13 +93,13 @@ jobs:
           username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /www/wwwroot/jxufe-tech/backend
+            cd /www/wwwroot/jxufe-tech
             # 确保静态资源目录存在
-            mkdir -p public/uploads public/music
-            # 只安装生产依赖，保护内存
-            npm install --omit=dev
-            # 用 PM2 启动或重启进程
-            pm2 restart ecosystem.config.js || pm2 start ecosystem.config.js
+            mkdir -p backend/public/uploads
+            # 从根目录统一安装生产依赖（backend/dist 会向上解析到根 node_modules）
+            npm ci --omit=dev
+            # 用 PM2 启动或重启进程（ecosystem 内 cwd 指向 backend）
+            pm2 restart backend/ecosystem.config.js || pm2 start backend/ecosystem.config.js
             pm2 save
 
       - name: Verify SSE & API connectivity
@@ -97,9 +109,9 @@ jobs:
           username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            echo "========== 检查 .env 是否部署 =========="
+            echo "========== 检查 .env 是否已由服务器维护 =========="
             if [ -f /www/wwwroot/jxufe-tech/backend/.env ]; then
-              echo "✅ .env 已存在"
+              echo "✅ .env 已存在（服务器维护，不随仓库部署）"
             else
               echo "❌ .env 缺失！请手动创建: echo 'DEEPSEEK_API_KEY=sk-xxx' >> /www/wwwroot/jxufe-tech/backend/.env"
             fi

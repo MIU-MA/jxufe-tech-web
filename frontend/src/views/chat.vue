@@ -6,15 +6,16 @@ import { Send, Sparkles, Plus } from 'lucide-vue-next'
 
 const md = createSafeMarkdown()
 
-const { messages, isThinking, containerRef, send, clearMessages } = useChat()
+const { messages, isThinking, budget, containerRef, send, clearMessages } = useChat()
 
 const inputText = ref('')
 const textareaRef = ref<HTMLTextAreaElement | null>(null)
 
 const hasMessages = computed(() => messages.value.length > 0)
+const budgetExhausted = computed(() => budget.value !== null && !budget.value.enabled)
 
 function handleSend() {
-  if (!inputText.value.trim() || isThinking.value) return
+  if (!inputText.value.trim() || isThinking.value || budgetExhausted.value) return
   send(inputText.value)
   inputText.value = ''
   if (textareaRef.value) {
@@ -286,29 +287,29 @@ const messageGroups = computed(() => {
           <textarea
             ref="textareaRef"
             v-model="inputText"
-            :placeholder="$t('chat.placeholder')"
+            :placeholder="budgetExhausted ? '今日额度已用完，请明天再来' : $t('chat.placeholder')"
             rows="1"
             class="flex-1 bg-transparent outline-none resize-none text-sm leading-relaxed placeholder:select-none"
             :style="{ color: 'var(--color-text)', '--placeholder-color': 'var(--color-text-muted)' }"
             @keydown="handleKeydown"
             @input="autoResize"
-            :disabled="isThinking"
+            :disabled="isThinking || budgetExhausted"
           ></textarea>
           <button
             class="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-200 disabled:opacity-40"
             :style="{
-              backgroundColor: inputText.trim() && !isThinking ? 'var(--color-primary)' : 'var(--color-border-light)',
-              color: inputText.trim() && !isThinking ? '#fff' : 'var(--color-text-muted)',
+              backgroundColor: inputText.trim() && !isThinking && !budgetExhausted ? 'var(--color-primary)' : 'var(--color-border-light)',
+              color: inputText.trim() && !isThinking && !budgetExhausted ? '#fff' : 'var(--color-text-muted)',
             }"
-            :disabled="!inputText.trim() || isThinking"
+            :disabled="!inputText.trim() || isThinking || budgetExhausted"
             @click="handleSend"
             :title="$t('chat.send')"
           >
             <Send :size="16" />
           </button>
         </div>
-        <p class="text-xs text-center mt-2" :style="{ color: 'var(--color-text-muted)' }">
-          {{ $t('chat.hint') }}
+        <p class="text-xs text-center mt-2" :style="{ color: budgetExhausted ? 'var(--color-accent)' : 'var(--color-text-muted)' }">
+          {{ budgetExhausted ? '今日 AI 使用额度已用完，明天自动恢复' : $t('chat.hint') }}
         </p>
       </div>
     </div>

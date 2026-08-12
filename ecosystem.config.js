@@ -7,9 +7,11 @@ module.exports = {
       env: {
         NODE_ENV: 'production',
         PORT: 3003,
-        // JWT_SECRET 必须在部署环境显式设置（.env 或 shell 环境变量）
-        // 不再提供弱默认回退 -- 缺失时应用会拒绝启动
-        DEEPSEEK_API_KEY: process.env.DEEPSEEK_API_KEY || '',
+        // 敏感配置（JWT_SECRET / ADMIN_PASSWORD / DEEPSEEK_API_KEY 等）
+        // 一律由服务器侧的 backend/.env 或 shell 环境变量提供，
+        // 不写入本文件、不随 Git 仓库部署（见 .github/workflows/deploy.yml）。
+        // 缺失关键密钥时应用会拒绝启动（安全加固策略）。
+        TRUST_PROXY: process.env.TRUST_PROXY || '1',
       },
     },
   ],

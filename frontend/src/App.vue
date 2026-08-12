@@ -8,7 +8,9 @@ import AppFooter from './components/AppFooter.vue';
   <AppHeader />
 
   <div class="pt-15">
-    <RouterView />
+    <Suspense>
+      <RouterView />
+    </Suspense>
   </div>
 
   <AppFooter />

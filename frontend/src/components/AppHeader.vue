@@ -35,7 +35,6 @@ function navigateTo(path: string) {
       {{ $t('footer.brandName') }}
     </div>
 
-    <!-- PC 端导航 -->
     <ul class="hidden md:flex list-none p-0 m-0 text-center gap-0">
       <li>
         <RouterLink to="/" class="text-white flex items-center gap-1.5 px-[15px] py-2 no-underline opacity-90 hover:opacity-100 rounded">
@@ -73,7 +72,6 @@ function navigateTo(path: string) {
       </li>
     </ul>
 
-    <!-- 右侧按钮组 -->
     <div class="flex items-center ml-auto md:ml-0 gap-3">
       <button class="bg-transparent w-9 h-9 flex items-center justify-center cursor-pointer text-[1.1em] p-0 shrink-0 border-none rounded transition-colors hover:bg-white/15" @click="toggleTheme">
         <Sun v-if="theme === 'dark'" :size="18" color="white" />
@@ -83,7 +81,6 @@ function navigateTo(path: string) {
         <Languages :size="18" color="white" />
       </button>
 
-      <!-- 汉堡按钮 -->
       <button
         class="md:hidden bg-transparent border border-white text-white text-[1.5em] cursor-pointer py-[5px] px-2.5 rounded hover:bg-[#002a5a]"
         @click="isMenuOpen = !isMenuOpen; isMobileSubOpen = false"
@@ -93,14 +90,12 @@ function navigateTo(path: string) {
     </div>
   </header>
 
-  <!-- 移动端遮罩 -->
   <div
     v-if="isMenuOpen"
     class="md:hidden fixed inset-0 top-[60px] z-[1998] bg-black/30"
     @click="closeAll"
   ></div>
 
-  <!-- 移动端菜单 -->
   <div
     v-if="isMenuOpen"
     class="md:hidden fixed top-[60px] right-0 w-[280px] max-w-[85vw] z-[1999] rounded-bl-xl shadow-2xl overflow-y-auto"
@@ -112,7 +107,6 @@ function navigateTo(path: string) {
         <Home :size="18" />{{ $t('nav.home') }}
       </RouterLink>
 
-      <!-- 移动端下拉 -->
       <div>
         <button
           class="w-full bg-transparent border-none text-white flex items-center gap-2 mx-3 px-4 py-3.5 cursor-pointer rounded-lg hover:bg-white/10"

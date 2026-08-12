@@ -4,17 +4,19 @@
   "private": true,
   "description": "江西财经大学数智技术协会 — 官网前端 + 无头 CMS 后端",
   "scripts": {
-    "dev": "node scripts/kill-port.cjs 3003 5173 && concurrently -n fe,be -c cyan,green --kill-others --handle-input \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev": "concurrently -n fe,be -c cyan,green --kill-others --handle-input \"npm run dev:frontend\" \"npm run dev:backend\"",
     "dev:frontend": "cd frontend && vite",
     "dev:backend": "cd backend && nest start --watch",
-    "kill:ports": "node scripts/kill-port.cjs 3003 5173",
     "start:backend": "cd backend && nest start",
     "start:backend:prod": "cd backend && node dist/main",
-    "build": "cd frontend && vite build && cd ../backend && nest build",
-    "build:frontend": "cd frontend && vite build",
+    "reset:admin": "cd backend && npx ts-node --transpile-only src/scripts/reset-admin.ts",
+    "migration:run": "cd backend && npx ts-node --transpile-only -P tsconfig.migration.json ../node_modules/typeorm/cli.js migration:run -d src/data-source.ts",
+    "migration:generate": "cd backend && npx ts-node --transpile-only -P tsconfig.migration.json ../node_modules/typeorm/cli.js migration:generate -d src/data-source.ts",
+    "build": "cd frontend && vite-ssg build && cd ../backend && nest build",
+    "build:frontend": "cd frontend && vite-ssg build",
     "build:backend": "cd backend && nest build",
     "preview": "cd frontend && vite preview",
-    "lint": "cd backend && eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "lint": "cd backend && eslint \"{src,test}/**/*.ts\"",
     "format": "cd backend && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "test": "cd backend && jest",
     "test:watch": "cd backend && jest --watch",
@@ -28,17 +30,19 @@
     "@nestjs/jwt": "^11.0.2",
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^11.0.5",
-    "@nestjs/platform-express": "^11.0.1",
-    "@nestjs/swagger": "^11.4.4",
+    "@nestjs/platform-express": "^11.1.29",
+    "@nestjs/swagger": "^11.4.6",
     "@nestjs/typeorm": "^11.0.1",
     "@scalar/nestjs-api-reference": "^1.2.0",
     "bcryptjs": "^3.0.2",
+    "beasties": "^0.3.5",
     "better-sqlite3": "^12.10.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.15.1",
+    "helmet": "^8.3.0",
     "lucide-vue-next": "^1.0.0",
-    "markdown-it": "^14.1.1",
-    "multer": "^2.0.0",
+    "markdown-it": "^15.0.0",
+    "multer": "^2.2.0",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
@@ -87,6 +91,19 @@
   },
   "overrides": {
     "vite": "npm:rolldown-vite@7.2.5",
-    "shell-quote": "^1.8.4"
+    "shell-quote": "^1.8.4",
+    "@nestjs/swagger": {
+      "js-yaml": "^5.2.3"
+    },
+    "express": {
+      "body-parser": "^2.3.0"
+    },
+    "postcss": {
+      ".": "^8.5.26",
+      "nanoid": "^3.3.17"
+    },
+    "@scalar/types": {
+      "nanoid": "^5.1.16"
+    }
   }
 }

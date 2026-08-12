@@ -7,6 +7,7 @@ import routes from '~pages'
 import zh from './i18n/locales/zh.json'
 import en from './i18n/locales/en.json'
 import { getInitialLocale } from './composables/useLocale'
+import { fetchArticles } from './api/articles'
 
 import './assets/main.css'
 
@@ -29,3 +30,23 @@ export const createApp = ViteSSG(
     app.use(i18n)
   }
 )
+
+export async function includedRoutes(paths: string[], routes: any[]): Promise<string[]> {
+  const staticPaths = paths.filter((p) => !p.includes(':'))
+
+  const base = import.meta.env.VITE_SSG_API_BASE as string | undefined
+  if (!base) {
+    console.warn('[SSG] 未配置 VITE_SSG_API_BASE，新闻详情页不会预渲染（客户端运行时抓取）')
+    return staticPaths
+  }
+
+  let articles: { id: number }[] = []
+  try {
+    articles = await fetchArticles()
+  } catch (err) {
+    console.error('[SSG] 抓取文章列表失败，终止构建', err)
+    throw err
+  }
+
+  return staticPaths.concat(articles.map((a) => `/news/${a.id}`))
+}

@@ -62,8 +62,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 # Uploaded files (keep directory structure)
 public/uploads/*
 !public/uploads/.gitkeep
-public/music/*
-!public/music/.gitkeep
 
 # Deploy package output
 /deploy
