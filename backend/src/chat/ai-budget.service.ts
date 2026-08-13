@@ -23,7 +23,6 @@ export function todayKey(d = new Date()): string {
   return `${y}-${m}-${day}`;
 }
 
-// 计数持久化到 DB，避免进程重启丢失，多实例部署下也近似生效
 @Injectable()
 export class AiBudgetService {
   private readonly logger = new Logger(AiBudgetService.name);
@@ -34,7 +33,6 @@ export class AiBudgetService {
   private readonly tokenBudget = Number(
     process.env.AI_DAILY_TOKEN_BUDGET ?? 200_000,
   );
-  private enabled = true;
 
   constructor(
     @InjectRepository(AiUsage)
@@ -42,13 +40,11 @@ export class AiBudgetService {
   ) {}
 
   async check(): Promise<boolean> {
-    if (!this.enabled) return false;
     const row = await this.getOrCreateToday();
     const ok =
       row.requests < this.requestLimit &&
       row.promptTokens + row.completionTokens < this.tokenBudget;
     if (!ok) {
-      this.enabled = false;
       this.logger.warn(
         `AI 每日预算已用完：请求 ${row.requests}/${this.requestLimit}，tokens ${row.promptTokens + row.completionTokens}/${this.tokenBudget}`,
       );
@@ -62,19 +58,14 @@ export class AiBudgetService {
     row.promptTokens += usage.promptTokens || 0;
     row.completionTokens += usage.completionTokens || 0;
     await this.usageRepo.save(row);
-
-    if (row.promptTokens + row.completionTokens >= this.tokenBudget) {
-      this.enabled = false;
-      this.logger.warn(
-        "AI 已达每日 token 预算上限，聊天功能已关闭（次日自动恢复）",
-      );
-    }
   }
 
   async status(): Promise<BudgetStatus> {
     const row = await this.getOrCreateToday();
     return {
-      enabled: this.enabled && row.requests < this.requestLimit,
+      enabled:
+        row.requests < this.requestLimit &&
+        row.promptTokens + row.completionTokens < this.tokenBudget,
       requests: row.requests,
       requestLimit: this.requestLimit,
       tokensUsed: row.promptTokens + row.completionTokens,

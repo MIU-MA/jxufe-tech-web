@@ -23,7 +23,7 @@ jobs:
           cache: npm
 
       # ==========================================
-      # 🎯 阶段一：构建 + 校验（全部从仓库根目录执行）
+      #    阶段一：构建 + 校验（全部从仓库根目录执行）
       #    任何一项失败即停止上线，不部署
       # ==========================================
       - name: Install dependencies (npm ci)
@@ -44,8 +44,39 @@ jobs:
       - name: Backend lint (eslint, no --fix)
         run: cd backend && npx eslint "{src,test}/**/*.ts"
 
+      - name: E2E tests
+        run: npm run test:e2e -- --runInBand
+
+      # 用全新空库跑完整迁移，再以生产模式启动编译产物做健康检查，
+      # 确保 production 依赖的 migration（users/articles/ai_usage）在干净库上可完整执行
+      - name: Verify migrations on empty DB + app health
+        env:
+          NODE_ENV: production
+          DB_PATH: /tmp/jxufe-ci.db
+          JWT_SECRET: ci-only-secret-0123456789abcdef0123456789abcdef
+          ADMIN_USERNAME: ciadmin
+          ADMIN_PASSWORD: ci-test-password
+          CHAT_TOKEN_SECRET: ci-only-chat-secret-0123456789abcdef
+        run: |
+          rm -f "$DB_PATH"
+          npm run migration:run
+          cd backend
+          (node dist/main.js > /tmp/jxufe-ci.log 2>&1 & echo $! > /tmp/jxufe-ci.pid)
+          for i in $(seq 1 20); do
+            if curl -fsS http://127.0.0.1:3003/api/health | jq -e '.status == "ok"' >/dev/null 2>&1; then
+              echo "✅ 空库迁移 + 启动健康检查通过"
+              kill "$(cat /tmp/jxufe-ci.pid)"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "❌ 启动健康检查失败"
+          cat /tmp/jxufe-ci.log
+          kill "$(cat /tmp/jxufe-ci.pid)" 2>/dev/null || true
+          exit 1
+
       # ==========================================
-      # 🎯 阶段二：部署产物
+      #   阶段二：部署产物
       # ==========================================
       - name: Deploy Frontend to Server
         uses: appleboy/scp-action@v0.1.7
@@ -66,11 +97,9 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           target: /www/wwwroot/jxufe-tech/backend
           source: "backend/dist/**"
-          strip_components: 2
+          strip_components: 1
           overwrite: true
 
-      # 根目录的 package.json / package-lock.json 是唯一依赖清单，
-      # 部署到仓库根，供服务器在根目录执行 npm ci --omit=dev
       - name: Deploy Manifests & PM2 Config to Root
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -82,7 +111,7 @@ jobs:
           overwrite: true
 
       # ==========================================
-      # 🎯 阶段三：服务器安装依赖并重启
+      #   阶段三：服务器安装依赖并重启
       #   注意：不再从 Git 仓库复制 backend/.env。
       #   .env 由服务器单独维护（或密钥注入），部署前须已存在。
       # ==========================================
@@ -98,8 +127,8 @@ jobs:
             mkdir -p backend/public/uploads
             # 从根目录统一安装生产依赖（backend/dist 会向上解析到根 node_modules）
             npm ci --omit=dev
-            # 用 PM2 启动或重启进程（ecosystem 内 cwd 指向 backend）
-            pm2 restart backend/ecosystem.config.js || pm2 start backend/ecosystem.config.js
+            # 统一用根 ecosystem.config.js 启动/重载（startOrReload：未启动则启动，已启动则热重载）
+            pm2 startOrReload ecosystem.config.js --update-env
             pm2 save
 
       - name: Verify SSE & API connectivity
@@ -117,7 +146,16 @@ jobs:
             fi
 
             echo "========== 检查后端进程 =========="
-            pm2 list | grep jxufe-backend || echo "❌ PM2 进程未启动"
+            pm2 list | grep jxufe-backend || { echo "❌ PM2 进程未启动"; exit 1; }
+
+            echo "========== 后端健康检查（真实请求接口，证明新代码生效）=========="
+            if curl -fsS http://127.0.0.1:3003/api/health | jq -e '.status == "ok"' >/dev/null 2>&1; then
+              echo "✅ /api/health 返回 status=ok"
+            else
+              echo "❌ /api/health 检查失败，新版后端未生效"
+              pm2 logs jxufe-backend --lines 30 --nostream 2>/dev/null || true
+              exit 1
+            fi
 
             echo "========== 检查 Nginx SSE 配置 =========="
             NGINX_CONF=$(grep -rl "proxy_pass.*3003\|proxy_pass.*jxufe" /etc/nginx /www/server 2>/dev/null | head -1)
@@ -129,6 +167,12 @@ jobs:
                 echo "⚠️  未配置 proxy_buffering off，SSE 流可能被 Nginx 缓冲"
                 echo "   请在 location /api/ 块中添加: proxy_buffering off; proxy_cache off;"
               fi
+              if grep -q "try_files" "$NGINX_CONF" 2>/dev/null; then
+                echo "✅ SSG 回退已配置 (try_files ... /index.html)"
+              else
+                echo "⚠️  未配置 try_files，/news/:id 等预渲染路由会回退首页"
+                echo "   请在 location / 块中添加: try_files \$uri \$uri.html \$uri/ /index.html;"
+              fi
             else
-              echo "未自动找到 Nginx 配置，请手动确认 location /api/ 是否设置了 proxy_buffering off;"
+              echo "未自动找到 Nginx 配置，请手动确认 location /api/ 的 proxy_buffering off 与 location / 的 try_files"
             fi

@@ -9,5 +9,6 @@ import { RebuildModule } from "../rebuild/rebuild.module";
   imports: [TypeOrmModule.forFeature([Article]), RebuildModule],
   controllers: [ArticlesController],
   providers: [ArticlesService],
+  exports: [ArticlesService],
 })
 export class ArticlesModule {}

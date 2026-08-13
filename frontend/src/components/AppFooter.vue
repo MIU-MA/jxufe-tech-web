@@ -13,81 +13,68 @@ const contactInfo = { email: "2117410945@qq.com" };
 </script>
 
 <template>
-  <footer
-    class="w-full border-t mt-0 transition-colors duration-300"
-    :style="{ backgroundColor: 'var(--color-bg-footer)', color: 'var(--color-text-footer)', borderColor: 'var(--color-border-light)' }"
-  >
-    <div class="py-[60px]">
-      <div class="max-w-6xl mx-auto px-5 grid grid-cols-1 md:grid-cols-[2fr_1.5fr_1fr] gap-10 md:gap-10">
+  <footer class="w-full mt-0 border-t border-t-[var(--color-border)] transition-colors duration-300 bg-[var(--color-bg-footer)]">
+    <div class="max-w-[1160px] mx-auto px-4 md:px-6 py-16">
+      <div class="grid grid-cols-1 md:grid-cols-[1.6fr_1.2fr_1.2fr] gap-12">
 
         <div>
           <div class="flex items-center gap-3 mb-5">
-            <img src="/logo.jpg" alt="Logo" class="w-12 h-12 rounded-full shadow-sm" />
-            <span class="text-[1.4rem] font-bold" :style="{ color: 'var(--color-text-heading)' }">{{ $t('footer.brandName') }}</span>
+            <img src="/logo.jpg" alt="数智技术协会会徽" class="w-11 h-11 rounded-full object-cover" />
+            <span class="font-display text-[1.3em] text-[var(--color-text-heading)]">{{ $t('footer.brandName') }}</span>
           </div>
-          <p class="text-[0.95rem] leading-relaxed max-w-[90%] md:max-w-full" :style="{ color: 'var(--color-text-muted)' }">
+          <p class="text-[0.92rem] leading-relaxed m-0 text-[var(--color-text-secondary)]">
             {{ $t('footer.tagline1') }}<br>
             {{ $t('footer.tagline2') }}
           </p>
         </div>
 
         <div>
-          <h4 class="text-[1.1rem] font-semibold mb-6 relative pl-3" :style="{ color: 'var(--color-text)' }">
-            <span class="absolute left-0 top-0 bottom-0 w-1 rounded-sm" :style="{ backgroundColor: 'var(--color-accent)' }"></span>
+          <h4 class="text-[1rem] m-0 mb-5 pb-2 text-[var(--color-text-heading)] border-b border-b-[var(--color-border)]">
             {{ $t('footer.contactUs') }}
           </h4>
-          <ul class="list-none p-0 m-0 space-y-4 text-[0.95rem]">
+          <ul class="list-none p-0 m-0 space-y-3 text-[0.92rem] text-[var(--color-text-secondary)]">
             <li class="flex items-start gap-2.5 leading-relaxed">
-              <Mail :size="18" class="mt-0.5 shrink-0 opacity-60" />
-              <a :href="`mailto:${contactInfo.email}`" class="hover:underline transition-colors" :style="{ color: 'var(--color-text-footer)' }">{{ contactInfo.email }}</a>
+              <Mail :size="17" class="mt-0.5 shrink-0 opacity-70" />
+              <a :href="`mailto:${contactInfo.email}`" class="no-underline hover:no-underline text-[var(--color-text-secondary)]">{{ contactInfo.email }}</a>
             </li>
             <li class="flex items-start gap-2.5 leading-relaxed">
-              <Building2 :size="18" class="mt-0.5 shrink-0 opacity-60" />
+              <Building2 :size="17" class="mt-0.5 shrink-0 opacity-70" />
               <span>{{ $t('footer.school') }}</span>
             </li>
             <li class="flex items-start gap-2.5 leading-relaxed">
-              <MapPin :size="18" class="mt-0.5 shrink-0 opacity-60" />
+              <MapPin :size="17" class="mt-0.5 shrink-0 opacity-70" />
               <span>{{ $t('footer.address') }}</span>
             </li>
           </ul>
         </div>
 
         <div>
-          <h4 class="text-[1.1rem] font-semibold mb-6 relative pl-3" :style="{ color: 'var(--color-text)' }">
-            <span class="absolute left-0 top-0 bottom-0 w-1 rounded-sm" :style="{ backgroundColor: 'var(--color-accent)' }"></span>
+          <h4 class="text-[1rem] m-0 mb-5 pb-2 text-[var(--color-text-heading)] border-b border-b-[var(--color-border)]">
             {{ $t('footer.friendLinks') }}
           </h4>
-          <div class="flex flex-col gap-2.5">
-            <a
-              v-for="(item, index) in friendLinks"
-              :key="index"
-              :href="item.url"
-              class="flex items-center no-underline text-[0.95rem] py-2 px-3 rounded-md border transition-all duration-200 hover:translate-x-[5px] hover:shadow-md"
-              :style="{
-                color: 'var(--color-text-footer)',
-                backgroundColor: 'var(--color-bg-card)',
-                borderColor: 'var(--color-border)'
-              }"
-              target="_blank"
-            >
-              <img :src="item.logo" :alt="item.name" class="w-5 h-5 mr-2.5 rounded-full">
-              <span>{{ item.name }}</span>
-            </a>
-          </div>
+          <ul class="list-none p-0 m-0 flex flex-col gap-3">
+            <li v-for="(item, index) in friendLinks" :key="index">
+              <a
+                :href="item.url"
+                class="flex items-center gap-2.5 no-underline hover:no-underline text-[0.92rem] transition-colors text-[var(--color-text-secondary)]"
+                target="_blank"
+              >
+                <img :src="item.logo" :alt="item.name" class="w-5 h-5 rounded-full object-cover">
+                <span>{{ item.name }}</span>
+              </a>
+            </li>
+          </ul>
         </div>
 
       </div>
     </div>
 
-    <div
-      class="text-white/80 py-3 px-5 text-sm flex flex-wrap items-center justify-center text-center gap-3 transition-colors duration-300"
-      :style="{ backgroundColor: 'var(--color-bg-footer-bottom)' }"
-    >
-      <p>&copy; {{ $t('footer.copyright', { year: new Date().getFullYear() }) }}</p>
+    <div class="py-4 px-4 md:px-6 text-sm flex flex-wrap items-center justify-center text-center gap-3 transition-colors duration-300 bg-[var(--color-bg-footer-bottom)]">
+      <p class="m-0 text-[var(--color-text-dark-muted)]">&copy; {{ $t('footer.copyright', { year: new Date().getFullYear() }) }}</p>
       <div class="flex items-center gap-2">
-        <a href="https://beian.miit.gov.cn/" target="_blank" class="text-white/60 no-underline hover:text-white transition-colors">赣ICP备2025074452号</a>
-        <span class="opacity-40">|</span>
-        <a href="https://beian.mps.gov.cn/" target="_blank" class="inline-flex items-center no-underline text-white/60 hover:text-white transition-colors">
+        <a href="https://beian.miit.gov.cn/" target="_blank" class="no-underline hover:no-underline transition-colors text-[var(--color-text-dark-muted)]">赣ICP备2025074452号</a>
+        <span class="opacity-50">|</span>
+        <a href="https://beian.mps.gov.cn/" target="_blank" class="inline-flex items-center no-underline hover:no-underline transition-colors text-[var(--color-text-dark-muted)]">
           <img src="https://www.beian.gov.cn/img/ghs.png" alt="公安备案" class="h-4 mr-1">
           赣公网安备36010602000365号
         </a>

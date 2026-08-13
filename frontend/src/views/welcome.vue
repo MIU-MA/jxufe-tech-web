@@ -2,11 +2,17 @@
 </script>
 
 <template>
-  <main class="max-w-3xl mx-auto px-5 py-10 h-[60vh] bg-bg-card rounded-lg text-center transition-colors duration-300">
-    <h1 class="text-4xl font-bold text-text-heading mb-5">{{ $t('welcome.title') }}</h1>
-    <p class="text-xl text-text-secondary leading-relaxed">
+  <main class="min-h-[calc(100vh-60px)] flex items-center justify-center">
+    <section class="max-w-[620px] mx-auto px-4 md:px-6 py-20 text-center">
+      <h1 class="font-display text-[2em] md:text-[2.3em] leading-snug mb-6 text-[var(--color-text-heading)]">
+        {{ $t('welcome.title') }}
+      </h1>
+      <p class="text-[1.05em] leading-relaxed text-[var(--color-text-secondary)]">
         {{ $t('welcome.text1') }}
+      </p>
+      <p class="text-[1.05em] leading-relaxed text-[var(--color-text-secondary)]">
         {{ $t('welcome.text2') }}
-    </p>
+      </p>
+    </section>
   </main>
 </template>

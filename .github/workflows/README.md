@@ -16,7 +16,13 @@
    - `backend/dist/**` → `/www/wwwroot/jxufe-tech/backend`
    - 根目录 `package.json`、`package-lock.json`、`ecosystem.config.js` → `/www/wwwroot/jxufe-tech`
    - **不部署 `backend/.env`**：敏感配置由服务器单独维护（详见下）
-6. 服务器端在仓库根执行 `npm ci --omit=dev`，再 `pm2 restart`
+6. 服务器端在仓库根执行 `npm ci --omit=dev`，再 `pm2 startOrReload ecosystem.config.js --update-env`
+
+> 部署说明：前端 `frontend/dist/**` 用 `strip_components: 2`，SSG 产物直接落在
+> `/www/wwwroot/jxufe-tech/frontend/`（Nginx root 指向该目录，不含 `dist/`）。
+> 后端 `backend/dist/**` 用 `strip_components: 1` **保留 `dist/` 层级**，落盘
+> `/www/wwwroot/jxufe-tech/backend/dist/main.js`，与根 `ecosystem.config.js` 的
+> `script: 'dist/main.js'`（`cwd` 指向 `backend`）一致。
 
 ## 使用前配置
 
@@ -58,8 +64,8 @@ server {
     server_name www.jxufe-tech.top;
     # ... ssl 证书配置 ...
 
-    # 前端静态文件（SSG 产物）
-    root /www/wwwroot/jxufe-tech/frontend/dist;
+    # 前端静态文件（SSG 产物，部署直接落在 frontend/ 根目录）
+    root /www/wwwroot/jxufe-tech/frontend;
     index index.html;
 
     # API 反向代理（SSE 必须关闭缓冲）
@@ -112,7 +118,7 @@ cat ~/.ssh/github-actions   # 复制全部内容
 cd /www/wwwroot/jxufe-tech
 mkdir -p backend/public/uploads
 npm ci --omit=dev
-pm2 start backend/ecosystem.config.js
+pm2 startOrReload ecosystem.config.js --update-env
 pm2 save
 ```
 

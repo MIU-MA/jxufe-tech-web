@@ -27,7 +27,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 重新抓取 CMS 文章并预渲染（SSG），再重新部署前端静态文件
       - name: Build frontend (SSG)
         run: npm run build:frontend
         env:

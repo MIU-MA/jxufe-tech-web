@@ -93,20 +93,14 @@ const messageGroups = computed(() => {
 
 <template>
   <main
-    class="flex flex-col mx-auto min-h-[calc(100vh-60px)] transition-colors duration-300"
-    :style="{ backgroundColor: 'var(--color-bg)' }"
+    class="flex flex-col mx-auto min-h-[calc(100vh-60px)] transition-colors duration-300 bg-[var(--color-bg)]"
   >
     <header
-      class="sticky top-[60px] z-30 flex items-center justify-between px-5 py-3 border-b backdrop-blur-sm transition-colors duration-300"
-      :style="{
-        backgroundColor: 'var(--color-bg-card)',
-        borderColor: 'var(--color-border-light)',
-      }"
+      class="sticky top-[60px] z-30 flex items-center justify-between px-5 py-3 border-b bg-[var(--color-bg-card)] border-b-[var(--color-border-light)] transition-colors duration-300"
     >
       <div class="flex items-center gap-3">
         <div
-          class="w-9 h-9 rounded-lg flex items-center justify-center"
-          :style="{ background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))' }"
+          class="w-9 h-9 rounded-lg flex items-center justify-center bg-[var(--color-primary)]"
         >
           <Sparkles :size="18" color="#fff" />
         </div>
@@ -115,11 +109,7 @@ const messageGroups = computed(() => {
       <div class="flex items-center gap-2">
         <button
           v-if="hasMessages"
-          class="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-all duration-200"
-          :style="{
-            color: 'var(--color-text-muted)',
-            border: '1px solid var(--color-border-light)',
-          }"
+          class="flex items-center gap-1.5 px-3 py-1.5 text-sm rounded-lg transition-all duration-200 text-[var(--color-text-muted)] border border-[var(--color-border-light)]"
           @click="handleClear"
           :title="$t('chat.newChat')"
         >
@@ -138,27 +128,21 @@ const messageGroups = computed(() => {
         class="flex flex-col items-center justify-center min-h-[calc(100vh-300px)] px-5 text-center"
       >
         <div
-          class="w-20 h-20 rounded-2xl flex items-center justify-center mb-6 shadow-lg"
-          :style="{ background: 'linear-gradient(135deg, var(--color-primary), #0088cc)' }"
+          class="w-20 h-20 rounded-lg flex items-center justify-center mb-6 bg-[var(--color-primary)]"
         >
           <Sparkles :size="36" color="#fff" />
         </div>
-        <h2 class="text-2xl font-bold mb-3" :style="{ color: 'var(--color-text-heading)' }">
+        <h2 class="text-2xl font-bold mb-3 text-[var(--color-text-heading)]">
           {{ $t('chat.welcomeTitle') }}
         </h2>
-        <p class="max-w-md leading-relaxed mb-8" :style="{ color: 'var(--color-text-secondary)' }">
+        <p class="max-w-md leading-relaxed mb-8 text-[var(--color-text-secondary)]">
           {{ $t('chat.welcomeDesc') }}
         </p>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-xl w-full">
           <button
             v-for="hint in quickHints"
             :key="hint"
-            class="text-left px-4 py-3 rounded-xl text-sm transition-all duration-200 hover:-translate-y-0.5"
-            :style="{
-              backgroundColor: 'var(--color-bg-alt)',
-              color: 'var(--color-text-secondary)',
-              border: '1px solid var(--color-border-light)',
-            }"
+            class="text-left px-4 py-3 rounded text-sm transition-colors duration-200 bg-[var(--color-bg-alt)] text-[var(--color-text-secondary)] border border-[var(--color-border-light)]"
             @click="inputText = hint; handleSend()"
           >
             {{ hint }}
@@ -169,11 +153,11 @@ const messageGroups = computed(() => {
       <div v-else class="max-w-3xl mx-auto w-full px-4 py-6">
         <template v-for="group in messageGroups" :key="group.label">
           <div class="flex items-center gap-3 my-6">
-            <div class="flex-1 h-px" :style="{ backgroundColor: 'var(--color-border-light)' }"></div>
-            <span class="text-xs px-3 py-1 rounded-full" :style="{ color: 'var(--color-text-muted)', backgroundColor: 'var(--color-bg-alt)' }">
+            <div class="flex-1 h-px bg-[var(--color-border-light)]"></div>
+            <span class="text-xs px-3 py-1 rounded-full text-[var(--color-text-muted)] bg-[var(--color-bg-alt)]">
               {{ group.label }}
             </span>
-            <div class="flex-1 h-px" :style="{ backgroundColor: 'var(--color-border-light)' }"></div>
+            <div class="flex-1 h-px bg-[var(--color-border-light)]"></div>
           </div>
 
           <template v-for="msg in group.items" :key="msg.id">
@@ -183,8 +167,7 @@ const messageGroups = computed(() => {
             >
               <div v-if="msg.role === 'assistant'" class="shrink-0">
                 <div
-                  class="w-8 h-8 rounded-lg flex items-center justify-center"
-                  :style="{ background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))' }"
+                  class="w-8 h-8 rounded-lg flex items-center justify-center bg-[var(--color-primary)]"
                 >
                   <Sparkles :size="14" color="#fff" />
                 </div>
@@ -196,37 +179,26 @@ const messageGroups = computed(() => {
               >
                 <div
                   v-if="msg.role === 'user'"
-                  class="px-4 py-2.5 rounded-2xl rounded-br-md text-sm leading-relaxed whitespace-pre-wrap break-words"
-                  :style="{
-                    backgroundColor: 'var(--color-primary)',
-                    color: '#ffffff',
-                  }"
+                  class="px-4 py-2.5 rounded-2xl rounded-br-md text-sm leading-relaxed whitespace-pre-wrap break-words bg-[var(--color-primary)] text-white"
                 >
                   {{ msg.content }}
                 </div>
 
                 <div
                   v-else
-                  class="px-4 py-3 rounded-2xl rounded-bl-md text-sm leading-relaxed transition-colors duration-300"
-                  :style="{
-                    backgroundColor: 'var(--color-bg-card)',
-                    color: 'var(--color-text)',
-                    border: '1px solid ' + 'var(--color-border-light)',
-                  }"
+                  class="px-4 py-3 rounded-2xl rounded-bl-md text-sm leading-relaxed transition-colors duration-300 bg-[var(--color-bg-card)] text-[var(--color-text)] border border-[var(--color-border-light)]"
                 >
                   <div
-                    class="prose prose-sm dark:prose-invert max-w-none prose-pre:rounded-lg prose-code:text-sm"
-                    :style="{ '--tw-prose-body': 'var(--color-text)', '--tw-prose-headings': 'var(--color-text-heading)' }"
+                    class="prose prose-sm dark:prose-invert max-w-none prose-pre:rounded-lg prose-code:text-sm [--tw-prose-body:var(--color-text)] [--tw-prose-headings:var(--color-text-heading)]"
                     v-html="renderMarkdown(msg.content)"
                   ></div>
                   <span
                     v-if="isThinking && msg.id === messages[messages.length - 1]?.id && !msg.content"
-                    class="inline-block w-2 h-4 ml-0.5 align-text-bottom animate-pulse rounded-sm"
-                    :style="{ backgroundColor: 'var(--color-accent)' }"
+                    class="inline-block w-2 h-4 ml-0.5 align-text-bottom animate-pulse rounded-sm bg-[var(--color-accent)]"
                   ></span>
                 </div>
 
-                <p class="text-[11px] mt-1 px-1" :class="msg.role === 'user' ? 'text-right' : 'text-left'" :style="{ color: 'var(--color-text-muted)' }">
+                <p class="text-[11px] mt-1 px-1 text-[var(--color-text-muted)]" :class="msg.role === 'user' ? 'text-right' : 'text-left'">
                   {{ formatTime(msg.timestamp) }}
                 </p>
               </div>
@@ -236,32 +208,22 @@ const messageGroups = computed(() => {
 
         <div v-if="isThinking && messages[messages.length - 1]?.role === 'user'" class="flex gap-3 mb-5">
           <div
-            class="w-8 h-8 rounded-lg flex items-center justify-center"
-            :style="{ background: 'linear-gradient(135deg, var(--color-primary), var(--color-accent))' }"
+            class="w-8 h-8 rounded-lg flex items-center justify-center bg-[var(--color-primary)]"
           >
             <Sparkles :size="14" color="#fff" />
           </div>
           <div
-            class="px-4 py-3 rounded-2xl rounded-bl-md"
-            :style="{
-              backgroundColor: 'var(--color-bg-card)',
-              border: '1px solid ' + 'var(--color-border-light)',
-            }"
+            class="px-4 py-3 rounded-2xl rounded-bl-md bg-[var(--color-bg-card)] border border-[var(--color-border-light)]"
           >
             <div class="flex items-center gap-1.5">
               <span
-                class="inline-block w-2 h-2 rounded-full animate-bounce"
-                :style="{ backgroundColor: 'var(--color-text-muted)' }"
+                class="inline-block w-2 h-2 rounded-full animate-pulse bg-[var(--color-text-muted)]"
               ></span>
               <span
-                class="inline-block w-2 h-2 rounded-full animate-bounce"
-                style="animation-delay: 0.15s"
-                :style="{ backgroundColor: 'var(--color-text-muted)' }"
+                class="inline-block w-2 h-2 rounded-full animate-pulse bg-[var(--color-text-muted)] [animation-delay:0.15s]"
               ></span>
               <span
-                class="inline-block w-2 h-2 rounded-full animate-bounce"
-                style="animation-delay: 0.3s"
-                :style="{ backgroundColor: 'var(--color-text-muted)' }"
+                class="inline-block w-2 h-2 rounded-full animate-pulse bg-[var(--color-text-muted)] [animation-delay:0.3s]"
               ></span>
             </div>
           </div>
@@ -270,37 +232,25 @@ const messageGroups = computed(() => {
     </div>
 
     <div
-      class="sticky bottom-0 z-30 border-t transition-colors duration-300"
-      :style="{
-        backgroundColor: 'var(--color-bg-card)',
-        borderColor: 'var(--color-border-light)',
-      }"
+      class="sticky bottom-0 z-30 border-t bg-[var(--color-bg-card)] border-t-[var(--color-border-light)] transition-colors duration-300"
     >
       <div class="max-w-3xl mx-auto px-4 py-3">
         <div
-          class="flex items-end gap-2.5 rounded-2xl px-4 py-2.5 transition-colors duration-300"
-          :style="{
-            backgroundColor: 'var(--color-bg)',
-            border: '1px solid ' + 'var(--color-border)',
-          }"
+          class="flex items-end gap-2.5 rounded-2xl px-4 py-2.5 transition-colors duration-300 bg-[var(--color-bg)] border border-[var(--color-border)]"
         >
           <textarea
             ref="textareaRef"
             v-model="inputText"
             :placeholder="budgetExhausted ? '今日额度已用完，请明天再来' : $t('chat.placeholder')"
             rows="1"
-            class="flex-1 bg-transparent outline-none resize-none text-sm leading-relaxed placeholder:select-none"
-            :style="{ color: 'var(--color-text)', '--placeholder-color': 'var(--color-text-muted)' }"
+            class="flex-1 bg-transparent outline-none resize-none text-sm leading-relaxed placeholder:select-none text-[var(--color-text)] placeholder:text-[var(--color-text-muted)]"
             @keydown="handleKeydown"
             @input="autoResize"
             :disabled="isThinking || budgetExhausted"
           ></textarea>
           <button
             class="shrink-0 w-9 h-9 flex items-center justify-center rounded-xl transition-all duration-200 disabled:opacity-40"
-            :style="{
-              backgroundColor: inputText.trim() && !isThinking && !budgetExhausted ? 'var(--color-primary)' : 'var(--color-border-light)',
-              color: inputText.trim() && !isThinking && !budgetExhausted ? '#fff' : 'var(--color-text-muted)',
-            }"
+            :class="inputText.trim() && !isThinking && !budgetExhausted ? 'bg-[var(--color-primary)] text-white' : 'bg-[var(--color-border-light)] text-[var(--color-text-muted)]'"
             :disabled="!inputText.trim() || isThinking || budgetExhausted"
             @click="handleSend"
             :title="$t('chat.send')"
@@ -308,7 +258,7 @@ const messageGroups = computed(() => {
             <Send :size="16" />
           </button>
         </div>
-        <p class="text-xs text-center mt-2" :style="{ color: budgetExhausted ? 'var(--color-accent)' : 'var(--color-text-muted)' }">
+        <p class="text-xs text-center mt-2" :class="budgetExhausted ? 'text-[var(--color-accent)]' : 'text-[var(--color-text-muted)]'">
           {{ budgetExhausted ? '今日 AI 使用额度已用完，明天自动恢复' : $t('chat.hint') }}
         </p>
       </div>

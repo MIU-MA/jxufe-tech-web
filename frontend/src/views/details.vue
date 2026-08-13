@@ -14,57 +14,51 @@ useScrollReveal();
 <template>
   <main class="max-w-6xl mx-auto px-5 pt-20 pb-10 min-h-[calc(100vh-350px)]">
     <section
-      class="fade-in-on-scroll max-w-[800px] mx-auto mb-16 p-10 rounded-2xl shadow-md transition-colors duration-300"
-      :style="{ backgroundColor: 'var(--color-bg-card)', boxShadow: '0 4px 20px var(--color-shadow)' }"
+      class="fade-in-on-scroll max-w-[800px] mx-auto mb-16 p-10 rounded-2xl [box-shadow:0_4px_20px_var(--color-shadow)] transition-colors duration-300 bg-[var(--color-bg-card)]"
     >
-      <h2 class="text-[1.8em] text-center mb-5" :style="{ color: 'var(--color-accent)' }">{{ $t('details.aboutAssociation') }}</h2>
+      <h2 class="text-[1.8em] text-center mb-5 text-[var(--color-accent)]">{{ $t('details.aboutAssociation') }}</h2>
       <p class="text-[1.05em] text-text-secondary leading-relaxed text-center">
         {{ $t('details.aboutIntro') }}
       </p>
     </section>
 
     <section
-      class="fade-in-on-scroll max-w-[800px] mx-auto mb-16 p-10 rounded-2xl shadow-md transition-colors duration-300"
-      :style="{ backgroundColor: 'var(--color-bg-card)', boxShadow: '0 4px 20px var(--color-shadow)' }"
+      class="fade-in-on-scroll max-w-[800px] mx-auto mb-16 p-10 rounded-2xl [box-shadow:0_4px_20px_var(--color-shadow)] transition-colors duration-300 bg-[var(--color-bg-card)]"
     >
-      <h2 class="text-[1.8em] text-center mb-5" :style="{ color: 'var(--color-accent)' }">{{ $t('details.departmentSetup') }}</h2>
-      <div class="grid gap-6 mt-2.5" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr))">
+      <h2 class="text-[1.8em] text-center mb-5 text-[var(--color-accent)]">{{ $t('details.departmentSetup') }}</h2>
+      <div class="grid gap-6 mt-2.5 grid-cols-[repeat(auto-fit,minmax(220px,1fr))]">
         <div
-          class="text-center py-8 px-5 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-          :style="{ backgroundColor: 'var(--color-bg-alt)' }"
+          class="text-center py-8 px-5 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg bg-[var(--color-bg-alt)]"
         >
-          <Megaphone :size="36" class="mx-auto mb-3" :style="{ color: 'var(--color-accent)' }" />
-          <h3 class="text-[1.2em] mb-2.5" :style="{ color: 'var(--color-text-heading)' }">{{ $t('details.publicDept') }}</h3>
-          <p class="text-[0.93em] leading-relaxed m-0" :style="{ color: 'var(--color-text-muted)' }">{{ $t('details.publicDeptDesc') }}</p>
+          <Megaphone :size="36" class="mx-auto mb-3 text-[var(--color-accent)]" />
+          <h3 class="text-[1.2em] mb-2.5 text-[var(--color-text-heading)]">{{ $t('details.publicDept') }}</h3>
+          <p class="text-[0.93em] leading-relaxed m-0 text-[var(--color-text-muted)]">{{ $t('details.publicDeptDesc') }}</p>
         </div>
         <div
-          class="text-center py-8 px-5 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-          :style="{ backgroundColor: 'var(--color-bg-alt)' }"
+          class="text-center py-8 px-5 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg bg-[var(--color-bg-alt)]"
         >
-          <ClipboardList :size="36" class="mx-auto mb-3" :style="{ color: 'var(--color-accent)' }" />
-          <h3 class="text-[1.2em] mb-2.5" :style="{ color: 'var(--color-text-heading)' }">{{ $t('details.orgDept') }}</h3>
-          <p class="text-[0.93em] leading-relaxed m-0" :style="{ color: 'var(--color-text-muted)' }">{{ $t('details.orgDeptDesc') }}</p>
+          <ClipboardList :size="36" class="mx-auto mb-3 text-[var(--color-accent)]" />
+          <h3 class="text-[1.2em] mb-2.5 text-[var(--color-text-heading)]">{{ $t('details.orgDept') }}</h3>
+          <p class="text-[0.93em] leading-relaxed m-0 text-[var(--color-text-muted)]">{{ $t('details.orgDeptDesc') }}</p>
         </div>
         <div
-          class="text-center py-8 px-5 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-          :style="{ backgroundColor: 'var(--color-bg-alt)' }"
+          class="text-center py-8 px-5 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg bg-[var(--color-bg-alt)]"
         >
-          <Monitor :size="36" class="mx-auto mb-3" :style="{ color: 'var(--color-accent)' }" />
-          <h3 class="text-[1.2em] mb-2.5" :style="{ color: 'var(--color-text-heading)' }">{{ $t('details.studyDept') }}</h3>
-          <p class="text-[0.93em] leading-relaxed m-0" :style="{ color: 'var(--color-text-muted)' }">{{ $t('details.studyDeptDesc') }}</p>
+          <Monitor :size="36" class="mx-auto mb-3 text-[var(--color-accent)]" />
+          <h3 class="text-[1.2em] mb-2.5 text-[var(--color-text-heading)]">{{ $t('details.studyDept') }}</h3>
+          <p class="text-[0.93em] leading-relaxed m-0 text-[var(--color-text-muted)]">{{ $t('details.studyDeptDesc') }}</p>
         </div>
       </div>
     </section>
 
     <section
-      class="fade-in-on-scroll max-w-[800px] mx-auto mb-16 p-10 rounded-2xl shadow-md transition-colors duration-300"
-      :style="{ backgroundColor: 'var(--color-bg-card)', boxShadow: '0 4px 20px var(--color-shadow)' }"
+      class="fade-in-on-scroll max-w-[800px] mx-auto mb-16 p-10 rounded-2xl [box-shadow:0_4px_20px_var(--color-shadow)] transition-colors duration-300 bg-[var(--color-bg-card)]"
     >
-      <h2 class="text-[1.8em] text-center mb-5" :style="{ color: 'var(--color-accent)' }">{{ $t('details.contributors') }}</h2>
+      <h2 class="text-[1.8em] text-center mb-5 text-[var(--color-accent)]">{{ $t('details.contributors') }}</h2>
       <p>
         {{ $t('details.contributorsText1') }}
         {{ $t('details.contributorsText2') }}
-        欢迎<a href="https://github.com/MIU-MA/vue3-js-jxufe-tech" style="color: blue;">{{ $t('details.viewDetails') }}</a>
+        欢迎<a href="https://github.com/MIU-MA/vue3-js-jxufe-tech" class="text-blue-500">{{ $t('details.viewDetails') }}</a>
       </p>
       <div class="flex justify-start gap-5 flex-wrap mt-5">
         <a v-for="contributor in contributors" :key="contributor.name" :href="contributor.url" target="_blank" :title="contributor.name"

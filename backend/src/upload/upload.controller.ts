@@ -28,9 +28,7 @@ import {
   ApiBody,
 } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/jwt-auth.guard";
-import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { Article } from "../articles/entities/article.entity";
+import { ArticlesService } from "../articles/articles.service";
 import { safeResolveUploadPath, PUBLIC_DIR } from "../common/path-guard";
 import {
   detectImageType,
@@ -70,10 +68,7 @@ function originalTitle(file: Express.Multer.File, dropExt: boolean): string {
 @ApiTags("文件上传")
 @Controller("api/upload")
 export class UploadController {
-  constructor(
-    @InjectRepository(Article)
-    private articleRepo: Repository<Article>,
-  ) {}
+  constructor(private readonly articlesService: ArticlesService) {}
 
   @Get("images")
   @ApiOperation({ summary: "列出所有已上传的图片" })
@@ -171,12 +166,11 @@ export class UploadController {
 
     writeUpload("uploads", filename, file.buffer);
     try {
-      const article = this.articleRepo.create({
+      const saved = await this.articlesService.create({
         title,
         content,
-        publishedAt: new Date(),
+        publishedAt: new Date().toISOString(),
       });
-      const saved = await this.articleRepo.save(article);
       return { code: 200, article: saved, message: `文章「${title}」已创建` };
     } catch (err) {
       try {

@@ -1,24 +1,19 @@
 import { Test, TestingModule } from "@nestjs/testing";
-import { getRepositoryToken } from "@nestjs/typeorm";
 import { UploadController } from "./upload.controller";
-import { Article } from "../articles/entities/article.entity";
+import { ArticlesService } from "../articles/articles.service";
 import { detectImageType, validateMarkdownContent } from "./upload-utils";
 
 describe("UploadController", () => {
   let controller: UploadController;
-  const mockArticleRepo = {
+  const mockArticlesService = {
     create: jest.fn(),
-    save: jest.fn(),
-    delete: jest.fn(),
   };
 
   beforeEach(async () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UploadController],
-      providers: [
-        { provide: getRepositoryToken(Article), useValue: mockArticleRepo },
-      ],
+      providers: [{ provide: ArticlesService, useValue: mockArticlesService }],
     }).compile();
 
     controller = module.get<UploadController>(UploadController);

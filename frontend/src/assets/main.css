@@ -1,85 +1,129 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&family=Noto+Serif+SC:wght@600;700&display=swap');
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
 @variant dark (&:where(.dark, .dark *));
+
+/* =========================================================
+   设计变量：高校组织网站的克制编辑风格
+   主色 #174a8b · 深蓝 #10345f · 强调(暗红) #b4322d
+   标题宋体 · 正文无衬线
+   ========================================================= */
 @theme {
-  --color-primary: #003a7a;
-  --color-primary-light: #005a9a;
-  --color-accent: #d97828;
-  --color-bg: #f7f9fc;
-  --color-bg-alt: #f0f8ff;
+  --font-sans: "PingFang SC", "Microsoft YaHei", "Noto Sans SC", Arial, sans-serif;
+  --font-display: "Songti SC", "SimSun", "Noto Serif SC", serif;
+
+  --color-primary: #174a8b;
+  --color-primary-light: #2f66a8;
+  --color-primary-dark: #10345f;
+  --color-accent: #b4322d;
+  --color-bg: #ffffff;
+  --color-bg-alt: #f5f7f9;
   --color-bg-card: #ffffff;
-  --color-bg-header: #003a7a;
-  --color-bg-footer: #f8f9fa;
-  --color-bg-footer-bottom: #003a7a;
-  --color-text: #334155;
-  --color-text-heading: #003a7a;
-  --color-text-secondary: #475569;
-  --color-text-muted: #64748b;
-  --color-text-footer: #555;
-  --color-border: #e0e0e0;
-  --color-border-light: #e9ecef;
-  --color-shadow: rgba(0, 58, 122, 0.08);
-  --color-shadow-card: rgba(0, 0, 0, 0.1);
-  --color-nav-bg: #17589d;
+  --color-bg-header: #ffffff;
+  --color-bg-footer: #f5f7f9;
+  --color-bg-footer-bottom: #10345f;
+  --color-bg-dark: #10345f;
+  --color-text: #20252b;
+  --color-text-heading: #10345f;
+  --color-text-secondary: #67717d;
+  --color-text-muted: #67717d;
+  --color-text-footer: #20252b;
+  --color-text-dark: #ffffff;
+  --color-text-dark-muted: #b7c4d4;
+  --color-border: #dce1e6;
+  --color-border-light: #e7ebef;
+  --color-line-dark: rgba(255, 255, 255, 0.14);
+  --color-shadow: rgba(16, 52, 95, 0.06);
 }
 
 :root {
-  --color-primary: #003a7a;
-  --color-primary-light: #005a9a;
-  --color-accent: #d97828;
-  --color-bg: #f7f9fc;
-  --color-bg-alt: #f0f8ff;
+  --color-primary: #174a8b;
+  --color-primary-light: #2f66a8;
+  --color-primary-dark: #10345f;
+  --color-accent: #b4322d;
+  --color-bg: #ffffff;
+  --color-bg-alt: #f5f7f9;
   --color-bg-card: #ffffff;
-  --color-bg-header: #003a7a;
-  --color-bg-footer: #f8f9fa;
-  --color-bg-footer-bottom: #003a7a;
-  --color-text: #334155;
-  --color-text-heading: #003a7a;
-  --color-text-secondary: #475569;
-  --color-text-muted: #64748b;
-  --color-text-footer: #555;
-  --color-border: #e0e0e0;
-  --color-border-light: #e9ecef;
-  --color-shadow: rgba(0, 58, 122, 0.08);
-  --color-shadow-card: rgba(0, 0, 0, 0.1);
-  --color-nav-bg: #17589d;
+  --color-bg-header: #ffffff;
+  --color-bg-footer: #f5f7f9;
+  --color-bg-footer-bottom: #10345f;
+  --color-bg-dark: #10345f;
+  --color-text: #20252b;
+  --color-text-heading: #10345f;
+  --color-text-secondary: #67717d;
+  --color-text-muted: #67717d;
+  --color-text-footer: #20252b;
+  --color-text-dark: #ffffff;
+  --color-text-dark-muted: #b7c4d4;
+  --color-border: #dce1e6;
+  --color-border-light: #e7ebef;
+  --color-line-dark: rgba(255, 255, 255, 0.14);
+  --color-shadow: rgba(16, 52, 95, 0.06);
+  /* 首屏暂不改动，保留原渐变 */
   --hero-gradient: linear-gradient(125deg, #ffffff 0%, #f0f4ff 30%, #e0ebff 70%, #ffffff 100%);
 }
 
 html.dark {
-  --color-primary: #003a7a;
-  --color-primary-light: #005a9a;
-  --color-accent: #d97828;
-  --color-bg: #0a1628;
-  --color-bg-alt: #0e1b30;
-  --color-bg-card: #152238;
-  --color-bg-header: #060f1e;
-  --color-bg-footer: #0e1b30;
-  --color-bg-footer-bottom: #060f1e;
-  --color-text: #cbd5e1;
-  --color-text-heading: #93c5fd;
-  --color-text-secondary: #94a3b8;
-  --color-text-muted: #64748b;
-  --color-text-footer: #94a3b8;
-  --color-border: #1e2e4a;
-  --color-border-light: #152238;
-  --color-shadow: rgba(0, 0, 0, 0.4);
-  --color-shadow-card: rgba(0, 0, 0, 0.5);
-  --color-nav-bg: #060f1e;
+  --color-primary: #5f8cc4;
+  --color-primary-light: #7fa5d1;
+  --color-primary-dark: #8fb0d8;
+  --color-accent: #d06a63;
+  --color-bg: #0e1722;
+  --color-bg-alt: #141f2c;
+  --color-bg-card: #16222f;
+  --color-bg-header: #0e1722;
+  --color-bg-footer: #141f2c;
+  --color-bg-footer-bottom: #0a1119;
+  --color-bg-dark: #0f1b2a;
+  --color-text: #d3dae1;
+  --color-text-heading: #cbd8e8;
+  --color-text-secondary: #97a3af;
+  --color-text-muted: #8a95a1;
+  --color-text-footer: #aab5c0;
+  --color-text-dark: #ffffff;
+  --color-text-dark-muted: #a9b7c7;
+  --color-border: #2b3642;
+  --color-border-light: #223042;
+  --color-line-dark: rgba(255, 255, 255, 0.1);
+  --color-shadow: rgba(0, 0, 0, 0.3);
   --hero-gradient: linear-gradient(125deg, #0a1628 0%, #0e1b30 40%, #111d35 100%);
 }
 
 body {
-  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans);
   margin: 0;
   padding: 0;
   background-color: var(--color-bg);
   color: var(--color-text);
-  line-height: 1.6;
+  line-height: 1.7;
   -webkit-font-smoothing: antialiased;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* 链接基础态：默认主题色，hover 仅颜色/下划线变化（克制） */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* 清晰可见的键盘焦点 */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--color-primary);
+  color: #fff;
 }
 
 ::-webkit-scrollbar {
@@ -88,53 +132,50 @@ body {
   background-color: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(to bottom, #003a7a, #0088cc);
-  border-radius: 10px;
-  border: 2px solid var(--color-bg);
+  background: var(--color-border);
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(to bottom, #d97828, #f0b848);
+  background: var(--color-primary);
 }
 
-::selection {
-  background: #003a7a;
-  color: #fff;
-}
-
-@keyframes floatUp {
-  0%   { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(-120vh); opacity: 0; }
-}
-
-@keyframes floatCard {
-  0%, 100% { transform: scale(0.65) translate(0, 0); }
-  33%      { transform: scale(0.65) translate(15px, -25px); }
-  66%      { transform: scale(0.65) translate(-10px, 15px); }
-}
-
+/* 首屏保留的动画（首屏暂不改动） */
 @keyframes gradientFlow {
   0%   { background-position: 0% 50%; }
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
-
+@keyframes floatUp {
+  0%   { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-120vh); opacity: 0; }
+}
 @keyframes bounce {
   0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
   40% { transform: translateY(-10px); }
   60% { transform: translateY(-5px); }
 }
 
+/* 导航激活态：蓝色文字 + 底部细线（在头部组件中同样用 --color-primary） */
 .router-link-active {
-  background: linear-gradient(135deg, #17589d, #005a9a);
-  border-radius: 4px;
+  color: var(--color-primary);
+}
+.router-link-active:hover {
+  text-decoration: none;
 }
 
+/* 滚动显现（克制：仅透明度与轻微上移） */
 .fade-in-on-scroll {
   opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 .is-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+/* 中文标题宋体辅助类 */
+.font-display {
+  font-family: var(--font-display);
+  font-weight: 600;
 }

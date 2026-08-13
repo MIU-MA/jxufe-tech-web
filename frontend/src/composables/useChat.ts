@@ -41,7 +41,12 @@ function saveToken(token: string): void {
   } catch {}
 }
 
-// 仅在浏览器环境访问 localStorage（SSG 预渲染阶段无 window）
+function clearStoredToken(): void {
+  try {
+    localStorage.removeItem(TOKEN_KEY)
+  } catch {}
+}
+
 function isBrowser(): boolean {
   return typeof window !== 'undefined'
 }
@@ -94,12 +99,16 @@ export function useChat() {
   function clearMessages() {
     messages.value = []
     if (isBrowser()) saveHistory([])
-    // 通知后端重置会话历史（新对话）
-    if (chatToken) {
+
+    const oldToken = chatToken
+    chatToken = ''
+    if (isBrowser()) clearStoredToken()
+
+    if (oldToken) {
       fetch('/api/chat/reset', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ token: chatToken }),
+        body: JSON.stringify({ token: oldToken }),
       }).catch(() => {})
     }
   }
@@ -142,20 +151,18 @@ export function useChat() {
     isThinking.value = true
     await scrollToBottom()
 
-    try {
-      abortController = new AbortController()
-
+    async function attemptSend(): Promise<'ok' | 'retry'> {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: text, token: chatToken }),
-        signal: abortController.signal,
+        signal: abortController?.signal,
       })
 
       if (response.status === 403) {
         chatToken = await fetchToken()
         if (!chatToken) throw new Error('会话验证失败，请刷新页面后重试')
-        throw new Error('令牌已刷新，请重新发送消息')
+        return 'retry'
       }
       if (response.status === 429) {
         budget.value = { ...(budget.value ?? { requests: 0, requestLimit: 0, tokensUsed: 0, tokenBudget: 0 }), enabled: false }
@@ -205,6 +212,19 @@ export function useChat() {
       }
 
       if (isBrowser()) saveHistory(messages.value)
+      return 'ok'
+    }
+
+    try {
+      abortController = new AbortController()
+
+      let retried = false
+      for (;;) {
+        const result = await attemptSend()
+        if (result === 'ok') break
+        if (retried) throw new Error('会话验证失败，请稍后重试')
+        retried = true
+      }
     } catch (err) {
       if ((err as Error).name === 'AbortError') {
         if (!aiMsg.content) {

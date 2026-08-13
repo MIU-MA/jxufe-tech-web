@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { RouterLink, useRouter } from 'vue-router';
+import { ref, computed } from 'vue';
+import { RouterLink, useRoute } from 'vue-router';
 import { useTheme } from '../composables/useTheme';
 import { useLocale } from '../composables/useLocale';
-import { Sun, Moon, Home, Link, LayoutDashboard, Languages, MessageCircle } from 'lucide-vue-next';
+import { Sun, Moon, Languages } from 'lucide-vue-next';
 
-const router = useRouter();
+const route = useRoute();
 const { theme, toggleTheme } = useTheme();
 const { toggleLocale } = useLocale();
 
@@ -13,134 +13,157 @@ const isMenuOpen = ref(false);
 const isDesktopDropdownOpen = ref(false);
 const isMobileSubOpen = ref(false);
 
+const aboutActive = computed(() =>
+  ['/presidents', '/members', '/details'].some((p) => route.path.startsWith(p)),
+);
+
+function isActive(path: string): boolean {
+  return path === '/' ? route.path === '/' : route.path.startsWith(path);
+}
+
 function closeAll() {
   isMenuOpen.value = false;
   isDesktopDropdownOpen.value = false;
   isMobileSubOpen.value = false;
 }
 
-function navigateTo(path: string) {
-  closeAll();
-  router.push(path);
+const navBase = 'relative flex items-center px-4 h-full text-[15px] no-underline hover:no-underline transition-colors';
+const navIdle = 'text-[var(--color-text-secondary)] hover:text-[var(--color-primary)]';
+const navActive = 'text-[var(--color-primary)] after:content-[\'\'] after:absolute after:left-3 after:right-3 after:bottom-0 after:h-0.5 after:bg-[var(--color-primary)]';
+const joinIdle = 'text-[var(--color-accent)] hover:text-[var(--color-accent)]';
+const joinActive = 'text-[var(--color-accent)] after:content-[\'\'] after:absolute after:left-3 after:right-3 after:bottom-0 after:h-0.5 after:bg-[var(--color-accent)]';
+
+function navClass(on: boolean, join = false): string {
+  if (join) return `${navBase} ${on ? joinActive : joinIdle}`;
+  return `${navBase} ${on ? navActive : navIdle}`;
 }
 </script>
 
 <template>
   <header
-    class="fixed top-0 w-full h-[60px] px-5 md:px-[5%] flex justify-between items-center shadow-md z-[2000] transition-colors duration-300 box-border"
-    :style="{ backgroundColor: 'var(--color-bg-header)' }"
+    class="fixed top-0 left-0 right-0 w-full h-[60px] z-[100] box-border transition-colors duration-300 bg-[var(--color-bg-header)] border-t-4 border-t-[var(--color-primary-dark)] border-b border-b-[var(--color-border)]"
   >
-    <div  class="flex items-center text-white text-[1.2em] font-medium shrink overflow-hidden whitespace-nowrap text-ellipsis no-underline">
-      <img src="/logo.jpg" alt="数智技术协会会徽" class="h-[35px] w-[35px] mr-2 rounded-full bg-white">
-      {{ $t('footer.brandName') }}
-    </div>
+    <div class="max-w-[1160px] mx-auto h-full px-4 md:px-6 flex items-center justify-between gap-4">
+      <RouterLink to="/" class="flex items-center gap-3 shrink no-underline hover:no-underline" @click="closeAll">
+        <img src="/logo.jpg" alt="数智技术协会会徽" class="h-10 w-10 rounded-full object-cover">
+        <span class="flex flex-col leading-tight">
+          <span class="font-display text-[17px] tracking-wide text-[var(--color-text-heading)]">数智技术协会</span>
+          <span class="text-[11px] tracking-[0.08em] text-[var(--color-text-muted)]">DSA Association</span>
+        </span>
+      </RouterLink>
 
-    <ul class="hidden md:flex list-none p-0 m-0 text-center gap-0">
-      <li>
-        <RouterLink to="/" class="text-white flex items-center gap-1.5 px-[15px] py-2 no-underline opacity-90 hover:opacity-100 rounded">
-          <Home :size="18" />{{ $t('nav.home') }}
-        </RouterLink>
-      </li>
-      <li class="relative" @mouseenter="isDesktopDropdownOpen = true" @mouseleave="isDesktopDropdownOpen = false">
+      <nav class="hidden md:flex items-center gap-1 h-full" aria-label="主导航">
+        <RouterLink to="/" :class="navClass(isActive('/'))">{{ $t('nav.home') }}</RouterLink>
+
+        <div class="relative h-full flex items-center" @mouseenter="isDesktopDropdownOpen = true" @mouseleave="isDesktopDropdownOpen = false">
+          <button
+            :class="navClass(aboutActive || isDesktopDropdownOpen)"
+            font-[inherit]
+            @click="isDesktopDropdownOpen = !isDesktopDropdownOpen"
+            aria-haspopup="true"
+            :aria-expanded="isDesktopDropdownOpen"
+          >
+            {{ $t('nav.about') }}
+            <span class="text-[0.72em] opacity-70">&#9662;</span>
+          </button>
+          <ul
+            v-show="isDesktopDropdownOpen"
+            class="absolute top-full left-0 min-w-[150px] list-none p-0 m-0 border bg-[var(--color-bg-card)] border-[var(--color-border)] transition-colors duration-300"
+          >
+            <li>
+              <RouterLink to="/presidents" class="block px-5 py-3 text-[0.9em] no-underline hover:no-underline transition-colors text-[var(--color-text)] hover:bg-[var(--color-bg-alt)]" @click="closeAll">
+                {{ $t('nav.presidents') }}
+              </RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/members" class="block px-5 py-3 text-[0.9em] no-underline hover:no-underline transition-colors text-[var(--color-text)] hover:bg-[var(--color-bg-alt)]" @click="closeAll">
+                {{ $t('nav.members') }}
+              </RouterLink>
+            </li>
+            <li>
+              <RouterLink to="/details" class="block px-5 py-3 text-[0.9em] no-underline hover:no-underline transition-colors text-[var(--color-text)] hover:bg-[var(--color-bg-alt)]" @click="closeAll">
+                {{ $t('nav.aboutUs') }}
+              </RouterLink>
+            </li>
+          </ul>
+        </div>
+
+        <RouterLink to="/chat" :class="navClass(isActive('/chat'))">AI 助手</RouterLink>
+        <RouterLink to="/welcome" :class="navClass(isActive('/welcome'), true)">{{ $t('nav.joinUs') }}</RouterLink>
+      </nav>
+
+      <div class="flex items-center gap-1.5">
         <button
-          class="bg-transparent border-none text-white flex items-center gap-1.5 px-[15px] py-2 opacity-90 cursor-pointer hover:opacity-100 rounded"
-          style="font-family: inherit; font-size: inherit;"
-          @click="isDesktopDropdownOpen = !isDesktopDropdownOpen"
+          class="w-9 h-9 flex items-center justify-center cursor-pointer p-0 shrink-0 border-none rounded transition-colors text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-alt)]"
+          @click="toggleTheme"
+          :title="theme === 'dark' ? $t('theme.switchLight') : $t('theme.switchDark')"
         >
-          <LayoutDashboard :size="18" />{{ $t('nav.about') }}
-          <span class="text-[0.7em] ml-0.5">&#9662;</span>
+          <Sun v-if="theme === 'dark'" :size="18" />
+          <Moon v-else :size="18" />
         </button>
-        <ul
-          v-show="isDesktopDropdownOpen"
-          class="absolute top-full left-0 min-w-[140px] list-none p-0 m-0 rounded-b-md shadow-lg"
-          :style="{ backgroundColor: 'var(--color-bg-header)' }"
+        <button
+          class="w-9 h-9 flex items-center justify-center cursor-pointer p-0 shrink-0 border-none rounded transition-colors text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-alt)]"
+          @click="toggleLocale"
+          :title="$t('lang.switch')"
         >
-          <li><RouterLink to="/presidents" class="text-white block no-underline py-3 px-5 text-[0.88em] whitespace-nowrap hover:bg-[#002a5a]">{{ $t('nav.presidents') }}</RouterLink></li>
-          <li><RouterLink to="/members"   class="text-white block no-underline py-3 px-5 text-[0.88em] whitespace-nowrap hover:bg-[#002a5a]">{{ $t('nav.members') }}</RouterLink></li>
-          <li><RouterLink to="/details"   class="text-white block no-underline py-3 px-5 text-[0.88em] whitespace-nowrap hover:bg-[#002a5a]">{{ $t('nav.aboutUs') }}</RouterLink></li>
-        </ul>
-      </li>
-      <li>
-        <RouterLink to="/chat" class="text-white flex items-center gap-1.5 px-[15px] py-2 no-underline opacity-90 hover:opacity-100 rounded">
-          <MessageCircle :size="18" />AI 对话
-        </RouterLink>
-      </li>
-      <li>
-        <RouterLink to="/welcome" class="text-white flex items-center gap-1.5 px-[15px] py-2 no-underline opacity-90 hover:opacity-100 rounded">
-          <Link :size="18" />{{ $t('nav.joinUs') }}
-        </RouterLink>
-      </li>
-    </ul>
+          <Languages :size="18" />
+        </button>
 
-    <div class="flex items-center ml-auto md:ml-0 gap-3">
-      <button class="bg-transparent w-9 h-9 flex items-center justify-center cursor-pointer text-[1.1em] p-0 shrink-0 border-none rounded transition-colors hover:bg-white/15" @click="toggleTheme">
-        <Sun v-if="theme === 'dark'" :size="18" color="white" />
-        <Moon v-else :size="18" color="white" />
-      </button>
-      <button class="bg-transparent w-9 h-9 flex items-center justify-center cursor-pointer text-[1.1em] p-0 shrink-0 border-none rounded transition-colors hover:bg-white/15" @click="toggleLocale">
-        <Languages :size="18" color="white" />
-      </button>
-
-      <button
-        class="md:hidden bg-transparent border border-white text-white text-[1.5em] cursor-pointer py-[5px] px-2.5 rounded hover:bg-[#002a5a]"
-        @click="isMenuOpen = !isMenuOpen; isMobileSubOpen = false"
-        aria-label="Toggle Navigation"
-        :aria-expanded="isMenuOpen"
-      >&#9776;</button>
+        <button
+          class="md:hidden w-9 h-9 flex items-center justify-center cursor-pointer border text-[1.4em] leading-none transition-colors text-[var(--color-text)] border-[var(--color-border)]"
+          @click="isMenuOpen = !isMenuOpen; isMobileSubOpen = false"
+          aria-label="Toggle Navigation"
+          :aria-expanded="isMenuOpen"
+        >&#9776;</button>
+      </div>
     </div>
   </header>
 
   <div
     v-if="isMenuOpen"
-    class="md:hidden fixed inset-0 top-[60px] z-[1998] bg-black/30"
+    class="md:hidden fixed inset-0 top-[60px] z-[90] bg-[rgba(16,52,95,0.35)]"
     @click="closeAll"
   ></div>
 
   <div
     v-if="isMenuOpen"
-    class="md:hidden fixed top-[60px] right-0 w-[280px] max-w-[85vw] z-[1999] rounded-bl-xl shadow-2xl overflow-y-auto"
-    style="max-height: calc(100vh - 60px);"
-    :style="{ backgroundColor: 'var(--color-nav-bg)' }"
+    class="md:hidden fixed top-[60px] right-0 w-[280px] max-w-[85vw] z-[91] border-l border-l-[var(--color-border)] overflow-y-auto transition-colors duration-300 bg-[var(--color-bg-header)]"
   >
-    <nav class="py-2">
-      <RouterLink to="/" @click="closeAll" class="text-white flex items-center gap-2 mx-3 px-4 py-3.5 no-underline rounded-lg hover:bg-white/10">
-        <Home :size="18" />{{ $t('nav.home') }}
+    <nav class="py-3" aria-label="移动端导航">
+      <RouterLink to="/" @click="closeAll" class="flex items-center mx-3 px-4 py-3.5 no-underline hover:no-underline text-[0.95em] text-[var(--color-text)]">
+        {{ $t('nav.home') }}
       </RouterLink>
 
       <div>
         <button
-          class="w-full bg-transparent border-none text-white flex items-center gap-2 mx-3 px-4 py-3.5 cursor-pointer rounded-lg hover:bg-white/10"
-          style="font-family: inherit; font-size: inherit;"
+          class="w-full flex items-center gap-2 mx-3 px-4 py-3.5 cursor-pointer border-none bg-transparent text-[0.95em] text-[var(--color-text)]"
+          font-[inherit]
           @click="isMobileSubOpen = !isMobileSubOpen"
         >
-          <LayoutDashboard :size="18" />{{ $t('nav.about') }}
-          <span class="ml-auto text-xs transition-transform duration-200" :style="{ transform: isMobileSubOpen ? 'rotate(180deg)' : 'none' }">&#9662;</span>
+          {{ $t('nav.about') }}
+          <span class="ml-auto text-xs transition-transform duration-200" :class="{ 'rotate-180': isMobileSubOpen }">&#9662;</span>
         </button>
-
-        <div
-          v-if="isMobileSubOpen"
-          class="overflow-hidden"
-        >
-          <div class="mx-3 my-1 rounded-lg overflow-hidden" :style="{ backgroundColor: 'rgba(255,255,255,0.06)' }">
-            <RouterLink to="/presidents" @click="closeAll" class="text-white flex items-center gap-2 pl-12 pr-4 py-3 no-underline text-[0.92em] hover:bg-white/10">
+        <div v-if="isMobileSubOpen" class="overflow-hidden">
+          <div class="mx-3 my-1 border-l-2 border-l-[var(--color-border)]">
+            <RouterLink to="/presidents" @click="closeAll" class="flex items-center pl-6 pr-4 py-3 no-underline hover:no-underline text-[0.92em] text-[var(--color-text-secondary)]">
               {{ $t('nav.presidents') }}
             </RouterLink>
-            <RouterLink to="/members"   @click="closeAll" class="text-white flex items-center gap-2 pl-12 pr-4 py-3 no-underline text-[0.92em] hover:bg-white/10">
+            <RouterLink to="/members" @click="closeAll" class="flex items-center pl-6 pr-4 py-3 no-underline hover:no-underline text-[0.92em] text-[var(--color-text-secondary)]">
               {{ $t('nav.members') }}
             </RouterLink>
-            <RouterLink to="/details"   @click="closeAll" class="text-white flex items-center gap-2 pl-12 pr-4 py-3 no-underline text-[0.92em] hover:bg-white/10">
+            <RouterLink to="/details" @click="closeAll" class="flex items-center pl-6 pr-4 py-3 no-underline hover:no-underline text-[0.92em] text-[var(--color-text-secondary)]">
               {{ $t('nav.aboutUs') }}
             </RouterLink>
           </div>
         </div>
       </div>
 
-      <RouterLink to="/chat" @click="closeAll" class="text-white flex items-center gap-2 mx-3 px-4 py-3.5 no-underline rounded-lg hover:bg-white/10">
-        <MessageCircle :size="18" />AI 对话
+      <RouterLink to="/chat" @click="closeAll" class="flex items-center mx-3 px-4 py-3.5 no-underline hover:no-underline text-[0.95em] text-[var(--color-text)]">
+        AI 助手
       </RouterLink>
 
-      <RouterLink to="/welcome" @click="closeAll" class="text-white flex items-center gap-2 mx-3 px-4 py-3.5 no-underline rounded-lg hover:bg-white/10">
-        <Link :size="18" />{{ $t('nav.joinUs') }}
+      <RouterLink to="/welcome" @click="closeAll" class="flex items-center mx-3 px-4 py-3.5 no-underline hover:no-underline text-[0.95em] text-[var(--color-text-secondary)]">
+        {{ $t('nav.joinUs') }}
       </RouterLink>
     </nav>
   </div>

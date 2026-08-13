@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import { RouterLink } from 'vue-router';
-import CodeCard from '../components/CodeCard.vue';
-import BackgroundIcons from '../components/BackgroundIcons.vue';
 import { useScrollReveal } from '../composables/useScrollReveal';
 import { fetchArticles, type Article } from '../api/articles';
 
@@ -46,197 +44,118 @@ const newsList = computed<NewsItem[]>(() =>
     }))
 )
 
-const floatingCodes = [
-  { title: 'style.css',  content: `.dsa-box {\n  display: grid;\n  gap: 2rem;\n  backdrop-filter: blur(10px);\n  animation: pulse 2s;\n}`, style: { top: '5%',  left: '2%',  animationDelay: '0s' } },
-  { title: 'index.html', content: `<section id=\"about\">\n  <div class=\"glass-card\">\n    <h1>数智技术</h1>\n    <p>AI与数据的结合<\/p>\n  </div>\n<\/section>`, style: { bottom: '10%', left: '5%',  animationDelay: '2s' } },
-  { title: 'main.js',    content: `export function initAI() {\n  console.log('AI Engine ready...');\n  return new NeuralNetwork();\n}`, style: { top: '15%', right: '2%',  animationDelay: '4s' } },
-  { title: 'data.py',    content: `import pandas as pd\n\ndf = pd.read_csv('jxufe.csv')\nprint(df.groupby('dept').mean())\n# 数据驱动决策`, style: { bottom: '5%',  right: '8%',  animationDelay: '1s' } },
-  { title: 'query.sql',  content: `SELECT name, role FROM members\nWHERE status = 'active'\nORDER BY contribution DESC;\n-- 检索核心成员`, style: { top: '45%', left: '10%', animationDelay: '3s' } },
-  { title: 'algo.cpp',   content: `void dfs(int u) {\n  vis[u] = true;\n  for(int v : adj[u])\n    if(!vis[v]) dfs(v);\n}\n// 算法探索`, style: { bottom: '40%', right: '5%',  animationDelay: '5s' } },
-]
+const recentNews = computed(() => newsList.value.slice(0, 3))
+const latestNewsId = computed(() => newsList.value[0]?.id)
 
 useScrollReveal()
 
 onMounted(() => {
   loadNews()
-  const typeWriter = (elementId: string, text: string, speed: number) => {
-    let i = 0
-    const el = document.getElementById(elementId)
-    if (!el) return
-    el.textContent = ''
-    function type() {
-      if (!el) return
-      if (i < text.length) { el.textContent += text.charAt(i); i++; setTimeout(type, speed) }
-      else { el.style.borderRight = 'none' }
-    }
-    el.style.borderRight = '0.15em solid var(--color-accent)'; el.style.animation = 'blink-caret .75s step-end infinite'; type()
-  }
-  if (document.getElementById('typing-text-1')) {
-    typeWriter('typing-text-1', "江西财经大学", 100)
-    setTimeout(() => {
-      const el1 = document.getElementById('typing-text-1')
-      if (el1) el1.style.borderRight = 'none'
-      typeWriter('typing-text-2', "数智技术协会", 100)
-    }, "江西财经大学".length * 100 + 500)
-  }
-})</script>
+})
+</script>
 
 <template>
   <div>
-    <nav class="fixed right-[30px] top-1/2 -translate-y-1/2 z-[100] flex flex-col gap-5">
-      <a href="#hero" class="nav-dot" :title="$t('nav.home')"></a>
-      <a href="#about-us-hero" class="nav-dot" :title="$t('home.aboutUs')"></a>
-      <a href="#news-hero" class="nav-dot" :title="$t('home.recentNews')"></a>
-    </nav>
-
-    <section
-      id="hero"
-      class="relative flex flex-col justify-center items-center w-full box-border h-[calc(100vh-60px)] bg-[length:400%_400%]"
-      :style="{ background: 'var(--hero-gradient)', animation: 'gradientFlow 15s ease infinite' }"
-    >
-      <BackgroundIcons />
-
-      <div class="relative z-[5] w-full flex flex-col items-center justify-center text-center">
-        <img
-          src="/logo.jpg" alt="Logo"
-          class="block w-[180px] h-[180px] lg:w-[250px] lg:h-[250px] rounded-full object-cover mb-[25px] shadow-[0_0_0_10px_rgba(255,255,255,0.5),0_10px_20px_rgba(0,0,0,0.1)]"
-        >
-        <h1 class="flex flex-col items-center my-2.5 font-bold" :style="{ color: 'var(--color-text-heading)' }">
-          <span id="typing-text-1" class="hero-line text-[2.5em] lg:text-[3em] mb-[5px] tracking-[0.05em]"></span>
-          <span id="typing-text-2" class="hero-line text-[1.8em] tracking-[0.1em]" :style="{ color: 'var(--color-text-heading)' }"></span>
+    <section class="transition-colors duration-300 bg-[color:var(--color-bg-alt)] border-b border-b-[var(--color-border)] bg-[image:linear-gradient(to_right,rgba(16,52,95,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(16,52,95,0.05)_1px,transparent_1px)] bg-[size:44px_44px]">
+      <div class="max-w-[1160px] mx-auto px-4 md:px-6 py-16 md:py-24 text-center">
+        <img src="/logo.jpg" alt="数智技术协会会徽" class="w-16 h-16 md:w-20 md:h-20 rounded-full object-cover mx-auto mb-7">
+        <h1 class="font-display leading-tight m-0 text-[var(--color-text-heading)]">
+          <span class="block text-[2em] md:text-[2.6em] tracking-[0.04em]">{{ $t('home.title1') }}</span>
+          <span class="block text-[1.3em] md:text-[1.7em] mt-2 tracking-[0.12em]">{{ $t('home.title2') }}</span>
         </h1>
-        <p class="text-[1.2em] mb-10 font-medium" :style="{ color: 'var(--color-accent)' }">{{ $t('home.subtitle') }}</p>
+        <p class="mt-6 mb-0 text-[1.02em] text-[var(--color-text-secondary)]">{{ $t('home.subtitle') }}</p>
       </div>
-
-      <a href="#about-us-hero" class="absolute bottom-[30px] text-[2em] z-10 cursor-pointer" :style="{ color: 'var(--color-text-heading)', animation: 'bounce 2s infinite' }">&#8659;</a>
     </section>
 
-    <main class="max-w-6xl mx-auto px-5 pt-20 pb-10 min-h-[calc(100vh-350px)]">
+    <div class="max-w-[1160px] mx-auto px-4 md:px-6 py-12 md:py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10 lg:gap-14">
 
-      <section
-        id="about-us-hero"
-        class="relative flex flex-col justify-center items-center w-full box-border min-h-[80vh] py-[60px] px-5 transition-colors duration-300"
-        :style="{ backgroundColor: 'var(--color-bg-alt)' }"
-      >
-        <BackgroundIcons />
+        <div class="min-w-0">
 
-        <div class="floating-code-container hidden lg:block absolute inset-0 pointer-events-none z-[4]">
-          <div
-            v-for="(item, index) in floatingCodes"
-            :key="index"
-            class="floating-card-wrapper absolute pointer-events-auto"
-            :style="{
-              ...item.style,
-              animation: 'floatCard 8s ease-in-out infinite',
-              opacity: 0.7,
-              transform: 'scale(0.65)',
-              filter: 'drop-shadow(0 10px 15px rgba(0,0,0,0.2))',
-            }"
-            :class="{ 'hidden 2xl:block': index >= 4 }"
-          >
-            <CodeCard :title="item.title" :code="item.content" />
-          </div>
-        </div>
+          <section id="news" class="mb-12 bg-[var(--color-bg-dark)]">
+            <div class="p-6 md:p-8">
+              <div class="flex items-baseline justify-between gap-4 mb-6">
+                <h2 class="font-display text-[1.4em] m-0 text-[var(--color-text-dark)]">
+                  {{ $t('home.recentNews') }}
+                </h2>
+                <RouterLink
+                  v-if="latestNewsId"
+                  to="/news"
+                  class="text-[0.9em] no-underline hover:no-underline transition-colors text-[var(--color-text-dark-muted)]"
+                >全部新闻</RouterLink>
+              </div>
 
-        <div class="fade-in-on-scroll relative z-[5] max-w-[800px] rounded-[20px] p-[50px] shadow-md transition-colors duration-300" :style="{ backgroundColor: 'var(--color-bg-card)', boxShadow: '0 10px 40px var(--color-shadow)' }">
-          <h2 class="text-center text-[2.2em] mb-5" :style="{ color: 'var(--color-accent)' }">{{ $t('home.aboutUs') }}</h2>
-          <h3 class="text-center text-[1.5em] mb-4" :style="{ color: 'var(--color-text-heading)' }">{{ $t('home.aboutCollege') }}</h3>
-          <p><strong>{{ $t('footer.brandName') }}</strong>{{ $t('home.aboutDesc') }}</p>
-          <ul>
-            <li><strong>{{ $t('home.dept1Name') }}</strong> {{ $t('home.dept1Desc') }}</li>
-            <li><strong>{{ $t('home.dept2Name') }}</strong> {{ $t('home.dept2Desc') }}</li>
-            <li><strong>{{ $t('home.dept3Name') }}</strong> {{ $t('home.dept3Desc') }}</li>
-          </ul>
-          <RouterLink to="/details" class="block text-center mt-5 font-bold" :style="{ color: 'var(--color-accent)' }">{{ $t('home.more') }}</RouterLink>
-        </div>
-      </section>
+              <p v-if="newsLoading" class="py-4 m-0 text-[0.92em] text-[var(--color-text-dark-muted)]">加载中…</p>
+              <p v-else-if="newsError" class="py-4 m-0 text-[0.92em] text-[var(--color-text-dark-muted)]">暂无法加载公告</p>
+              <p v-else-if="recentNews.length === 0" class="py-4 m-0 text-[0.92em] text-[var(--color-text-dark-muted)]">暂无公告</p>
 
-      <section
-        id="news-hero"
-        class="relative flex flex-col justify-center items-center w-full box-border min-h-[80vh] py-20 px-5 transition-colors duration-300"
-        :style="{ backgroundColor: 'var(--color-bg)' }"
-      >
-        <BackgroundIcons />
-        <div class="fade-in-on-scroll relative z-[5]">
-          <h2 class="text-center text-[2em] mb-10" :style="{ color: 'var(--color-text-heading)' }">{{ $t('home.recentNews') }}</h2>
+              <ul v-else class="list-none p-0 m-0">
+                <li v-for="news in recentNews" :key="news.id" class="border-t border-t-[var(--color-line-dark)]">
+                  <RouterLink :to="news.link" class="flex flex-wrap items-center gap-x-4 gap-y-1 py-3.5 md:py-4 no-underline hover:no-underline transition-colors">
+                    <span class="shrink-0 text-[0.85em] tabular-nums text-[var(--color-text-dark-muted)]">{{ news.date }}</span>
+                    <span class="flex-1 min-w-0 truncate text-[1em] text-[var(--color-text-dark)]">{{ news.title }}</span>
+                    <span class="text-[0.85em] text-[var(--color-text-dark-muted)]">→</span>
+                  </RouterLink>
+                </li>
+              </ul>
+            </div>
+          </section>
 
-          <p v-if="newsLoading" class="text-center py-10" :style="{ color: 'var(--color-text-muted)' }">加载中…</p>
-          <p v-else-if="newsError" class="text-center py-10" :style="{ color: 'var(--color-text-muted)' }">暂无法加载新闻</p>
-          <p v-else-if="newsList.length === 0" class="text-center py-10" :style="{ color: 'var(--color-text-muted)' }">暂无新闻</p>
-
-          <div v-else class="flex flex-wrap justify-center gap-[30px] mt-5">
-            <div v-for="news in newsList" :key="news.id" class="news-card w-[300px] h-[260px] mx-auto bg-transparent">
-              <div class="news-card-inner relative w-full h-full text-center">
-                <div
-                  class="news-card-front absolute inset-0 rounded-[15px] flex items-center justify-center transition-colors duration-300"
-                  :style="{ backgroundColor: 'var(--color-bg-card)', boxShadow: '0 5px 15px var(--color-shadow-card)' }"
-                >
-                  <div>
-                    <h3 class="text-lg font-bold" :style="{ color: 'var(--color-text-heading)' }">{{ news.title }}</h3>
-                    <p class="text-sm mt-2">{{ news.date }}</p>
-                  </div>
+          <section class="fade-in-on-scroll bg-[var(--color-bg-alt)]">
+            <div class="p-6 md:p-8">
+              <div class="grid md:grid-cols-[1fr_1.6fr] gap-x-10 gap-y-6">
+                <div>
+                  <div class="font-display text-[2em] leading-none text-[var(--color-primary)]">01</div>
+                  <div class="mt-3 w-10 border-t-2 border-t-[var(--color-primary)]"></div>
+                  <div class="mt-3 text-[0.8em] tracking-[0.08em] uppercase text-[var(--color-text-muted)]">About Us</div>
+                  <h3 class="font-display text-[1.5em] mt-5 mb-0 text-[var(--color-text-heading)]">{{ $t('home.aboutUs') }}</h3>
                 </div>
-                <div
-                  class="news-card-back absolute inset-0 rounded-[15px] text-white flex flex-col justify-center items-center p-[25px]"
-                  :style="{ background: 'linear-gradient(135deg, var(--color-primary), var(--color-primary-light))', boxShadow: '0 5px 15px var(--color-shadow-card)' }"
-                >
-                  <h4 class="text-lg font-bold mb-3">{{ $t('home.eventDetails') }}</h4>
-                  <p class="text-sm mb-3">{{ news.summary }}</p>
-                  <a :href="news.link" class="news-card-link mt-4 py-2 px-5 border-2 border-white rounded-[25px] text-white font-bold transition-all duration-300 hover:bg-white hover:text-[#003a7a]">
-                    {{ $t('home.viewDetails') }}
-                  </a>
+                <div>
+                  <p class="mt-0 mb-4 leading-relaxed text-[var(--color-text-secondary)]">
+                    {{ $t('details.aboutIntro') }}
+                  </p>
+                  <p class="mb-0 leading-relaxed text-[var(--color-text-secondary)]">
+                    {{ $t('footer.tagline1') }}{{ $t('footer.tagline2') }}
+                  </p>
+                  <RouterLink to="/details" class="inline-block mt-5 font-medium no-underline hover:no-underline transition-colors text-[var(--color-primary)]">
+                    {{ $t('home.more') }}
+                  </RouterLink>
                 </div>
               </div>
             </div>
-          </div>
+          </section>
         </div>
-      </section>
-    </main>
+
+        <aside class="min-w-0 fade-in-on-scroll">
+
+          <div class="mb-12">
+            <h2 class="font-display text-[1.25em] m-0 pb-3 text-[var(--color-text-heading)] border-b border-b-[var(--color-border)]">
+              {{ $t('details.departmentSetup') }}
+            </h2>
+            <ul class="list-none p-0 m-0">
+              <li v-for="(dept, i) in [
+                { name: $t('details.publicDept'), desc: $t('details.publicDeptDesc') },
+                { name: $t('details.orgDept'), desc: $t('details.orgDeptDesc') },
+                { name: $t('details.studyDept'), desc: $t('details.studyDeptDesc') },
+              ]" :key="i" class="border-t border-t-[var(--color-border-light)]">
+                <RouterLink to="/details" class="flex items-center gap-4 py-3.5 no-underline hover:no-underline transition-colors">
+                  <span class="font-display w-7 shrink-0 text-[0.95em] text-[var(--color-text-muted)]">0{{ i + 1 }}</span>
+                  <span class="flex-1 min-w-0">
+                    <span class="block text-[0.95em] text-[var(--color-text)]">{{ dept.name }}</span>
+                    <span class="block text-[0.8em] truncate text-[var(--color-text-muted)]">{{ dept.desc }}</span>
+                  </span>
+                  <span class="shrink-0 text-[0.85em] text-[var(--color-text-muted)]">→</span>
+                </RouterLink>
+              </li>
+            </ul>
+          </div>
+
+          <RouterLink to="/welcome" class="block no-underline hover:no-underline p-6 transition-colors bg-[var(--color-bg-dark)]">
+            <span class="block font-display text-[1.2em] text-[var(--color-text-dark)]">{{ $t('nav.joinUs') }}</span>
+            <span class="block mt-2 text-[0.88em] leading-relaxed text-[var(--color-text-dark-muted)]">{{ $t('welcome.text2') }}</span>
+          </RouterLink>
+        </aside>
+      </div>
+    </div>
   </div>
 </template>
-
-<style>
-.news-card { perspective: 1000px; }
-.news-card-inner {
-  transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-style: preserve-3d;
-}
-.news-card:hover .news-card-inner { transform: rotateY(180deg); }
-.news-card-front,
-.news-card-back { backface-visibility: hidden; }
-.news-card-back { transform: rotateY(180deg); }
-
-.floating-card-wrapper { transition: all 0.5s ease; }
-.floating-card-wrapper:hover {
-  opacity: 1 !important;
-  transform: scale(1) !important;
-  z-index: 20;
-  filter: drop-shadow(0 20px 40px rgba(0, 58, 122, 0.4));
-}
-
-.nav-dot {
-  display: block;
-  width: 12px; height: 12px;
-  border-radius: 50%;
-  background-color: var(--color-border);
-  transition: all 0.3s ease;
-  border: 2px solid transparent;
-  position: relative;
-}
-.nav-dot:hover {
-  background-color: var(--color-accent);
-  transform: scale(1.3);
-  box-shadow: 0 0 10px rgba(255, 111, 0, 0.5);
-}
-.nav-dot:hover::before {
-  content: attr(title);
-  position: absolute; right: 25px; top: 50%;
-  transform: translateY(-50%);
-  background: var(--color-primary);
-  color: white;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  white-space: nowrap;
-}
-</style>

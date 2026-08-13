@@ -21,13 +21,11 @@ useScrollReveal();
 <template>
   <main class="max-w-6xl mx-auto px-5 pt-20 pb-10 min-h-[calc(100vh-350px)]">
     <div
-      class="fade-in-on-scroll text-center mb-12 p-8 rounded-xl shadow-md transition-colors duration-300"
-      :style="{ backgroundColor: 'var(--color-bg-card)', boxShadow: '0 4px 12px var(--color-shadow)' }"
+      class="fade-in-on-scroll text-center mb-12 p-8 rounded-xl transition-colors duration-300 bg-[var(--color-bg-card)] [box-shadow:0_4px_12px_var(--color-shadow)]"
     >
-      <h1 class="text-[2.5em] md:text-[2em] font-bold m-0 mb-2.5" :style="{ color: 'var(--color-accent)' }">{{ $t('members.title') }}</h1>
+      <h1 class="text-[2.5em] md:text-[2em] font-bold m-0 mb-2.5 text-[var(--color-accent)]">{{ $t('members.title') }}</h1>
     </div>
-    <div class="fade-in-on-scroll grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-auto-fill gap-8 pb-16"
-      style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr))">
+    <div class="fade-in-on-scroll grid grid-cols-1 sm:grid-cols-2 gap-8 pb-16 grid-cols-[repeat(auto-fit,minmax(300px,1fr))]">
       <MemberCard v-for="(member, index) in members" :key="index"
         :img="member.img"
         :name="member.name"
