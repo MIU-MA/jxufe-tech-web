@@ -33,7 +33,7 @@ jobs:
         run: npm run build
         env:
           # SSG 构建时从线上 API 抓取 CMS 文章，展开 /news/:id 静态页
-          VITE_SSG_API_BASE: https://api.jxufe-tech.top
+          VITE_SSG_API_BASE: https://www.jxufe-tech.top
 
       - name: Unit tests
         run: npm test -- --runInBand

@@ -30,7 +30,7 @@ jobs:
       - name: Build frontend (SSG)
         run: npm run build:frontend
         env:
-          VITE_SSG_API_BASE: https://api.jxufe-tech.top
+          VITE_SSG_API_BASE: https://www.jxufe-tech.top
 
       - name: Deploy Frontend to Server
         uses: appleboy/scp-action@v0.1.7
