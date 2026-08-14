@@ -1,46 +1,33 @@
-# GitHub Actions 自动部署说明
+# GitHub Actions 自动部署
 
-每次 `git push` 到 `main` 分支，自动构建、校验并部署前后端到宝塔服务器。
+push 到 `main` 分支后自动构建、测试并部署前后端到宝塔服务器。
 
-## 工作流做了什么
+## 流程
 
-1. checkout 代码
-2. **从仓库根目录** `npm ci`（单一依赖安装，锁定版本）
-3. 构建：前端 SSG（`VITE_SSG_API_BASE` 指向线上 API 抓取文章）+ 后端 NestJS 编译
-4. 校验闸门（**任一失败即停止上线**）：
-   - `npm test -- --runInBand`（单元测试）
-   - `npx vue-tsc --noEmit -p frontend/tsconfig.json`（前端类型检查）
-   - `cd backend && npx eslint "{src,test}/**/*.ts"`（后端 Lint，只检查不自动修改）
-5. 部署产物到服务器：
-   - `frontend/dist/**` → `/www/wwwroot/jxufe-tech/frontend`
-   - `backend/dist/**` → `/www/wwwroot/jxufe-tech/backend`
-   - 根目录 `package.json`、`package-lock.json`、`ecosystem.config.js` → `/www/wwwroot/jxufe-tech`
-   - **不部署 `backend/.env`**：敏感配置由服务器单独维护（详见下）
-6. 服务器端在仓库根执行 `npm ci --omit=dev`，再 `pm2 startOrReload ecosystem.config.js --update-env`
+1. 根目录 `npm ci` 装依赖
+2. 构建：前端 SSG（构建时从 `www.jxufe-tech.top` 抓文章，预渲染 `/news/:id`）+ 后端 NestJS 编译
+3. 校验，任一失败就中断、不上线：
+   - 后端单测 `npm test -- --runInBand`
+   - 前端类型检查 `npx vue-tsc --noEmit -p frontend/tsconfig.json`
+   - 后端 lint `cd backend && npx eslint "{src,test}/**/*.ts"`（只检查，不自动改）
+4. 把产物 scp 到服务器：
+   - `frontend/dist/**` → `/www/wwwroot/jxufe-tech/frontend`（`strip_components: 2`，SSG 产物直接落在 frontend 根目录，nginx root 指向它）
+   - `backend/dist/**` → `/www/wwwroot/jxufe-tech/backend`（`strip_components: 1`，保留 `dist/` 层级，落盘 `backend/dist/main.js`，对应 `ecosystem.config.js` 里的 `script: 'dist/main.js'`）
+   - 根 `package.json` / `package-lock.json` / `ecosystem.config.js` → `/www/wwwroot/jxufe-tech`
+5. 服务器上 `npm ci --omit=dev` 装生产依赖，然后 `pm2 startOrReload ecosystem.config.js --update-env` 重载后端
 
-> 部署说明：前端 `frontend/dist/**` 用 `strip_components: 2`，SSG 产物直接落在
-> `/www/wwwroot/jxufe-tech/frontend/`（Nginx root 指向该目录，不含 `dist/`）。
-> 后端 `backend/dist/**` 用 `strip_components: 1` **保留 `dist/` 层级**，落盘
-> `/www/wwwroot/jxufe-tech/backend/dist/main.js`，与根 `ecosystem.config.js` 的
-> `script: 'dist/main.js'`（`cwd` 指向 `backend`）一致。
+`backend/.env` 不随部署上传，由服务器单独维护，部署不会覆盖它。
 
-## 使用前配置
+## 首次配置
 
-### 1. 服务器准备
+### 服务器
 
 ```bash
-# 安装 Node.js ≥ 22 与 PM2
-npm install -g pm2
-
-# 创建项目目录
+npm install -g pm2        # 需要 Node.js ≥ 22
 mkdir -p /www/wwwroot/jxufe-tech
-
-# 配置 Nginx（前端静态文件 + API 反向代理，见下方示例）
 ```
 
-### 2. 服务器维护 `.env`（不入库）
-
-`backend/.env` **不随 Git 部署**，请在服务器手动创建（部署不会覆盖）：
+### 服务器维护 `.env`
 
 ```bash
 cd /www/wwwroot/jxufe-tech/backend
@@ -53,22 +40,20 @@ EOF
 chmod 600 .env
 ```
 
-> 提示：更推荐用 ECS / 云平台的密钥注入，把上述变量作为进程环境变量注入，
-> 这样 `.env` 甚至可以不需要。
+密钥多的话也可以用 ECS 的密钥注入，把变量作为进程环境变量注入，`.env` 就不需要了。
 
-### 3. Nginx 配置示例
+### Nginx
 
 ```nginx
 server {
     listen 443 ssl;
     server_name www.jxufe-tech.top;
-    # ... ssl 证书配置 ...
+    # ...ssl 证书...
 
-    # 前端静态文件（SSG 产物，部署直接落在 frontend/ 根目录）
-    root /www/wwwroot/jxufe-tech/frontend;
+    root /www/wwwroot/jxufe-tech/frontend;   # SSG 静态文件
     index index.html;
 
-    # API 反向代理（SSE 必须关闭缓冲）
+    # API 反代到后端。AI 对话是 SSE 流，必须关掉缓冲
     location /api/ {
         proxy_pass http://127.0.0.1:3003;
         proxy_set_header Host $host;
@@ -84,37 +69,35 @@ server {
         alias /www/wwwroot/jxufe-tech/backend/public/uploads/;
     }
 
-    # SSG 页面：命中文件则返回，否则回退 index.html
+    # SSG 页面：命中文件返回文件，否则回退 index.html
     location / {
         try_files $uri $uri.html $uri/ /index.html;
     }
 }
 ```
 
-> 说明：后端按 `TRUST_PROXY=1`（一层 Nginx）解析 `req.ip`，
-> 忽略客户端伪造的 `X-Forwarded-For`，用于登录/聊天限流。
+> 后端 `TRUST_PROXY=1`，按一层 nginx 解析 `req.ip`，忽略客户端伪造的 `X-Forwarded-For`（登录/聊天限流用）。
 
-### 4. 生成 SSH 密钥
+### SSH 密钥 + GitHub Secrets
 
 ```bash
 ssh-keygen -t ed25519 -C "github-actions" -f ~/.ssh/github-actions
 cat ~/.ssh/github-actions.pub >> ~/.ssh/authorized_keys
-cat ~/.ssh/github-actions   # 复制全部内容
+cat ~/.ssh/github-actions   # 全部复制
 ```
 
-### 5. 设置 GitHub Secrets
+仓库 Settings → Secrets and variables → Actions，新建两个 secret：
 
-仓库 → Settings → Secrets and variables → Actions → New repository secret：
-
-| Secret 名 | 值 |
-|-----------|-----|
+| Secret | 值 |
+|---|---|
 | `SERVER_IP` | 服务器 IP |
-| `SERVER_SSH_KEY` | `~/.ssh/github-actions` 的完整内容 |
+| `SERVER_SSH_KEY` | 上面复制的内容 |
 
 ## 首次部署
 
+先手动跑一次，把目录和依赖备好：
+
 ```bash
-# 在服务器上手动跑一次，确保目录与依赖就绪
 cd /www/wwwroot/jxufe-tech
 mkdir -p backend/public/uploads
 npm ci --omit=dev
@@ -122,11 +105,11 @@ pm2 startOrReload ecosystem.config.js --update-env
 pm2 save
 ```
 
-之后推代码到 `main` 就会自动部署。
+之后 push 到 main 就自动部署了。
 
 ## 验证
 
 1. `git push origin main`
-2. GitHub → Actions 标签页查看运行状态
-3. 成功后访问 `https://www.jxufe-tech.top` 看首页是否正常
-4. 访问 `https://www.jxufe-tech.top/api/health` 看健康检查是否返回 JSON
+2. GitHub → Actions 标签页看运行状态
+3. 打开 `https://www.jxufe-tech.top` 看首页
+4. `https://www.jxufe-tech.top/api/health` 应返回 JSON
