@@ -15,8 +15,8 @@ import { ALLOWED_ORIGINS } from "./common/origins";
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
-  // trust proxy 让 req.ip 取 Nginx 追加的 X-Forwarded-For，客户端伪造无效
-  app.set("trust proxy", Number(process.env.TRUST_PROXY ?? 1));
+  // 默认不信任转发头；部署在 Nginx 后时显式设置 TRUST_PROXY=1
+  app.set("trust proxy", Number(process.env.TRUST_PROXY ?? 0));
 
   app.use(
     helmet({
