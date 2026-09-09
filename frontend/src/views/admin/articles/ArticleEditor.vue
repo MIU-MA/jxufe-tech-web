@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import type { Article } from '../../../api/articles'
+import { toLocalDateTime, toPublishedAt } from '../../../utils/dateTime'
 
 const props = defineProps<{
   mode: 'create' | 'edit'
@@ -24,7 +25,7 @@ watch(() => props.article, (a) => {
     title.value = a.title
     content.value = a.content
     summary.value = a.summary || ''
-    publishedAt.value = a.publishedAt ? new Date(a.publishedAt).toISOString().slice(0, 16) : ''
+    publishedAt.value = a.publishedAt ? toLocalDateTime(a.publishedAt) : ''
   }
 }, { immediate: true })
 
@@ -38,7 +39,7 @@ function handleSave() {
     title: title.value.trim(),
     content: content.value,
     summary: summary.value.trim() || null,
-    publishedAt: publishedAt.value ? new Date(publishedAt.value).toISOString() : null,
+    publishedAt: toPublishedAt(publishedAt.value, props.mode === 'edit' ? props.article?.publishedAt : null),
   })
 }
 </script>

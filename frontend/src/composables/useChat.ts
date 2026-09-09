@@ -1,4 +1,4 @@
-import { ref, nextTick } from 'vue'
+import { ref, reactive, nextTick } from 'vue'
 
 export interface ChatMessage {
   id: string
@@ -141,12 +141,12 @@ export function useChat() {
     if (isBrowser()) saveHistory(messages.value)
     await scrollToBottom()
 
-    const aiMsg: ChatMessage = {
+    const aiMsg = reactive<ChatMessage>({
       id: `a-${Date.now()}`,
       role: 'assistant',
       content: '',
       timestamp: Date.now(),
-    }
+    })
     messages.value.push(aiMsg)
     isThinking.value = true
     await scrollToBottom()
