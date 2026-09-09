@@ -8,6 +8,7 @@ import zh from './i18n/locales/zh.json'
 import en from './i18n/locales/en.json'
 import { getInitialLocale } from './composables/useLocale'
 import { fetchArticles } from './api/articles'
+import { articleInitialStateKey } from './composables/useArticles'
 
 import './assets/main.css'
 
@@ -20,7 +21,12 @@ export const createApp = ViteSSG(
       return { top: 0 }
     }
   },
-  ({ app, isClient }) => {
+  async ({ app, isClient, initialState, routePath }) => {
+    // 在渲染前抓取数据；API 出错时直接终止构建，保留线上版本。
+    if (!isClient && import.meta.env.VITE_SSG_API_BASE && (routePath === '/' || routePath === '/news')) {
+      initialState.articles = await fetchArticles()
+    }
+    app.provide(articleInitialStateKey, initialState)
     const i18n = createI18n({
       legacy: false,
       locale: isClient ? getInitialLocale() : 'zh',

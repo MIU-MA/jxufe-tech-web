@@ -7,12 +7,10 @@
       <h1 class="font-display text-[2em] md:text-[2.3em] leading-snug mb-6 text-[var(--color-text-heading)]">
         {{ $t('welcome.title') }}
       </h1>
-      <p class="text-[1.05em] leading-relaxed text-[var(--color-text-secondary)]">
-        {{ $t('welcome.text1') }}
-      </p>
-      <p class="text-[1.05em] leading-relaxed text-[var(--color-text-secondary)]">
-        {{ $t('welcome.text2') }}
-      </p>
+      <img  src="/images/welcome.jpg"
+        alt="数智技术协会"
+        class="mx-auto mb-6 rounded-lg shadow-md max-h-[400px] object-cover"  >
+      
     </section>
   </main>
 </template>

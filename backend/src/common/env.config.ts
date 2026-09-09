@@ -56,6 +56,13 @@ export function assertSecretsOrExit(): void {
     );
   }
 
+  if (process.env.TRUST_PROXY !== undefined) {
+    const trustProxy = Number(process.env.TRUST_PROXY);
+    if (!Number.isInteger(trustProxy) || trustProxy < 0) {
+      problems.push("TRUST_PROXY 必须是非负整数（如 0 或 1）");
+    }
+  }
+
   if (problems.length === 0) return;
 
   console.error("══════════════════════════════════════════");

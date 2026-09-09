@@ -1,4 +1,4 @@
-import { ref, nextTick } from 'vue'
+import { ref, reactive, nextTick } from 'vue'
 
 export interface ChatMessage {
   id: string
@@ -141,12 +141,12 @@ export function useChat() {
     if (isBrowser()) saveHistory(messages.value)
     await scrollToBottom()
 
-    const aiMsg: ChatMessage = {
+    const aiMsg = reactive<ChatMessage>({
       id: `a-${Date.now()}`,
       role: 'assistant',
       content: '',
       timestamp: Date.now(),
-    }
+    })
     messages.value.push(aiMsg)
     isThinking.value = true
     await scrollToBottom()
@@ -195,19 +195,25 @@ export function useChat() {
 
           if (data === '[DONE]') continue
 
+          let parsed: any
           try {
-            const parsed = JSON.parse(data)
-            const delta = parsed?.choices?.[0]?.delta?.content
-            if (delta) {
-              aiMsg.content += delta
-              const now = Date.now()
-              if (now - lastSave > 200) {
-                if (isBrowser()) saveHistory(messages.value)
-                lastSave = now
-              }
-              await scrollToBottom()
+            parsed = JSON.parse(data)
+          } catch {
+            continue
+          }
+          if (typeof parsed?.error === 'string' && parsed.error) {
+            throw new Error(parsed.error)
+          }
+          const delta = parsed?.choices?.[0]?.delta?.content
+          if (delta) {
+            aiMsg.content += delta
+            const now = Date.now()
+            if (now - lastSave > 200) {
+              if (isBrowser()) saveHistory(messages.value)
+              lastSave = now
             }
-          } catch {}
+            await scrollToBottom()
+          }
         }
       }
 

@@ -19,10 +19,12 @@
     "lint": "cd backend && eslint \"{src,test}/**/*.ts\"",
     "format": "cd backend && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "test": "cd backend && jest",
+    "test:frontend": "node --test tests/frontend.test.cjs",
     "test:watch": "cd backend && jest --watch",
     "test:cov": "cd backend && jest --coverage",
     "test:debug": "cd backend && node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "cd backend && jest --config ./test/jest-e2e.json"
+    "test:e2e": "cd backend && jest --config ./test/jest-e2e.json",
+    "typecheck": "vue-tsc -p frontend/tsconfig.json --noEmit"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
