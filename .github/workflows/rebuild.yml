@@ -8,6 +8,11 @@ on:
         required: false
         default: 'manual'
 
+# CMS 重建与代码部署共用锁，避免旧构建覆盖或清理新构建页面。
+concurrency:
+  group: production-deploy
+  cancel-in-progress: false
+
 jobs:
   rebuild-frontend:
     if: github.repository == 'jxufe-tech/jxufe-tech-web'
@@ -32,6 +37,22 @@ jobs:
         env:
           VITE_SSG_API_BASE: https://www.jxufe-tech.top
 
+      - name: Frontend and deployment regression tests
+        run: npm run test:frontend
+
+      - name: Generate news page manifest
+        run: node scripts/news-pages.cjs manifest frontend/dist
+
+      - name: Upload news cleanup script
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          target: /www/wwwroot/jxufe-tech
+          source: "scripts/news-pages.cjs"
+          overwrite: true
+
       - name: Deploy Frontend to Server
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -43,13 +64,15 @@ jobs:
           strip_components: 2
           overwrite: true
 
-      - name: Prune stale frontend assets
+      - name: Prune stale news pages and frontend assets
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SERVER_IP }}
           username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            set -eu
+            node /www/wwwroot/jxufe-tech/scripts/news-pages.cjs prune /www/wwwroot/jxufe-tech/frontend
             cd /www/wwwroot/jxufe-tech/frontend/assets
             echo "清理 30 分钟前的旧 assets（本次刚上传的不在列）"
             find . -maxdepth 1 -type f -mmin +30 -print -delete

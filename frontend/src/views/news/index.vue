@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { fetchArticles, type Article } from '../../api/articles'
+import { useArticles } from '../../composables/useArticles'
+import { formatArticleDate as formatDate } from '../../utils/dateTime'
 
 interface NewsItem {
   id: number
@@ -10,43 +11,26 @@ interface NewsItem {
   summary: string
 }
 
-const loading = ref(true)
-const error = ref(false)
-const list = ref<NewsItem[]>([])
+const { articles, loading, error, load } = useArticles()
 
 function stripMarkdown(md: string): string {
   return md.replace(/#{1,6}\s/g, '').replace(/[*_~`>\[\]()!|-]/g, '').replace(/\n+/g, ' ').trim()
 }
 
-function formatDate(iso: string): string {
-  const d = new Date(iso)
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-}
-
-async function load() {
-  loading.value = true; error.value = false
-  try {
-    const data = await fetchArticles()
-    list.value = [...data]
-      .sort((a, b) => {
-        const da = a.publishedAt || a.createdAt
-        const db = b.publishedAt || b.createdAt
-        return new Date(db).getTime() - new Date(da).getTime()
-      })
-      .map(item => ({
-        id: item.id,
-        title: item.title,
-        date: formatDate(item.publishedAt || item.createdAt),
-        summary: item.summary || (stripMarkdown(item.content).slice(0, 120) + (item.content.length > 120 ? '…' : ''))
-      }))
-  } catch {
-    error.value = true
-  } finally {
-    loading.value = false
-  }
-}
-
-onMounted(load)
+const list = computed<NewsItem[]>(() =>
+  [...articles.value]
+    .sort((a, b) => {
+      const da = a.publishedAt || a.createdAt
+      const db = b.publishedAt || b.createdAt
+      return new Date(db).getTime() - new Date(da).getTime()
+    })
+    .map(item => ({
+      id: item.id,
+      title: item.title,
+      date: formatDate(item.publishedAt || item.createdAt),
+      summary: item.summary || (stripMarkdown(item.content).slice(0, 120) + (item.content.length > 120 ? '…' : ''))
+    }))
+)
 </script>
 
 <template>

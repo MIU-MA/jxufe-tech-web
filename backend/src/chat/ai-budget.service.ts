@@ -43,12 +43,36 @@ export class AiBudgetService {
     private usageRepo: Repository<AiUsage>,
   ) {}
 
-  async check(): Promise<boolean> {
-    const row = await this.getOrCreateToday();
-    const ok =
-      row.requests < this.requestLimit &&
-      row.promptTokens + row.completionTokens < this.tokenBudget;
+  /**
+   * 在调用上游 AI 前原子占用一次请求名额。
+   * 条件更新让并发请求无法同时越过 requestLimit，也避免读改写丢失计数。
+   */
+  async reserveRequest(): Promise<boolean> {
+    const key = todayKey();
+    await this.usageRepo
+      .createQueryBuilder()
+      .insert()
+      .into(AiUsage)
+      .values({ date: key })
+      .orIgnore()
+      .execute();
+
+    const result = await this.usageRepo
+      .createQueryBuilder()
+      .update(AiUsage)
+      .set({ requests: () => '"requests" + 1' })
+      .where('"date" = :key', { key })
+      .andWhere('"requests" < :requestLimit', {
+        requestLimit: this.requestLimit,
+      })
+      .andWhere('"promptTokens" + "completionTokens" < :tokenBudget', {
+        tokenBudget: this.tokenBudget,
+      })
+      .execute();
+
+    const ok = (result.affected ?? 0) === 1;
     if (!ok) {
+      const row = await this.getOrCreateToday();
       this.logger.warn(
         `AI 每日预算已用完：请求 ${row.requests}/${this.requestLimit}，tokens ${row.promptTokens + row.completionTokens}/${this.tokenBudget}`,
       );
@@ -56,12 +80,21 @@ export class AiBudgetService {
     return ok;
   }
 
-  async record(usage: TokenUsage): Promise<void> {
-    const row = await this.getOrCreateToday();
-    row.requests += 1;
-    row.promptTokens += usage.promptTokens || 0;
-    row.completionTokens += usage.completionTokens || 0;
-    await this.usageRepo.save(row);
+  async recordUsage(usage: TokenUsage): Promise<void> {
+    const promptTokens = Math.max(0, Math.trunc(usage.promptTokens || 0));
+    const completionTokens = Math.max(
+      0,
+      Math.trunc(usage.completionTokens || 0),
+    );
+    await this.usageRepo
+      .createQueryBuilder()
+      .update(AiUsage)
+      .set({
+        promptTokens: () => `"promptTokens" + ${promptTokens}`,
+        completionTokens: () => `"completionTokens" + ${completionTokens}`,
+      })
+      .where('"date" = :key', { key: todayKey() })
+      .execute();
   }
 
   async status(): Promise<BudgetStatus> {
@@ -79,9 +112,13 @@ export class AiBudgetService {
 
   private async getOrCreateToday(): Promise<AiUsage> {
     const key = todayKey();
-    const existing = await this.usageRepo.findOne({ where: { date: key } });
-    if (existing) return existing;
-    const row = this.usageRepo.create({ date: key });
-    return this.usageRepo.save(row);
+    await this.usageRepo
+      .createQueryBuilder()
+      .insert()
+      .into(AiUsage)
+      .values({ date: key })
+      .orIgnore()
+      .execute();
+    return this.usageRepo.findOneByOrFail({ date: key });
   }
 }

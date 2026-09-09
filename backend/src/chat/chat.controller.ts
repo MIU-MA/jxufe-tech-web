@@ -82,7 +82,7 @@ export class ChatController {
       return;
     }
 
-    if (!(await this.aiBudget.check())) {
+    if (!(await this.aiBudget.reserveRequest())) {
       res.status(429).json({ error: "今日 AI 使用额度已用完，请明天再试" });
       return;
     }
@@ -97,7 +97,9 @@ export class ChatController {
         body.message,
         token,
         (usage) => {
-          void this.aiBudget.record(usage);
+          void this.aiBudget.recordUsage(usage).catch((err: unknown) => {
+            this.logger.error(`登记 AI usage 失败: ${(err as Error).message}`);
+          });
         },
       );
       const reader = stream.getReader();

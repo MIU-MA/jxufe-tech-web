@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useScrollReveal } from '../composables/useScrollReveal';
-import { fetchArticles, type Article } from '../api/articles';
+import { useArticles } from '../composables/useArticles';
+import { formatArticleDate as formatDate } from '../utils/dateTime';
 
 interface NewsItem {
   id: number
@@ -12,22 +13,10 @@ interface NewsItem {
   link: string
 }
 
-const articles = ref<Article[]>([])
-const newsLoading = ref(true)
-const newsError = ref(false)
+const { articles, loading: newsLoading, error: newsError } = useArticles()
 
 function stripMarkdown(md: string): string {
   return md.replace(/#{1,6}\s/g, '').replace(/[*_~`>\[\]()!|-]/g, '').replace(/\n+/g, ' ').trim()
-}
-
-function formatDate(iso: string): string {
-  const d = new Date(iso)
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
-}
-
-async function loadNews() {
-  newsLoading.value = true; newsError.value = false
-  try { articles.value = await fetchArticles() } catch { newsError.value = true } finally { newsLoading.value = false }
 }
 
 const newsList = computed<NewsItem[]>(() =>
@@ -48,10 +37,6 @@ const recentNews = computed(() => newsList.value.slice(0, 3))
 const latestNewsId = computed(() => newsList.value[0]?.id)
 
 useScrollReveal()
-
-onMounted(() => {
-  loadNews()
-})
 </script>
 
 <template>
