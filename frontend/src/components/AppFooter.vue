@@ -7,6 +7,7 @@ const friendLinks = ref([
     { name: "计算机协会",   url: "https://www.jxufe-cs.top/", logo: "https://www.jxufe-cs.top/img/%E4%BC%9A%E5%BE%BD.png" },
     { name: "网络安全协会", url: "https://csec.jxufe.edu.cn", logo: "https://csec.jxufe.edu.cn/favicon.svg" },
     { name: "IT帮", url: "https://itbang.bethanyapi.org/", logo: "https://itbang.bethanyapi.org/api/status/logo?v=b6496153868a80d3" },
+    { name: "江财offer", url: "https://jufe.woodfish.site/1", logo: "https://jufe.woodfish.site/_next/image?url=%2F0b9e02d4fcddecc48d4b61e79cb26f16_compressed.png&w=750&q=75" },
     { name: "江西财经大学", url: "https://www.jxufe.edu.cn/", logo: "https://jxufe-acm.cn/jxufe.png" }
 
 ]);
