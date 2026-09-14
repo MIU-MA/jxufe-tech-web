@@ -24,6 +24,19 @@ import MemberCard from '../components/MemberCard.vue';
           bio="睡觉大王"
         />
       </div>
+       <div
+        class="text-[1.8em] font-bold text-center pb-2.5 mb-5 border-b-[3px] text-[var(--color-text-heading)] border-b-[var(--color-border-light)]"
+      >
+        {{ $t('presidents.term2026') }}
+      </div>
+       <div class="flex flex-wrap justify-center gap-5 mt-5">
+        <MemberCard
+          img="/images/lh.jpg"
+          name="月后小怪"
+          role="大数据252"
+          bio="蓝桥杯国二"
+        />
+      </div>
     </section>
   </main>
 </template>
