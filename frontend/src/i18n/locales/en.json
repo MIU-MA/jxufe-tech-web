@@ -57,7 +57,8 @@
   },
   "presidents": {
     "title": "Past Presidents",
-    "term2025": "Class of 2025"
+    "term2025": "Class of 2025",
+    "term2026": "Class of 2026"
   },
   "members": {
     "title": "MEMBERS"

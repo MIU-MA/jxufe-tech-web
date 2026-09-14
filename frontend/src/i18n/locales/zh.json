@@ -57,7 +57,8 @@
   },
   "presidents": {
     "title": "历届负责人",
-    "term2025": "2025届"
+    "term2025": "2025届",
+    "term2026": "2026届"
   },
   "members": {
     "title": "MEMBERS"
