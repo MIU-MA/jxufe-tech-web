@@ -156,6 +156,7 @@ jobs:
           username: root
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
+            set -eu
             cd /www/wwwroot/jxufe-tech
             # 确保静态资源目录存在
             mkdir -p backend/public/uploads
@@ -176,17 +177,28 @@ jobs:
             if [ -f /www/wwwroot/jxufe-tech/backend/.env ]; then
               echo "✅ .env 已存在（服务器维护，不随仓库部署）"
             else
-              echo "❌ .env 缺失！请手动创建: echo 'DEEPSEEK_API_KEY=sk-xxx' >> /www/wwwroot/jxufe-tech/backend/.env"
+              echo "❌ .env 缺失！请在服务器上配置 /www/wwwroot/jxufe-tech/backend/.env 后重新部署"
+              exit 1
             fi
 
             echo "========== 检查后端进程 =========="
             pm2 list | grep jxufe-backend || { echo "❌ PM2 进程未启动"; exit 1; }
 
-            echo "========== 后端健康检查（真实请求接口，证明新代码生效）=========="
-            if curl -fsS http://127.0.0.1:3003/api/health | jq -e '.status == "ok"' >/dev/null 2>&1; then
-              echo "✅ /api/health 返回 status=ok"
-            else
-              echo "❌ /api/health 检查失败，新版后端未生效"
+            echo "========== 等待后端就绪（PM2 online 不代表 HTTP 已开始监听）=========="
+            # 每次请求最多 3 秒；失败后等待 2 秒，最多尝试 30 次。
+            healthy=false
+            for attempt in $(seq 1 30); do
+              if curl -fsS --connect-timeout 2 --max-time 3 http://127.0.0.1:3003/api/health | jq -e '.status == "ok"' >/dev/null 2>&1; then
+                echo "✅ /api/health 返回 status=ok（第 ${attempt} 次检查）"
+                healthy=true
+                break
+              fi
+              echo "后端尚未就绪（${attempt}/30）"
+              if [ "$attempt" -lt 30 ]; then sleep 2; fi
+            done
+            if [ "$healthy" != true ]; then
+              echo "❌ 后端在等待窗口内未通过健康检查"
+              echo "以下为 PM2 最近日志，可能包含历史记录，请结合时间和进程 ID 排查"
               pm2 logs jxufe-backend --lines 30 --nostream 2>/dev/null || true
               exit 1
             fi

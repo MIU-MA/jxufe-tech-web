@@ -9,7 +9,7 @@
       </h1>
       <img  src="/images/welcome.jpg"
         alt="数智技术协会"
-        class="mx-auto mb-6 rounded-lg shadow-md max-h-[400px] object-cover"  >
+        class="mx-auto mb-6 rounded-lg shadow-md max-h-[600px] object-cover"  >
       
     </section>
   </main>
