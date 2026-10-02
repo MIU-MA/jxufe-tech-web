@@ -93,6 +93,7 @@ loadArticles()
       <ArticleEditor
         v-if="editorMode === 'create' || editingArticle"
         :mode="editorMode"
+        :token="token"
         :article="editingArticle"
         :saving="saving"
         :error="saveError"

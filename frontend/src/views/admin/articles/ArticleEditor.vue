@@ -1,10 +1,13 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { computed, nextTick, onBeforeUnmount, ref, watch } from 'vue'
 import type { Article } from '../../../api/articles'
+import { IMAGE_ACCEPT, uploadArticleImage } from '../../../api/imageUpload'
 import { toLocalDateTime, toPublishedAt } from '../../../utils/dateTime'
+import { createSafeMarkdown } from '../../../utils/markdown'
 
 const props = defineProps<{
   mode: 'create' | 'edit'
+  token: string
   article?: Article | null
   saving?: boolean
   error?: string
@@ -19,21 +22,129 @@ const title = ref('')
 const content = ref('')
 const summary = ref('')
 const publishedAt = ref('')
+const textareaRef = ref<HTMLTextAreaElement | null>(null)
+const fileInputRef = ref<HTMLInputElement | null>(null)
+const preview = ref(false)
+const uploading = ref(false)
+const uploadStatus = ref('')
+const uploadError = ref('')
+const md = createSafeMarkdown()
+const previewHtml = computed(() => md.render(content.value))
+let selection = { start: 0, end: 0 }
+let uploadController: AbortController | null = null
 
-watch(() => props.article, (a) => {
-  if (props.mode === 'edit' && a) {
+watch(() => [props.mode, props.article] as const, ([mode, a]) => {
+  uploadController?.abort()
+  uploadController = null
+  uploading.value = false
+  uploadStatus.value = ''
+  uploadError.value = ''
+  preview.value = false
+  if (mode === 'edit' && a) {
     title.value = a.title
     content.value = a.content
     summary.value = a.summary || ''
     publishedAt.value = a.publishedAt ? toLocalDateTime(a.publishedAt) : ''
+  } else {
+    title.value = ''; content.value = ''; summary.value = ''; publishedAt.value = ''
   }
+  selection = { start: content.value.length, end: content.value.length }
 }, { immediate: true })
 
-watch(() => props.mode, (m) => {
-  if (m === 'create') { title.value = ''; content.value = ''; summary.value = ''; publishedAt.value = '' }
+onBeforeUnmount(() => {
+  uploadController?.abort()
+  uploadController = null
 })
 
+function rememberSelection() {
+  const textarea = textareaRef.value
+  if (textarea) selection = { start: textarea.selectionStart, end: textarea.selectionEnd }
+}
+
+function chooseImages() {
+  rememberSelection()
+  fileInputRef.value?.click()
+}
+
+async function uploadImages(files: File[]) {
+  if (!files.length || props.saving || uploading.value) return
+  const controller = new AbortController()
+  uploadController = controller
+  uploading.value = true
+  uploadStatus.value = ''
+  uploadError.value = ''
+  const failures: string[] = []
+  let inserted = 0
+  let { start, end } = selection
+  try {
+    for (const [index, file] of files.entries()) {
+      uploadStatus.value = `上传中 ${index + 1}/${files.length}…`
+      try {
+        const url = await uploadArticleImage(file, props.token, controller.signal)
+        if (controller.signal.aborted) return
+        const label = (file.name.replace(/\.[^.]+$/, '') || '图片')
+          .replace(/[\r\n]/g, ' ').replace(/[\\\[\]]/g, '\\$&')
+        const before = content.value.slice(0, start)
+        const after = content.value.slice(end)
+        const block = `${before && !before.endsWith('\n') ? '\n\n' : ''}![${label}](${url})\n${after && !after.startsWith('\n') ? '\n' : ''}`
+        content.value = before + block + after
+        start = before.length + block.length
+        end = start
+        inserted++
+      } catch (err) {
+        if (controller.signal.aborted) return
+        failures.push(`${file.name || '图片'}：${err instanceof Error ? err.message : '上传失败，请重试'}`)
+      }
+    }
+    selection = { start, end }
+    uploadStatus.value = inserted ? `已插入 ${inserted} 张图片` : ''
+    uploadError.value = failures.join('；')
+  } finally {
+    if (uploadController === controller) {
+      uploading.value = false
+      uploadController = null
+      await nextTick()
+      if (!preview.value) {
+        textareaRef.value?.focus()
+        textareaRef.value?.setSelectionRange(start, end)
+      }
+    }
+  }
+}
+
+function handleFiles(event: Event) {
+  const input = event.target as HTMLInputElement
+  const files = Array.from(input.files ?? [])
+  input.value = ''
+  void uploadImages(files)
+}
+
+function handlePaste(event: ClipboardEvent) {
+  const files = Array.from(event.clipboardData?.items ?? [])
+    .filter(item => item.kind === 'file' && item.type.startsWith('image/'))
+    .map(item => item.getAsFile()).filter((file): file is File => file !== null)
+  if (!files.length) return
+  event.preventDefault()
+  rememberSelection()
+  void uploadImages(files)
+}
+
+function handleDragOver(event: DragEvent) {
+  if (!event.dataTransfer?.types.includes('Files')) return
+  event.preventDefault()
+  event.dataTransfer.dropEffect = props.saving || uploading.value ? 'none' : 'copy'
+}
+
+function handleDrop(event: DragEvent) {
+  const files = Array.from(event.dataTransfer?.files ?? [])
+  if (!files.length) return
+  event.preventDefault()
+  rememberSelection()
+  void uploadImages(files)
+}
+
 function handleSave() {
+  if (props.saving || uploading.value) return
   if (!title.value.trim() || !content.value.trim()) return
   emit('save', {
     title: title.value.trim(),
@@ -93,27 +204,57 @@ function handleSave() {
     </div>
 
     <div class="mb-[18px]">
-      <label class="block mb-1.5 font-semibold text-[0.9em]" :style="{ color: 'var(--color-text-secondary)' }">
+      <label for="article-content" class="block mb-1.5 font-semibold text-[0.9em]" :style="{ color: 'var(--color-text-secondary)' }">
         内容 <span class="font-normal text-[0.85em]" :style="{ color: 'var(--color-text-muted)' }">（Markdown 格式）</span>
       </label>
+      <div class="flex items-center flex-wrap gap-2 mb-2">
+        <button
+          type="button" :disabled="saving || uploading"
+          class="border rounded-lg px-3 py-1.5 text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          :style="{ borderColor: 'var(--color-border)', color: 'var(--color-primary)', backgroundColor: 'var(--color-bg)' }"
+          @click="chooseImages"
+        >{{ uploading ? '图片上传中…' : '上传图片' }}</button>
+        <input ref="fileInputRef" type="file" :accept="IMAGE_ACCEPT" multiple class="hidden" :disabled="saving || uploading" @change="handleFiles">
+        <button
+          type="button" :disabled="saving || uploading" :aria-pressed="preview"
+          class="border rounded-lg px-3 py-1.5 text-sm cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+          :style="{ borderColor: 'var(--color-border)', color: 'var(--color-text-secondary)', backgroundColor: 'var(--color-bg)' }"
+          @click="preview = !preview"
+        >{{ preview ? '返回编辑' : '预览正文' }}</button>
+        <span class="text-xs" :style="{ color: 'var(--color-text-muted)' }">支持粘贴截图、拖入图片；单张不超过 10 MB</span>
+      </div>
       <textarea
-        v-model="content" placeholder="在此编写 Markdown 内容…" :disabled="saving" rows="14"
+        v-show="!preview" id="article-content" ref="textareaRef"
+        v-model="content" placeholder="在此编写 Markdown 内容…" :disabled="saving" :readonly="uploading" rows="14"
+        @select="rememberSelection" @click="rememberSelection" @keyup="rememberSelection" @input="rememberSelection"
+        @paste="handlePaste" @dragover="handleDragOver" @drop="handleDrop"
         class="w-full box-border px-3.5 py-2.5 border rounded-lg text-[0.95em] font-mono leading-relaxed resize-y min-h-[240px] transition-colors duration-200 focus:outline-none"
         :style="{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text-heading)' }"
       ></textarea>
+      <div
+        v-if="preview"
+        class="rounded-lg border p-4 min-h-[240px] break-words"
+        :style="{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-bg)', color: 'var(--color-text)' }"
+      >
+        <div v-if="content.trim()" class="prose prose-sm dark:prose-invert max-w-none prose-img:max-w-full prose-img:rounded-md" v-html="previewHtml"></div>
+        <p v-else class="text-sm" :style="{ color: 'var(--color-text-muted)' }">正文为空，输入内容后即可预览。</p>
+      </div>
+      <p v-if="uploadStatus" role="status" aria-live="polite" class="mt-2 text-sm" :style="{ color: 'var(--color-text-secondary)' }">{{ uploadStatus }}</p>
+      <p v-if="uploadError" role="alert" class="mt-2 text-sm text-[#c0392b]">{{ uploadError }}</p>
     </div>
 
     <p v-if="error" class="text-[#c0392b] text-[0.9em] mt-1">{{ error }}</p>
 
     <div class="flex gap-3 items-center mt-5">
       <button
-        :disabled="saving"
+        :disabled="saving || uploading"
         class="border-none rounded-lg py-2.5 px-6 text-[0.92em] cursor-pointer text-white transition-opacity duration-200 hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed"
         :style="{ backgroundColor: 'var(--color-primary)' }"
         @click="handleSave"
       >{{ saving ? '保存中…' : (mode === 'create' ? '发布文章' : '保存修改') }}</button>
       <button
-        class="bg-transparent border rounded-lg py-2.5 px-6 text-[0.92em] cursor-pointer transition-all duration-200"
+        :disabled="saving || uploading"
+        class="bg-transparent border rounded-lg py-2.5 px-6 text-[0.92em] cursor-pointer transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
         :style="{ color: 'var(--color-text-muted)', borderColor: 'var(--color-border)' }"
         @click="emit('cancel')"
       >取消</button>
