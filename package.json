@@ -20,6 +20,7 @@
     "format": "cd backend && prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "test": "cd backend && jest",
     "test:frontend": "node --test tests/frontend.test.cjs tests/article-editor.test.cjs",
+    "test:deploy": "node --test tests/backend-runtime.test.cjs",
     "test:watch": "cd backend && jest --watch",
     "test:cov": "cd backend && jest --coverage",
     "test:debug": "cd backend && node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",

@@ -46,6 +46,9 @@ jobs:
       - name: Frontend and deployment regression tests
         run: npm run test:frontend
 
+      - name: Backend runtime packaging regression tests
+        run: npm run test:deploy
+
       - name: Frontend typecheck (vue-tsc)
         run: npx vue-tsc --noEmit -p frontend/tsconfig.json
 
@@ -54,6 +57,13 @@ jobs:
 
       - name: E2E tests
         run: npm run test:e2e -- --runInBand
+
+      - name: Prepare and install isolated backend runtime
+        run: |
+          node scripts/prepare-backend-runtime.cjs
+          npm install --prefix deploy/backend --package-lock-only --ignore-scripts --offline --no-audit --no-fund
+          npm ci --prefix deploy/backend --omit=dev --no-audit --no-fund
+          cp -R backend/dist deploy/backend/dist
 
       # 用全新空库跑完整迁移，再以生产模式启动编译产物做健康检查，
       # 确保 production 依赖的 migration（users/articles/ai_usage）在干净库上可完整执行
@@ -68,7 +78,8 @@ jobs:
         run: |
           rm -f "$DB_PATH"
           npm run migration:run
-          cd backend
+          # 从隔离运行目录启动，确保无需仓库根目录的开发依赖。
+          cd deploy/backend
           (node dist/main.js > /tmp/jxufe-ci.log 2>&1 & echo $! > /tmp/jxufe-ci.pid)
           for i in $(seq 1 20); do
             if curl -fsS http://127.0.0.1:3003/api/health | jq -e '.status == "ok"' >/dev/null 2>&1; then
@@ -134,6 +145,17 @@ jobs:
           strip_components: 1
           overwrite: true
 
+      - name: Deploy backend runtime manifests
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: root
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          target: /www/wwwroot/jxufe-tech/backend
+          source: "deploy/backend/package.json,deploy/backend/package-lock.json"
+          strip_components: 2
+          overwrite: true
+
       - name: Deploy Manifests & PM2 Config to Root
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -160,8 +182,25 @@ jobs:
             cd /www/wwwroot/jxufe-tech
             # 确保静态资源目录存在
             mkdir -p backend/public/uploads
-            # 从根目录统一安装生产依赖（backend/dist 会向上解析到根 node_modules）
-            npm ci --omit=dev
+            echo "========== 安装前内存与 Swap =========="
+            free -h || true
+            # 仅安装后端运行依赖；串行执行安装脚本，限制连接及原生编译并发。
+            if (
+              cd backend || exit 1
+              export npm_config_jobs=1
+              export npm_config_maxsockets=2
+              npm ci --omit=dev --no-audit --no-fund --foreground-scripts
+            ); then
+              echo "✅ 后端运行依赖安装完成"
+            else
+              install_status=$?
+              echo "❌ 后端依赖安装失败，退出码 ${install_status}"
+              free -h || true
+              echo "========== 近期 OOM 记录（权限不足时可能无法读取）=========="
+              dmesg --ctime 2>/dev/null | grep -Ei 'out of memory|oom-kill|killed process' | tail -n 10 || true
+              journalctl -k --since '-5 minutes' --no-pager 2>/dev/null | grep -Ei 'out of memory|oom-kill|killed process' | tail -n 10 || true
+              exit "$install_status"
+            fi
             # 统一用根 ecosystem.config.js 启动/重载（startOrReload：未启动则启动，已启动则热重载）
             pm2 startOrReload ecosystem.config.js --update-env
             pm2 save
