@@ -10,12 +10,47 @@ const { manifest, prune } = require('../scripts/news-pages.cjs')
 function loadTs(file, dependencies = {}) {
   const source = fs.readFileSync(path.join(__dirname, '..', file), 'utf8')
   const js = ts.transpileModule(source, {
-    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022, esModuleInterop: true },
   }).outputText
   const module = { exports: {} }
   new Function('require', 'module', 'exports', js)(name => dependencies[name] ?? require(name), module, module.exports)
   return module.exports
 }
+
+function wikiRenderer() {
+  return loadTs('frontend/src/utils/wikiMarkdown.ts', {
+    './markdown': loadTs('frontend/src/utils/markdown.ts'),
+  }).renderWikiMarkdown
+}
+
+test('wiki outline points to distinct rendered headings and preserves formatted heading text', () => {
+  const render = wikiRenderer()
+  const result = render('# Overview\n\n## **Overview**\n\n### Use `Python` and [docs](https://example.com)\n', 'answer-1')
+  assert.deepEqual(result.headings.map(h => h.text), ['Overview', 'Overview', 'Use Python and docs'])
+  assert.deepEqual(result.headings.map(h => h.level), [2, 2, 3])
+  assert.equal(new Set(result.headings.map(h => h.id)).size, 3)
+  for (const heading of result.headings) assert.ok(result.html.includes(`id="${heading.id}"`))
+  assert.ok(!result.html.includes('<h1'))
+  assert.ok(result.html.includes('<strong>Overview</strong>'))
+})
+
+test('wiki heading anchors remain stable as streamed content grows', () => {
+  const render = wikiRenderer()
+  const partial = render('## Getting started\n\nFirst steps', 'answer-2')
+  const complete = render('## Getting started\n\nFirst steps.\n\n### Next steps\n\nContinue here.', 'answer-2')
+  assert.deepEqual(complete.headings[0], partial.headings[0])
+  assert.equal(complete.headings.length, 2)
+  assert.deepEqual(render('A response without headings.', 'plain').headings, [])
+})
+
+test('wiki rendering keeps raw HTML escaped and ignores headings inside fenced code', () => {
+  const result = wikiRenderer()('<script>alert(1)</script>\n\n<h2>Fake</h2>\n\n```md\n## Example only\n```\n\n## Safe\n\n[bad](javascript:alert(1))', '" onclick="bad')
+  assert.equal(result.headings.length, 1)
+  assert.match(result.headings[0].id, /^[\w-]+$/)
+  assert.ok(!result.html.includes('<script>'))
+  assert.ok(!result.html.includes('<h2>Fake'))
+  assert.ok(!result.html.includes('href="javascript:'))
+})
 
 test('streamed chunks update observers before the response ends', async t => {
   const { useChat } = loadTs('frontend/src/composables/useChat.ts')

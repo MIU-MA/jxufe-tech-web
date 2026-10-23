@@ -13,7 +13,7 @@ function stripMd(md: string) { return md.replace(/[#*_~`>\[\]()!|-]/g, '').repla
 
 <template>
   <div
-    class="rounded-xl py-2 overflow-x-auto shadow-sm"
+    class="ed-admin-panel rounded-xl py-2 overflow-x-auto shadow-sm"
     :style="{ backgroundColor: 'var(--color-bg-card)', boxShadow: '0 2px 12px var(--color-shadow)' }"
   >
     <table v-if="articles.length > 0" class="w-full border-collapse text-[0.92em]">

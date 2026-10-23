@@ -157,7 +157,7 @@ function handleSave() {
 
 <template>
   <div
-    class="rounded-xl p-7 mb-6 shadow-sm"
+    class="ed-admin-panel rounded-xl p-7 mb-6 shadow-sm"
     :class="{ 'border-l-4': mode === 'edit' }"
     :style="{
       backgroundColor: 'var(--color-bg-card)',
@@ -249,7 +249,7 @@ function handleSave() {
       <button
         :disabled="saving || uploading"
         class="border-none rounded-lg py-2.5 px-6 text-[0.92em] cursor-pointer text-white transition-opacity duration-200 hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed"
-        :style="{ backgroundColor: 'var(--color-primary)' }"
+        :style="{ backgroundColor: 'var(--color-control-bg)', color: 'var(--color-control-text)' }"
         @click="handleSave"
       >{{ saving ? '保存中…' : (mode === 'create' ? '发布文章' : '保存修改') }}</button>
       <button

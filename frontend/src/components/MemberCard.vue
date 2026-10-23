@@ -4,31 +4,71 @@ defineProps({
   name: { type: String, required: true },
   role: { type: String, default: '' },
   bio: { type: String, default: '' },
-  badge: { type: String, default: '' }
+  badge: { type: String, default: '' },
 })
 </script>
 
 <template>
-  <div
-    class="relative rounded-2xl pt-10 pb-8 px-5 text-center border transition-all duration-300 ease-in-out hover:-translate-y-2 hover:shadow-xl bg-[var(--color-bg-card)] [box-shadow:0_4px_6px_-1px_var(--color-shadow),0_10px_15px_-3px_var(--color-shadow)] border-[var(--color-border-light)]"
-  >
-    <div
-      v-if="badge"
-      class="absolute top-0 left-0 text-white py-1.5 px-4 rounded-tl-2xl rounded-br-2xl text-sm font-semibold bg-[linear-gradient(135deg,var(--color-primary),var(--color-primary-light))]"
-    >
-      {{ badge }}
+  <article class="member-entry">
+    <img :src="img" :alt="name" loading="lazy" width="76" height="90" />
+    <div class="member-content">
+      <p v-if="badge" class="member-badge">{{ badge }}</p>
+      <h3>{{ name }}</h3>
+      <p v-if="role" class="member-role">{{ role }}</p>
+      <p v-if="bio" class="member-bio">{{ bio }}</p>
     </div>
-
-    <img
-      :src="img" :alt="name + ' 肖像'"
-      class="w-[140px] h-[140px] rounded-full object-cover mx-auto mb-5 border-4 shadow-md transition-all duration-300 hover:scale-105 border-[var(--color-border-light)]"
-    >
-
-    <h3 class="text-2xl mb-2 text-[var(--color-text-heading)]">{{ name }}</h3>
-    <span v-if="role" class="font-bold block mb-4 text-[0.95em] text-[var(--color-accent)]">{{ role }}</span>
-    <p
-      v-if="bio"
-      class="text-[0.92em] leading-relaxed rounded-lg p-4 text-center bg-[var(--color-bg-alt)] text-[var(--color-text-secondary)]"
-    >{{ bio }}</p>
-  </div>
+  </article>
 </template>
+
+<style scoped>
+.member-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: 17px;
+  padding: 23px 0;
+  border-bottom: 1px solid var(--color-border-light);
+  min-width: 0;
+}
+.member-entry > img {
+  width: 76px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 1px solid var(--color-border);
+  flex-shrink: 0;
+}
+.member-content {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.member-content h3 {
+  margin: 0 0 5px;
+  font: 500 21px/1.4 var(--font-display);
+  color: var(--color-text-heading);
+}
+.member-badge {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 1px 6px;
+  border: 1px solid var(--color-border);
+  color: var(--color-primary);
+  font-size: 9px;
+  line-height: 1.8;
+}
+.member-role {
+  margin: 0 0 9px;
+  font-size: 11px;
+  color: var(--color-text-muted);
+}
+.member-bio {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.9;
+  color: var(--color-text-secondary);
+}
+@media (max-width: 700px) {
+  .member-content h3 {
+    font-size: 20px;
+  }
+}
+</style>

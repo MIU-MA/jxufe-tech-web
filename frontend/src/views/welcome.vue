@@ -1,16 +1,46 @@
 <script setup lang="ts">
+import EditorialPage from '../components/EditorialPage.vue'
+
+import { RouterLink } from 'vue-router'
 </script>
 
 <template>
-  <main class="min-h-[calc(100vh-60px)] flex items-center justify-center">
-    <section class="max-w-[620px] mx-auto px-4 md:px-6 py-20 text-center">
-      <h1 class="font-display text-[2em] md:text-[2.3em] leading-snug mb-6 text-[var(--color-text-heading)]">
-        {{ $t('welcome.title') }}
-      </h1>
-      <img  src="/images/welcome.jpg"
-        alt="数智技术协会"
-        class="mx-auto mb-6 rounded-lg shadow-md max-h-[600px] object-cover"  >
-      
+  <EditorialPage
+    :title="$t('nav.joinUs')"
+    eyebrow="COMMUNITY / JOIN US"
+    :description="$t('welcome.text2')"
+  >
+    <section class="ed-section" aria-labelledby="join-intro">
+      <div class="ed-section-title">
+        <span>01</span>
+        <h2 id="join-intro">{{ $t('site.meetUs') }}</h2>
+      </div>
+      <p class="ed-text">{{ $t('details.aboutIntro') }}</p>
+      <div class="ed-link-row">
+        <RouterLink to="/details" class="ed-link">{{ $t('nav.aboutUs') }} →</RouterLink
+        ><RouterLink to="/chat" class="ed-link">{{ $t('site.askAi') }} ↗</RouterLink>
+      </div>
     </section>
-  </main>
+    <section class="ed-section" aria-labelledby="join-poster">
+      <div class="ed-section-title">
+        <span>02</span>
+        <h2 id="join-poster">{{ $t('site.poster') }}</h2>
+      </div>
+      <figure class="ed-poster">
+        <a
+          href="/images/welcome.jpg"
+          target="_blank"
+          rel="noopener noreferrer"
+          :aria-label="$t('site.fullPoster')"
+          ><img src="/images/welcome.jpg" :alt="$t('welcome.title')"
+        /></a>
+        <figcaption>
+          <span>{{ $t('welcome.title') }}</span
+          ><a href="/images/welcome.jpg" target="_blank" rel="noopener noreferrer"
+            >{{ $t('site.fullPoster') }} ↗</a
+          >
+        </figcaption>
+      </figure>
+    </section>
+  </EditorialPage>
 </template>

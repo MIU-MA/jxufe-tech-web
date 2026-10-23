@@ -6,10 +6,15 @@ import AdminLogin from './AdminLogin.vue'
 import ArticlesPanel from './articles/ArticlesPanel.vue'
 import ImagesPanel from './images/ImagesPanel.vue'
 
-interface Tab { key: string; label: string; icon: string; panel: Component }
+interface Tab {
+  key: string
+  label: string
+  icon: string
+  panel: Component
+}
 const tabs: Tab[] = [
   { key: 'articles', label: '文章管理', icon: 'FileText', panel: ArticlesPanel },
-  { key: 'images',   label: '图片管理', icon: 'Image', panel: ImagesPanel  },
+  { key: 'images', label: '图片管理', icon: 'Image', panel: ImagesPanel },
 ]
 function getTabIcon(iconName: string) {
   const map: Record<string, any> = { FileText, Image }
@@ -43,12 +48,13 @@ onMounted(() => {
 })
 
 async function onLogin(username: string, password: string) {
-  loginLoading.value = true; loginError.value = ''
+  loginLoading.value = true
+  loginError.value = ''
   try {
     const res = await fetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username, password })
+      body: JSON.stringify({ username, password }),
     })
     if (!res.ok) throw new Error('登录失败')
     const data = await res.json()
@@ -69,51 +75,138 @@ function logout() {
 </script>
 
 <template>
-  <div class="min-h-[calc(100vh-60px)]" :style="{ background: 'var(--color-bg)' }">
-
+  <div class="admin-shell">
     <AdminLogin v-if="!token" :loading="loginLoading" :error="loginError" @login="onLogin" />
-
-    <div v-else class="flex min-h-[calc(100vh-60px)]">
-      <aside
-        class="w-[220px] shrink-0 flex flex-col border-r transition-colors duration-300"
-        :style="{
-          backgroundColor: 'var(--color-bg-card)',
-          borderColor: 'var(--color-border)',
-        }"
-      >
-        <div class="px-5 py-6 border-b" :style="{ borderColor: 'var(--color-border)' }">
-          <h1 class="m-0 text-lg font-bold" :style="{ color: 'var(--color-text-heading)' }">管理后台</h1>
+    <div v-else class="admin-layout">
+      <aside class="admin-nav">
+        <div class="admin-nav-heading">
+          <p>DSA / ADMIN</p>
+          <h1>内容管理</h1>
         </div>
-
-        <nav class="flex-1 py-4 px-3">
+        <nav>
           <button
-            v-for="tab in tabs" :key="tab.key"
-            class="w-full text-left flex items-center gap-3 px-4 py-3 mb-1 rounded-lg border-none cursor-pointer transition-all duration-200 text-[0.95em]"
-            :style="activeTab === tab.key
-              ? { backgroundColor: 'var(--color-primary)', color: '#fff' }
-              : { backgroundColor: 'transparent', color: 'var(--color-text-secondary)' }"
+            v-for="tab in tabs"
+            :key="tab.key"
+            type="button"
+            :class="{ selected: activeTab === tab.key }"
             @click="activeTab = tab.key"
           >
-            <component :is="getTabIcon(tab.icon)" :size="20" />
-            {{ tab.label }}
+            <component :is="getTabIcon(tab.icon)" :size="16" aria-hidden="true" />{{ tab.label }}
           </button>
         </nav>
-
-        <div class="px-3 py-4 border-t" :style="{ borderColor: 'var(--color-border)' }">
-          <button
-            class="w-full text-left flex items-center gap-3 px-4 py-3 rounded-lg border-none cursor-pointer transition-all duration-200 text-[0.95em] hover:bg-[#fef2f2] hover:text-[#c0392b]"
-            :style="{ backgroundColor: 'transparent', color: 'var(--color-text-muted)' }"
-            @click="logout"
-          >
-            <LogOut :size="20" />
-            退出登录
-          </button>
-        </div>
+        <button class="admin-logout" type="button" @click="logout">
+          <LogOut :size="15" aria-hidden="true" />退出登录
+        </button>
       </aside>
-
-      <main class="flex-1 overflow-auto p-6 md:p-8">
-        <component :is="tabs.find(t => t.key === activeTab)?.panel" :key="activeTab" />
+      <main class="admin-main">
+        <header>
+          <p class="ed-kicker">CONTENT MANAGEMENT</p>
+          <h2>{{ tabs.find((tab) => tab.key === activeTab)?.label }}</h2>
+        </header>
+        <component :is="tabs.find((tab) => tab.key === activeTab)?.panel" :key="activeTab" />
       </main>
     </div>
   </div>
 </template>
+
+<style scoped>
+.admin-shell {
+  min-height: calc(100vh - 60px);
+  background: var(--color-bg);
+}
+.admin-layout {
+  max-width: 1480px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 186px minmax(0, 1fr);
+  gap: 36px;
+  padding: 0 32px;
+  min-height: calc(100vh - 60px);
+}
+.admin-nav {
+  padding: 34px 0;
+  display: flex;
+  flex-direction: column;
+}
+.admin-nav-heading {
+  margin-bottom: 25px;
+}
+.admin-nav-heading p {
+  margin: 0 0 8px;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  color: var(--color-text-muted);
+}
+.admin-nav-heading h1 {
+  margin: 0;
+  font: 500 23px/1.5 var(--font-display);
+  color: var(--color-text-heading);
+}
+.admin-nav nav {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.admin-nav button {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 11px;
+  font: inherit;
+  font-size: 12px;
+  background: transparent;
+  border: 0;
+  color: var(--color-text-secondary);
+  text-align: left;
+  cursor: pointer;
+}
+.admin-nav button.selected {
+  color: var(--color-primary);
+  background: var(--color-bg-alt);
+  border-left: 2px solid var(--color-primary);
+  padding-left: 9px;
+}
+.admin-nav .admin-logout {
+  margin-top: auto;
+  border-top: 1px solid var(--color-border-light);
+  padding-top: 20px;
+}
+.admin-main {
+  min-width: 0;
+  padding: 30px 0 45px;
+}
+.admin-main > header {
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 18px;
+  margin-bottom: 25px;
+}
+.admin-main > header h2 {
+  margin: 0;
+  font: 500 29px/1.5 var(--font-display);
+  color: var(--color-text-heading);
+}
+@media (max-width: 700px) {
+  .admin-layout {
+    display: block;
+    padding: 0 20px;
+  }
+  .admin-nav {
+    padding: 22px 0 15px;
+    border-bottom: 1px solid var(--color-border);
+  }
+  .admin-nav-heading {
+    margin-bottom: 16px;
+  }
+  .admin-nav nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .admin-nav .admin-logout {
+    margin-top: 10px;
+    padding-top: 10px;
+  }
+  .admin-main {
+    padding-top: 24px;
+  }
+}
+</style>

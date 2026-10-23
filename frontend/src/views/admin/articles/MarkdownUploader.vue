@@ -56,7 +56,7 @@ async function handleUpload(e: Event) {
 
 <template>
   <div
-    class="rounded-xl p-7 mb-6 shadow-sm"
+    class="ed-admin-panel rounded-xl p-7 mb-6 shadow-sm"
     :style="{ backgroundColor: 'var(--color-bg-card)', boxShadow: '0 2px 12px var(--color-shadow)' }"
   >
     <h2 class="m-0 mb-5 text-[1.15em]" :style="{ color: 'var(--color-text-heading)' }">📄 Markdown 文件上传</h2>
@@ -77,7 +77,7 @@ async function handleUpload(e: Event) {
       <button
         :disabled="uploading"
         class="border-none rounded-lg py-2.5 px-6 text-[0.92em] cursor-pointer text-white transition-opacity duration-200 hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed"
-        :style="{ backgroundColor: 'var(--color-primary)' }"
+        :style="{ backgroundColor: 'var(--color-control-bg)', color: 'var(--color-control-text)' }"
         @click="triggerFile"
       >{{ uploading ? '上传中…' : '选择 .md 文件' }}</button>
       <span class="text-sm" :style="{ color: 'var(--color-text-muted)' }">{{ selectedName || '未选择文件' }}</span>

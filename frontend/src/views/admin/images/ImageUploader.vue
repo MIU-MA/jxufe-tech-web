@@ -83,7 +83,7 @@ onMounted(loadImages)
 
 <template>
   <div
-    class="rounded-xl p-7 mb-6 shadow-sm"
+    class="ed-admin-panel rounded-xl p-7 mb-6 shadow-sm"
     :style="{ backgroundColor: 'var(--color-bg-card)', boxShadow: '0 2px 12px var(--color-shadow)' }"
   >
     <h2 class="m-0 mb-5 text-[1.15em]" :style="{ color: 'var(--color-text-heading)' }">🖼 图片管理</h2>
@@ -99,7 +99,7 @@ onMounted(loadImages)
       <button
         :disabled="uploading"
         class="border-none rounded-lg py-2.5 px-6 text-[0.92em] cursor-pointer text-white transition-opacity duration-200 hover:opacity-85 disabled:opacity-50 disabled:cursor-not-allowed"
-        :style="{ backgroundColor: 'var(--color-primary)' }"
+        :style="{ backgroundColor: 'var(--color-control-bg)', color: 'var(--color-control-text)' }"
         @click="fileInput?.click()"
       >{{ uploading ? '上传中…' : '上传图片' }}</button>
       <span v-if="uploadMsg" class="ml-4 text-sm" :class="uploadMsg.startsWith('上传成功') ? 'text-green-600' : 'text-[#c0392b]'">{{ uploadMsg }}</span>

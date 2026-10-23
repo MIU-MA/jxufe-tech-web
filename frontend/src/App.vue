@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { RouterView } from 'vue-router';
+import { RouterView, useRoute } from 'vue-router';
 import AppHeader from './components/AppHeader.vue';
 import AppFooter from './components/AppFooter.vue';
+const route = useRoute();
 </script>
 
 <template>
@@ -13,5 +14,5 @@ import AppFooter from './components/AppFooter.vue';
     </Suspense>
   </div>
 
-  <AppFooter />
+  <AppFooter v-if="route.path !== '/chat'" />
 </template>
