@@ -5,7 +5,10 @@
     "presidents": "历届负责人",
     "members": "优秀成员",
     "aboutUs": "关于协会",
-    "joinUs": "加入我们"
+    "joinUs": "加入我们",
+    "mainLabel": "主导航",
+    "mobileLabel": "移动端导航",
+    "toggleLabel": "展开或收起导航"
   },
   "footer": {
     "brandName": "数智技术协会",
@@ -80,13 +83,13 @@
     "switch": "Switch to English"
   },
   "chat": {
-    "newChat": "新探索",
+    "newChat": "新对话",
     "send": "提问",
     "placeholder": "输入一个问题，开始探索…",
     "hint": "AI 内容仅供参考，重要信息请以官方发布为准。",
     "newLine": "换行",
     "thinking": "正在整理内容…",
-    "generating": "词条生成中…",
+    "generating": "正在回答…",
     "copy": "复制内容",
     "copied": "已复制",
     "copyFailed": "复制失败，请手动选择文字复制。",
@@ -150,8 +153,8 @@
     "affiliation": "江西财经大学",
     "contents": "本页目录",
     "keepExploring": "继续探索",
-    "askAi": "向 AI 维基提问",
-    "aiTitle": "AI 维基",
+    "askAi": "AI 助手",
+    "aiTitle": "AI 助手",
     "newsTitle": "新闻与公告",
     "allNews": "全部动态",
     "noNews": "暂无公告，欢迎稍后再来。",
@@ -167,5 +170,41 @@
     "fullPoster": "查看完整海报",
     "summary": "内容摘要",
     "backToNews": "返回全部动态"
+  },
+  "knowledge": {
+    "title": "维基",
+    "description": "协会资料与技术文档，逐步补充。",
+    "browse": "文档列表",
+    "search": "搜索文档",
+    "categories": "文档分类",
+    "all": "全部",
+    "read": "阅读词条",
+    "empty": "没有找到相关文档。",
+    "reset": "重置筛选",
+    "back": "返回维基",
+    "missing": "未找到词条",
+    "missingText": "这个词条暂不存在，可以返回维基浏览其他内容。",
+    "askArticle": "请 AI 解释本文",
+    "explainQuestion": "请帮我解释这篇资料的主要内容。",
+    "articles": [],
+    "noArticles": "暂无内容。",
+    "breadcrumb": "当前位置",
+    "categoryNames": [
+      "协会资料",
+      "技术文档",
+      "学习资源"
+    ]
+  },
+  "assistant": {
+    "title": "AI 助手",
+    "subtitle": "陪你了解校园与技术",
+    "newChat": "新对话",
+    "close": "关闭 AI 助手",
+    "visitWiki": "查看维基",
+    "welcome": "有什么想了解的？",
+    "intro": "关于协会、校园生活或技术学习，都可以从一个问题开始。",
+    "you": "你",
+    "context": "附带资料（节选）",
+    "removeContext": "移除附带资料"
   }
 }

@@ -1,170 +1,351 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { RouterLink, useRoute } from 'vue-router';
-import { useTheme } from '../composables/useTheme';
-import { useLocale } from '../composables/useLocale';
-import { Sun, Moon, Languages } from 'lucide-vue-next';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { RouterLink, useRoute } from 'vue-router'
+import {
+  ArrowUpRight,
+  BookOpen,
+  ChevronDown,
+  Info,
+  Landmark,
+  Languages,
+  Menu,
+  MessageCircle,
+  Moon,
+  Sun,
+  Users,
+  X,
+} from 'lucide-vue-next'
+import { useTheme } from '../composables/useTheme'
+import { useLocale } from '../composables/useLocale'
+import { useAssistant } from '../composables/useAssistant'
 
-const route = useRoute();
-const { theme, toggleTheme } = useTheme();
-const { toggleLocale } = useLocale();
-
-const isMenuOpen = ref(false);
-const isDesktopDropdownOpen = ref(false);
-const isMobileSubOpen = ref(false);
-
-const aboutActive = computed(() =>
-  ['/presidents', '/members', '/details'].some((p) => route.path.startsWith(p)),
-);
-
-function isActive(path: string): boolean {
-  return path === '/' ? route.path === '/' : route.path.startsWith(path);
+const route = useRoute()
+const assistant = useAssistant()
+const { theme, toggleTheme } = useTheme()
+const { toggleLocale } = useLocale()
+const headerRef = ref<HTMLElement | null>(null)
+const dropdownRef = ref<HTMLElement | null>(null)
+const aboutTrigger = ref<HTMLButtonElement | null>(null)
+const mobileTrigger = ref<HTMLButtonElement | null>(null)
+const isMenuOpen = ref(false)
+const isAboutOpen = ref(false)
+const isMobileAboutOpen = ref(false)
+const aboutLinks = [
+  { to: '/details', label: 'nav.aboutUs', icon: Info },
+  { to: '/members', label: 'nav.members', icon: Users },
+  { to: '/presidents', label: 'nav.presidents', icon: Landmark },
+]
+const aboutActive = computed(() => aboutLinks.some((link) => isActive(link.to)))
+const linkBase =
+  'inline-flex h-9 items-center justify-center gap-1.5 rounded-md border-0 px-3.5 text-sm whitespace-nowrap no-underline transition-colors hover:no-underline cursor-pointer'
+const iconButton =
+  'inline-flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-md border-0 bg-transparent text-text-secondary transition-colors hover:bg-bg-alt hover:text-primary'
+function isActive(path: string) {
+  return path === '/'
+    ? route.path === '/'
+    : route.path === path || route.path.startsWith(path + '/')
 }
-
+function linkClass(active: boolean) {
+  return [
+    linkBase,
+    active
+      ? 'bg-bg-alt text-primary! font-medium'
+      : 'bg-transparent text-text-secondary! hover:bg-bg-alt hover:text-primary!',
+  ]
+}
+function mobileLinkClass(active: boolean) {
+  return [
+    'flex w-full items-center gap-3 rounded-md px-3 py-3 text-left text-sm no-underline transition-colors hover:no-underline',
+    active
+      ? 'bg-bg-alt text-primary! font-medium'
+      : 'text-text-secondary! hover:bg-bg-alt hover:text-primary!',
+  ]
+}
 function closeAll() {
-  isMenuOpen.value = false;
-  isDesktopDropdownOpen.value = false;
-  isMobileSubOpen.value = false;
+  isMenuOpen.value = false
+  isAboutOpen.value = false
+  isMobileAboutOpen.value = false
 }
-
-const navBase = 'relative flex items-center px-4 h-full text-[15px] no-underline hover:no-underline transition-colors';
-const navIdle = 'text-[var(--color-text-secondary)] hover:text-[var(--color-primary)]';
-const navActive = 'text-[var(--color-primary)] after:content-[\'\'] after:absolute after:left-3 after:right-3 after:bottom-0 after:h-0.5 after:bg-[var(--color-primary)]';
-const joinIdle = 'text-[var(--color-accent)] hover:text-[var(--color-accent)]';
-const joinActive = 'text-[var(--color-accent)] after:content-[\'\'] after:absolute after:left-3 after:right-3 after:bottom-0 after:h-0.5 after:bg-[var(--color-accent)]';
-
-function navClass(on: boolean, join = false): string {
-  if (join) return `${navBase} ${on ? joinActive : joinIdle}`;
-  return `${navBase} ${on ? navActive : navIdle}`;
+function toggleMobile() {
+  isMenuOpen.value = !isMenuOpen.value
+  isAboutOpen.value = false
+  isMobileAboutOpen.value = aboutActive.value
 }
+function openAssistant() {
+  closeAll()
+  assistant.open()
+}
+async function focusAboutLink() {
+  isAboutOpen.value = true
+  await nextTick()
+  dropdownRef.value?.querySelector<HTMLAnchorElement>('a')?.focus()
+}
+function closeAndFocus() {
+  const trigger = isMenuOpen.value
+    ? mobileTrigger.value
+    : isAboutOpen.value
+      ? aboutTrigger.value
+      : null
+  closeAll()
+  trigger?.focus()
+}
+function handleOutside(event: PointerEvent) {
+  const target = event.target as Node | null
+  if (target && !headerRef.value?.contains(target)) closeAll()
+  else if (target && !dropdownRef.value?.contains(target))
+    isAboutOpen.value = false
+}
+watch(() => route.path, closeAll)
+onMounted(() => document.addEventListener('pointerdown', handleOutside))
+onBeforeUnmount(() =>
+  document.removeEventListener('pointerdown', handleOutside),
+)
 </script>
 
 <template>
-  <header
-    class="fixed top-0 left-0 right-0 w-full h-[60px] z-[100] box-border transition-colors duration-300 bg-[var(--color-bg-header)] border-t-4 border-t-[var(--color-primary-dark)] border-b border-b-[var(--color-border)]"
-  >
-    <div class="max-w-[1160px] mx-auto h-full px-4 md:px-6 flex items-center justify-between gap-4">
-      <RouterLink to="/" class="flex items-center gap-3 shrink no-underline hover:no-underline" @click="closeAll">
-        <img src="/logo.jpg" alt="数智技术协会会徽" class="h-10 w-10 rounded-full object-cover">
-        <span class="flex flex-col leading-tight">
-          <span class="font-display text-[17px] tracking-wide text-[var(--color-text-heading)]">数智技术协会</span>
-          <span class="text-[11px] tracking-[0.08em] text-[var(--color-text-muted)]">DSA Association</span>
-        </span>
-      </RouterLink>
-
-      <nav class="hidden md:flex items-center gap-1 h-full" aria-label="主导航">
-        <RouterLink to="/" :class="navClass(isActive('/'))">{{ $t('nav.home') }}</RouterLink>
-
-        <div class="relative h-full flex items-center" @mouseenter="isDesktopDropdownOpen = true" @mouseleave="isDesktopDropdownOpen = false">
-          <button
-            :class="navClass(aboutActive || isDesktopDropdownOpen)"
-            font-[inherit]
-            @click="isDesktopDropdownOpen = !isDesktopDropdownOpen"
-            aria-haspopup="true"
-            :aria-expanded="isDesktopDropdownOpen"
-          >
-            {{ $t('nav.about') }}
-            <span class="text-[0.72em] opacity-70">&#9662;</span>
-          </button>
-          <ul
-            v-show="isDesktopDropdownOpen"
-            class="absolute top-full left-0 min-w-[150px] list-none p-0 m-0 border bg-[var(--color-bg-card)] border-[var(--color-border)] transition-colors duration-300"
-          >
-            <li>
-              <RouterLink to="/presidents" class="block px-5 py-3 text-[0.9em] no-underline hover:no-underline transition-colors text-[var(--color-text)] hover:bg-[var(--color-bg-alt)]" @click="closeAll">
-                {{ $t('nav.presidents') }}
-              </RouterLink>
-            </li>
-            <li>
-              <RouterLink to="/members" class="block px-5 py-3 text-[0.9em] no-underline hover:no-underline transition-colors text-[var(--color-text)] hover:bg-[var(--color-bg-alt)]" @click="closeAll">
-                {{ $t('nav.members') }}
-              </RouterLink>
-            </li>
-            <li>
-              <RouterLink to="/details" class="block px-5 py-3 text-[0.9em] no-underline hover:no-underline transition-colors text-[var(--color-text)] hover:bg-[var(--color-bg-alt)]" @click="closeAll">
-                {{ $t('nav.aboutUs') }}
-              </RouterLink>
-            </li>
-          </ul>
-        </div>
-
-        <RouterLink to="/chat" :class="navClass(isActive('/chat'))">AI 助手</RouterLink>
-        <RouterLink to="/welcome" :class="navClass(isActive('/welcome'), true)">{{ $t('nav.joinUs') }}</RouterLink>
-      </nav>
-
-      <div class="flex items-center gap-1.5">
-        <button
-          class="w-9 h-9 flex items-center justify-center cursor-pointer p-0 shrink-0 border-none rounded transition-colors text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-alt)]"
-          @click="toggleTheme"
-          :title="theme === 'dark' ? $t('theme.switchLight') : $t('theme.switchDark')"
-        >
-          <Sun v-if="theme === 'dark'" :size="18" />
-          <Moon v-else :size="18" />
-        </button>
-        <button
-          class="w-9 h-9 flex items-center justify-center cursor-pointer p-0 shrink-0 border-none rounded transition-colors text-[var(--color-text-secondary)] hover:bg-[var(--color-bg-alt)]"
-          @click="toggleLocale"
-          :title="$t('lang.switch')"
-        >
-          <Languages :size="18" />
-        </button>
-
-        <button
-          class="md:hidden w-9 h-9 flex items-center justify-center cursor-pointer border text-[1.4em] leading-none transition-colors text-[var(--color-text)] border-[var(--color-border)]"
-          @click="isMenuOpen = !isMenuOpen; isMobileSubOpen = false"
-          aria-label="Toggle Navigation"
-          :aria-expanded="isMenuOpen"
-        >&#9776;</button>
-      </div>
-    </div>
-  </header>
-
   <div
-    v-if="isMenuOpen"
-    class="md:hidden fixed inset-0 top-[60px] z-[90] bg-[rgba(16,52,95,0.35)]"
-    @click="closeAll"
-  ></div>
-
-  <div
-    v-if="isMenuOpen"
-    class="md:hidden fixed top-[60px] right-0 w-[280px] max-w-[85vw] z-[91] border-l border-l-[var(--color-border)] overflow-y-auto transition-colors duration-300 bg-[var(--color-bg-header)]"
+    ref="headerRef"
+    class="sticky top-0 z-100"
+    @keydown.esc.stop="closeAndFocus"
   >
-    <nav class="py-3" aria-label="移动端导航">
-      <RouterLink to="/" @click="closeAll" class="flex items-center mx-3 px-4 py-3.5 no-underline hover:no-underline text-[0.95em] text-[var(--color-text)]">
-        {{ $t('nav.home') }}
-      </RouterLink>
-
-      <div>
-        <button
-          class="w-full flex items-center gap-2 mx-3 px-4 py-3.5 cursor-pointer border-none bg-transparent text-[0.95em] text-[var(--color-text)]"
-          font-[inherit]
-          @click="isMobileSubOpen = !isMobileSubOpen"
+    <header
+      class="relative h-[68px] border-t-2 border-t-primary-dark border-b border-b-border bg-bg-header shadow-[0_1px_12px_var(--color-shadow)]"
+    >
+      <div
+        class="mx-auto flex h-full max-w-[1160px] items-center justify-between gap-3 px-4 md:px-6"
+      >
+        <RouterLink
+          to="/"
+          class="flex min-w-0 shrink-0 items-center gap-3 no-underline hover:no-underline"
+          @click="closeAll"
         >
-          {{ $t('nav.about') }}
-          <span class="ml-auto text-xs transition-transform duration-200" :class="{ 'rotate-180': isMobileSubOpen }">&#9662;</span>
-        </button>
-        <div v-if="isMobileSubOpen" class="overflow-hidden">
-          <div class="mx-3 my-1 border-l-2 border-l-[var(--color-border)]">
-            <RouterLink to="/presidents" @click="closeAll" class="flex items-center pl-6 pr-4 py-3 no-underline hover:no-underline text-[0.92em] text-[var(--color-text-secondary)]">
-              {{ $t('nav.presidents') }}
-            </RouterLink>
-            <RouterLink to="/members" @click="closeAll" class="flex items-center pl-6 pr-4 py-3 no-underline hover:no-underline text-[0.92em] text-[var(--color-text-secondary)]">
-              {{ $t('nav.members') }}
-            </RouterLink>
-            <RouterLink to="/details" @click="closeAll" class="flex items-center pl-6 pr-4 py-3 no-underline hover:no-underline text-[0.92em] text-[var(--color-text-secondary)]">
-              {{ $t('nav.aboutUs') }}
-            </RouterLink>
+          <img
+            src="/logo.jpg"
+            alt="数智技术协会会徽"
+            class="size-10 shrink-0 rounded-full border border-border-light object-cover p-0.5"
+          />
+          <span class="flex min-w-0 flex-col gap-1 leading-none">
+            <span
+              class="font-display text-[17px] font-semibold tracking-[.04em] text-text-heading"
+              >数智技术协会</span
+            >
+            <span class="text-[10px] tracking-[.06em] text-text-muted"
+              >DSA Association</span
+            >
+          </span>
+        </RouterLink>
+
+        <nav
+          class="hidden items-center gap-1 @[940px]/site:flex"
+          :aria-label="$t('nav.mainLabel')"
+        >
+          <RouterLink
+            to="/"
+            :class="linkClass(isActive('/'))"
+            :aria-current="isActive('/') ? 'page' : undefined"
+            >{{ $t('nav.home') }}</RouterLink
+          >
+          <div ref="dropdownRef" class="relative">
+            <button
+              ref="aboutTrigger"
+              type="button"
+              :class="linkClass(aboutActive || isAboutOpen)"
+              :aria-expanded="isAboutOpen"
+              aria-controls="association-links"
+              @click="isAboutOpen = !isAboutOpen"
+              @keydown.down.prevent="focusAboutLink"
+            >
+              {{ $t('nav.about')
+              }}<ChevronDown
+                :size="13"
+                class="text-text-muted transition-transform motion-reduce:transition-none"
+                :class="{ 'rotate-180': isAboutOpen }"
+                aria-hidden="true"
+              />
+            </button>
+            <div
+              v-if="isAboutOpen"
+              id="association-links"
+              class="absolute top-full left-0 z-10 mt-2 w-52 rounded-lg border border-border bg-bg-card p-1.5 shadow-[0_8px_28px_var(--color-shadow)]"
+            >
+              <RouterLink
+                v-for="link in aboutLinks"
+                :key="link.to"
+                :to="link.to"
+                :class="mobileLinkClass(isActive(link.to))"
+                :aria-current="isActive(link.to) ? 'page' : undefined"
+                @click="closeAll"
+                ><component
+                  :is="link.icon"
+                  :size="16"
+                  :stroke-width="1.6"
+                  aria-hidden="true"
+                />{{ $t(link.label) }}</RouterLink
+              >
+            </div>
           </div>
+          <RouterLink
+            to="/wiki"
+            :class="linkClass(isActive('/wiki'))"
+            :aria-current="isActive('/wiki') ? 'page' : undefined"
+            >{{ $t('knowledge.title') }}</RouterLink
+          >
+          <button
+            type="button"
+            :class="linkClass(assistant.isOpen.value)"
+            :aria-expanded="assistant.isOpen.value"
+            aria-controls="assistant-panel"
+            @click="openAssistant"
+          >
+            <MessageCircle
+              :size="15"
+              :stroke-width="1.6"
+              aria-hidden="true"
+            />{{ $t('assistant.title') }}
+          </button>
+          <RouterLink
+            to="/welcome"
+            class="ml-3 inline-flex h-9 items-center gap-1.5 rounded-md border border-border px-3.5 text-sm whitespace-nowrap text-primary! no-underline transition-colors hover:border-primary hover:bg-bg-alt hover:no-underline"
+            :class="{ 'border-primary bg-bg-alt': isActive('/welcome') }"
+            :aria-current="isActive('/welcome') ? 'page' : undefined"
+            @click="closeAll"
+            >{{ $t('nav.joinUs') }}<ArrowUpRight :size="14" aria-hidden="true"
+          /></RouterLink>
+        </nav>
+
+        <div
+          class="flex shrink-0 items-center gap-0.5 @[940px]/site:border-l @[940px]/site:border-border-light @[940px]/site:pl-3"
+        >
+          <button
+            type="button"
+            :class="iconButton"
+            :aria-label="
+              theme === 'dark'
+                ? $t('theme.switchLight')
+                : $t('theme.switchDark')
+            "
+            :title="
+              theme === 'dark'
+                ? $t('theme.switchLight')
+                : $t('theme.switchDark')
+            "
+            @click="toggleTheme"
+          >
+            <Sun
+              v-if="theme === 'dark'"
+              :size="17"
+              :stroke-width="1.7"
+              aria-hidden="true"
+            /><Moon v-else :size="17" :stroke-width="1.7" aria-hidden="true" />
+          </button>
+          <button
+            type="button"
+            :class="iconButton"
+            :aria-label="$t('lang.switch')"
+            :title="$t('lang.switch')"
+            @click="toggleLocale"
+          >
+            <Languages :size="17" :stroke-width="1.7" aria-hidden="true" />
+          </button>
+          <button
+            ref="mobileTrigger"
+            type="button"
+            :class="iconButton"
+            class="ml-1 border! border-border! @[940px]/site:hidden"
+            :aria-label="$t('nav.toggleLabel')"
+            :aria-expanded="isMenuOpen"
+            aria-controls="mobile-navigation"
+            @click="toggleMobile"
+          >
+            <X v-if="isMenuOpen" :size="19" aria-hidden="true" /><Menu
+              v-else
+              :size="19"
+              aria-hidden="true"
+            />
+          </button>
         </div>
       </div>
+    </header>
 
-      <RouterLink to="/chat" @click="closeAll" class="flex items-center mx-3 px-4 py-3.5 no-underline hover:no-underline text-[0.95em] text-[var(--color-text)]">
-        AI 助手
-      </RouterLink>
-
-      <RouterLink to="/welcome" @click="closeAll" class="flex items-center mx-3 px-4 py-3.5 no-underline hover:no-underline text-[0.95em] text-[var(--color-text-secondary)]">
-        {{ $t('nav.joinUs') }}
-      </RouterLink>
+    <nav
+      v-if="isMenuOpen"
+      id="mobile-navigation"
+      class="absolute inset-x-0 top-full max-h-[calc(100dvh-68px)] overflow-y-auto border-b border-border bg-bg-header p-3 shadow-[0_8px_20px_var(--color-shadow)] @[940px]/site:hidden"
+      :aria-label="$t('nav.mobileLabel')"
+    >
+      <RouterLink
+        to="/"
+        :class="mobileLinkClass(isActive('/'))"
+        @click="closeAll"
+        >{{ $t('nav.home') }}</RouterLink
+      >
+      <button
+        type="button"
+        class="cursor-pointer border-0 bg-transparent"
+        :class="mobileLinkClass(aboutActive)"
+        :aria-expanded="isMobileAboutOpen"
+        aria-controls="mobile-association-links"
+        @click="isMobileAboutOpen = !isMobileAboutOpen"
+      >
+        {{ $t('nav.about')
+        }}<ChevronDown
+          :size="14"
+          class="ml-auto transition-transform motion-reduce:transition-none"
+          :class="{ 'rotate-180': isMobileAboutOpen }"
+          aria-hidden="true"
+        />
+      </button>
+      <div
+        v-if="isMobileAboutOpen"
+        id="mobile-association-links"
+        class="my-1 ml-3 border-l border-border pl-3"
+      >
+        <RouterLink
+          v-for="link in aboutLinks"
+          :key="link.to"
+          :to="link.to"
+          :class="mobileLinkClass(isActive(link.to))"
+          @click="closeAll"
+          ><component
+            :is="link.icon"
+            :size="15"
+            :stroke-width="1.6"
+            aria-hidden="true"
+          />{{ $t(link.label) }}</RouterLink
+        >
+      </div>
+      <RouterLink
+        to="/wiki"
+        :class="mobileLinkClass(isActive('/wiki'))"
+        @click="closeAll"
+        ><BookOpen :size="16" :stroke-width="1.6" aria-hidden="true" />{{
+          $t('knowledge.title')
+        }}</RouterLink
+      >
+      <button
+        type="button"
+        class="cursor-pointer border-0 bg-transparent"
+        :class="mobileLinkClass(assistant.isOpen.value)"
+        :aria-expanded="assistant.isOpen.value"
+        aria-controls="assistant-panel"
+        @click="openAssistant"
+      >
+        <MessageCircle :size="16" :stroke-width="1.6" aria-hidden="true" />{{
+          $t('assistant.title')
+        }}
+      </button>
+      <div class="mt-2 border-t border-border-light pt-2">
+        <RouterLink
+          to="/welcome"
+          :class="mobileLinkClass(isActive('/welcome'))"
+          @click="closeAll"
+          >{{ $t('nav.joinUs')
+          }}<ArrowUpRight
+            :size="15"
+            class="ml-auto text-primary"
+            aria-hidden="true"
+        /></RouterLink>
+      </div>
     </nav>
   </div>
 </template>

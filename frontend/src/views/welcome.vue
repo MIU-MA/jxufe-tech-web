@@ -2,6 +2,8 @@
 import EditorialPage from '../components/EditorialPage.vue'
 
 import { RouterLink } from 'vue-router'
+import { useAssistant } from '../composables/useAssistant'
+const assistant = useAssistant()
 </script>
 
 <template>
@@ -18,7 +20,7 @@ import { RouterLink } from 'vue-router'
       <p class="ed-text">{{ $t('details.aboutIntro') }}</p>
       <div class="ed-link-row">
         <RouterLink to="/details" class="ed-link">{{ $t('nav.aboutUs') }} →</RouterLink
-        ><RouterLink to="/chat" class="ed-link">{{ $t('site.askAi') }} ↗</RouterLink>
+        ><button type="button" class="ed-link bg-transparent border-none p-0 cursor-pointer" @click="assistant.open()">{{ $t('assistant.title') }} ↗</button>
       </div>
     </section>
     <section class="ed-section" aria-labelledby="join-poster">

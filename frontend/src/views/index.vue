@@ -53,7 +53,7 @@ useScrollReveal()
     </section>
 
     <div class="max-w-[1160px] mx-auto px-4 md:px-6 py-12 md:py-16">
-      <div class="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10 lg:gap-14">
+      <div class="grid grid-cols-1 @[900px]/site:grid-cols-[1fr_300px] gap-10 @[900px]/site:gap-14">
 
         <div class="min-w-0">
 

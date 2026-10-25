@@ -1,4 +1,5 @@
 import { ref, reactive, nextTick } from 'vue'
+import { buildChatMessage } from '../utils/chatMessage'
 
 export interface ChatMessage {
   id: string
@@ -113,7 +114,7 @@ export function useChat() {
     }
   }
 
-  async function send(content: string) {
+  async function send(content: string, context?: string) {
     const text = content.trim()
     if (!text || isThinking.value) return
 
@@ -155,7 +156,7 @@ export function useChat() {
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: text, token: chatToken }),
+        body: JSON.stringify({ message: buildChatMessage(text, context), token: chatToken }),
         signal: abortController?.signal,
       })
 

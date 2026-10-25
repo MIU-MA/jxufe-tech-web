@@ -23,6 +23,29 @@ function wikiRenderer() {
   }).renderWikiMarkdown
 }
 
+test('wiki search combines category and keywords across title, summary and body', () => {
+  const { filterWikiArticles } = loadTs('frontend/src/utils/wikiArticles.ts')
+  const articles = [
+    { slug: 'a', category: 'Guide', title: 'Python notes', summary: 'Getting started', body: 'Install the tools' },
+    { slug: 'b', category: 'Projects', title: 'Web app', summary: 'Python backend', body: 'Deploy the tools' },
+  ]
+  assert.deepEqual(filterWikiArticles(articles, ' PYTHON tools ', 'Guide').map(a => a.slug), ['a'])
+  assert.equal(filterWikiArticles(articles, 'missing').length, 0)
+  assert.equal(filterWikiArticles([], '').length, 0)
+  assert.equal(filterWikiArticles(articles, '   ').length, 2)
+})
+
+test('chat references fit the API limit and preserve the user question', () => {
+  const { buildChatMessage } = loadTs('frontend/src/utils/chatMessage.ts')
+  const question = '请解释这篇文章。'.repeat(100)
+  const result = buildChatMessage(question, '资料正文'.repeat(3000))
+  assert.equal(result.length, 2000)
+  assert.ok(result.endsWith(question))
+  assert.ok(result.includes('参考资料（节选'))
+  assert.equal(buildChatMessage('你好'), '你好')
+  assert.equal(buildChatMessage('x'.repeat(2000), '资料'), 'x'.repeat(2000))
+})
+
 test('wiki outline points to distinct rendered headings and preserves formatted heading text', () => {
   const render = wikiRenderer()
   const result = render('# Overview\n\n## **Overview**\n\n### Use `Python` and [docs](https://example.com)\n', 'answer-1')
@@ -53,7 +76,9 @@ test('wiki rendering keeps raw HTML escaped and ignores headings inside fenced c
 })
 
 test('streamed chunks update observers before the response ends', async t => {
-  const { useChat } = loadTs('frontend/src/composables/useChat.ts')
+  const { useChat } = loadTs('frontend/src/composables/useChat.ts', {
+    '../utils/chatMessage': loadTs('frontend/src/utils/chatMessage.ts'),
+  })
   let controller
   const originalFetch = global.fetch
   global.fetch = async url => url.endsWith('/token')

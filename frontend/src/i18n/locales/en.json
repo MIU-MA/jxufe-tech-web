@@ -5,7 +5,10 @@
     "presidents": "Past Presidents",
     "members": "Members",
     "aboutUs": "About Us",
-    "joinUs": "Join Us"
+    "joinUs": "Join Us",
+    "mainLabel": "Main navigation",
+    "mobileLabel": "Mobile navigation",
+    "toggleLabel": "Toggle navigation"
   },
   "footer": {
     "brandName": "DSA Association",
@@ -80,13 +83,13 @@
     "switch": "切换到中文"
   },
   "chat": {
-    "newChat": "New exploration",
+    "newChat": "New conversation",
     "send": "Ask",
     "placeholder": "Ask a question to start exploring…",
     "hint": "AI can make mistakes. Verify important information with official sources.",
     "newLine": "New line",
     "thinking": "Preparing an answer…",
-    "generating": "Writing the article…",
+    "generating": "Responding…",
     "copy": "Copy content",
     "copied": "Copied",
     "copyFailed": "Could not copy. Please select and copy the text manually.",
@@ -150,8 +153,8 @@
     "affiliation": "Jiangxi University of Finance and Economics",
     "contents": "On this page",
     "keepExploring": "Keep exploring",
-    "askAi": "Ask the AI Wiki",
-    "aiTitle": "AI Wiki",
+    "askAi": "AI Assistant",
+    "aiTitle": "AI Assistant",
     "newsTitle": "News & updates",
     "allNews": "All updates",
     "noNews": "No updates yet. Please check back soon.",
@@ -167,5 +170,41 @@
     "fullPoster": "View the full poster",
     "summary": "Summary",
     "backToNews": "Back to all updates"
+  },
+  "knowledge": {
+    "title": "Wiki",
+    "description": "Association information and technical documentation. More to come.",
+    "browse": "Documents",
+    "search": "Search documents",
+    "categories": "Categories",
+    "all": "All",
+    "read": "Read article",
+    "empty": "No matching documents.",
+    "reset": "Reset filters",
+    "back": "Back to the wiki",
+    "missing": "Article not found",
+    "missingText": "This article does not exist. Browse the wiki for other topics.",
+    "askArticle": "Ask AI about this article",
+    "explainQuestion": "Please explain the main points of this article.",
+    "articles": [],
+    "noArticles": "No documents yet.",
+    "breadcrumb": "Breadcrumb",
+    "categoryNames": [
+      "Association",
+      "Technical docs",
+      "Resources"
+    ]
+  },
+  "assistant": {
+    "title": "AI Assistant",
+    "subtitle": "Campus, technology and learning",
+    "newChat": "New conversation",
+    "close": "Close AI assistant",
+    "visitWiki": "View the wiki",
+    "welcome": "What would you like to know?",
+    "intro": "Ask about the association, campus life or learning technology.",
+    "you": "You",
+    "context": "Reference excerpt",
+    "removeContext": "Remove reference"
   }
 }
