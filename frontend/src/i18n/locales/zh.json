@@ -186,7 +186,36 @@
     "missingText": "这个词条暂不存在，可以返回维基浏览其他内容。",
     "askArticle": "请 AI 解释本文",
     "explainQuestion": "请帮我解释这篇资料的主要内容。",
-    "articles": [],
+    "articles": [
+      {
+        "slug": "association-intro",
+        "category": "协会资料",
+        "title": "协会简介",
+        "summary": "数智技术协会是什么、平时做什么，以及适合什么样的同学加入。",
+        "body": "## 我们是谁\n\n江西财经大学数智技术协会隶属于信息管理与数学学院，是一个以数据科学、人工智能与项目开发实践为核心的技术社团。我们希望把协会打造成全校最专业的技术交流平台，让感兴趣的同学在这里找到方向、同伴和练习场。\n\n## 我们在做什么\n\n- **技术分享**：定期举办讲座与分享会，主题覆盖 Python、数据分析、AI 应用与 Web 开发。\n- **项目实践**：以小组形式完成真实项目，从需求讨论、分工协作到最终交付，完整走一遍开发流程。\n- **赛事与活动**：组织同学参与各类竞赛，并通过海报、推文等形式对外展示协会成果。\n\n## 日常氛围\n\n协会不要求零基础，也不设门槛。无论是刚入门的新人，还是已经能独立完成项目的同学，都能在这里找到适合自己的位置：新人跟着学习路线一步步来，有经验的同学带队做项目、讲分享。\n\n如果你对数据、AI 或开发中的任何一个方向感兴趣，都欢迎先来听听我们的分享会，了解之后再决定是否加入。"
+      },
+      {
+        "slug": "departments",
+        "category": "协会资料",
+        "title": "部门设置",
+        "summary": "宣传部、组织部、学习部的分工与日常工作，以及如何选择。",
+        "body": "协会下设三个部门，分别负责对外形象、活动落地与技术成长。加入时按兴趣选择即可，也鼓励在不同部门之间轮换体验。\n\n## 宣传部\n\n负责社团形象的塑造与推广：制作招新海报与各类宣传物料，运营对外展示渠道，让更多同学了解数智技术协会。适合对设计、文案或视频剪辑感兴趣的同学。\n\n## 组织部\n\n策划并执行协会的各项活动，包括讲座、分享会、比赛等，负责场地、时间与人员的统筹，确保每场活动顺利落地。适合擅长协调沟通、注重细节的同学。\n\n## 学习部\n\n深入研究前沿技术，组织技术分享和培训，带领成员学习 Python、AI、Web 开发等实用技能，并维护协会的维基与学习路线。适合希望把技术讲清楚、带动他人一起进步的同学。\n\n## 如何选择\n\n- 想练技术、讲分享：优先考虑学习部。\n- 想办活动、练统筹：优先考虑组织部。\n- 想做设计、做内容：优先考虑宣传部。"
+      },
+      {
+        "slug": "git-quickstart",
+        "category": "技术文档",
+        "title": "Git 快速上手",
+        "summary": "从安装配置到提交第一个 Pull Request 的最小命令集与提交信息规范。",
+        "body": "Git 是协会项目协作的基础工具。这篇文档给出最小命令集，帮助你在半小时内完成第一次代码提交。\n\n## 安装与配置\n\n在 [git-scm.com](https://git-scm.com) 下载安装后，先配置身份信息：\n\n```bash\ngit config --global user.name \"你的名字\"\ngit config --global user.email \"你的邮箱\"\n```\n\n## 日常操作四步\n\n```bash\ngit pull                        # 同步远程最新代码\ngit checkout -b feat/xxx        # 新建并切换到自己的分支\ngit add .                       # 暂存改动\ngit commit -m \"feat: 完成了什么\"  # 提交\ngit push -u origin feat/xxx     # 推送分支\n```\n\n## 常用命令速查\n\n| 场景 | 命令 |\n| --- | --- |\n| 查看状态 | `git status` |\n| 查看提交历史 | `git log --oneline` |\n| 放弃工作区改动 | `git restore <文件>` |\n| 合并主分支更新 | `git pull origin main` |\n\n## 提交信息怎么写\n\n推荐使用「类型: 描述」的格式，常用类型包括 `feat`（新功能）、`fix`（修复）、`docs`（文档）、`refactor`（重构）。例如：`feat: 新增维基页面`。\n\n## 小结\n\n记住四步——拉取、开分支、提交、推送——就能参与绝大多数协作。遇到冲突不要慌，`git status` 会告诉你哪些文件需要处理。"
+      },
+      {
+        "slug": "dev-environment",
+        "category": "技术文档",
+        "title": "本地开发环境搭建",
+        "summary": "在电脑上跑起协会官网前后端的最小步骤、环境变量与常见问题。",
+        "body": "协会官网是一个 Vue 3 前端加 NestJS 后端的 Monorepo 项目。按以下步骤即可在本地跑起来。\n\n## 环境要求\n\n- Node.js ≥ 20\n- npm ≥ 10\n\n## 启动步骤\n\n```bash\ngit clone https://github.com/jxufe-tech/jxufe-tech-web.git\ncd jxufe-tech-web\nnpm ci\ncp backend/.env.example backend/.env\nnpm run dev\n```\n\n`npm run dev` 会同时启动前端与后端。启动后访问：\n\n| 服务 | 地址 |\n| --- | --- |\n| 前端 | http://localhost:5173 |\n| 后端 API | http://localhost:3003 |\n| API 文档 | http://localhost:3003/docs.html |\n\n## 配置环境变量\n\n把 `backend/.env.example` 复制为 `backend/.env` 后，需要填入：\n\n- `JWT_SECRET`：管理后台登录令牌的签名密钥\n- `ADMIN_USERNAME` / `ADMIN_PASSWORD`：管理员账号与密码\n- `DEEPSEEK_API_KEY`：AI 助手功能使用的密钥\n\n## 常见问题\n\n- **端口被占用**：结束占用 5173 或 3003 端口的进程后重试。\n- **依赖安装慢**：切换 npm 镜像源，然后重新执行 `npm ci`。\n- **数据库**：后端默认使用 SQLite，仓库内的 `backend/data.db` 已包含初始数据，无需额外安装数据库服务。"
+      }
+    ],
     "noArticles": "暂无内容。",
     "breadcrumb": "当前位置",
     "categoryNames": [

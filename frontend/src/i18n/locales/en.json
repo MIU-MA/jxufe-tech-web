@@ -186,7 +186,36 @@
     "missingText": "This article does not exist. Browse the wiki for other topics.",
     "askArticle": "Ask AI about this article",
     "explainQuestion": "Please explain the main points of this article.",
-    "articles": [],
+    "articles": [
+      {
+        "slug": "association-intro",
+        "category": "Association",
+        "title": "About the association",
+        "summary": "What the Digital Intelligence Technology Association is, what we do, and who should join.",
+        "body": "## Who we are\n\nThe Digital Intelligence Technology Association of Jiangxi University of Finance and Economics, under the School of Information Management and Mathematics, is a student community focused on data science, artificial intelligence, and hands-on project development. We aim to build the most professional technology exchange platform on campus.\n\n## What we do\n\n- **Tech talks**: regular sessions and workshops on Python, data analysis, AI applications, and web development.\n- **Projects**: small teams take on real projects, from requirements and collaboration to final delivery.\n- **Competitions**: we organize teams for contests and showcase results through posters and articles.\n\n## Our culture\n\nNo prior experience is required. Beginners follow learning roadmaps step by step, while experienced members lead projects and give talks. If you are curious about data, AI, or development, come to one of our sessions first and decide after."
+      },
+      {
+        "slug": "departments",
+        "category": "Association",
+        "title": "Departments",
+        "summary": "What the publicity, organization, and study departments do day to day, and how to choose.",
+        "body": "The association has three departments covering outreach, events, and technical growth. Pick one that fits your interests — you can always try another later.\n\n## Publicity\n\nShapes and promotes the image of the association: recruitment posters, promotional materials, and external channels. A good fit if you enjoy design, writing, or video editing.\n\n## Organization\n\nPlans and runs our activities — talks, workshops, and competitions — handling venues, scheduling, and coordination so every event lands smoothly. A good fit if you are organized and communicative.\n\n## Study\n\nResearches emerging technology, organizes tech sharing and training, and leads members through Python, AI, and web development. Also maintains the association wiki and learning roadmaps. A good fit if you enjoy explaining technology and helping others grow.\n\n## How to choose\n\n- Want to build skills and give talks? Try Study.\n- Want to run events and coordinate people? Try Organization.\n- Want to design and create content? Try Publicity."
+      },
+      {
+        "slug": "git-quickstart",
+        "category": "Technical docs",
+        "title": "Git quickstart",
+        "summary": "The smallest command set from install to your first pull request, plus commit message conventions.",
+        "body": "Git is the foundation of collaboration on association projects. This guide covers the minimum you need for your first commit in half an hour.\n\n## Install and configure\n\nDownload from [git-scm.com](https://git-scm.com), then set your identity:\n\n```bash\ngit config --global user.name \"Your Name\"\ngit config --global user.email \"you@example.com\"\n```\n\n## The daily four steps\n\n```bash\ngit pull                          # sync the latest code\ngit checkout -b feat/xxx          # create and switch to your branch\ngit add .                         # stage changes\ngit commit -m \"feat: what you did\" # commit\ngit push -u origin feat/xxx       # push the branch\n```\n\n## Cheat sheet\n\n| Task | Command |\n| --- | --- |\n| Check status | `git status` |\n| View history | `git log --oneline` |\n| Discard local edits | `git restore <file>` |\n| Update from main | `git pull origin main` |\n\n## Commit messages\n\nUse the `type: description` format. Common types: `feat` for features, `fix` for fixes, `docs` for documentation, `refactor` for refactors. Example: `feat: add wiki pages`.\n\n## Recap\n\nPull, branch, commit, push — those four steps cover most collaboration. When you hit a conflict, `git status` tells you which files need attention."
+      },
+      {
+        "slug": "dev-environment",
+        "category": "Technical docs",
+        "title": "Local development setup",
+        "summary": "Run the association website frontend and backend locally in a few steps.",
+        "body": "The website is a Vue 3 frontend plus a NestJS backend in one monorepo. Follow these steps to run it locally.\n\n## Requirements\n\n- Node.js ≥ 20\n- npm ≥ 10\n\n## Steps\n\n```bash\ngit clone https://github.com/jxufe-tech/jxufe-tech-web.git\ncd jxufe-tech-web\nnpm ci\ncp backend/.env.example backend/.env\nnpm run dev\n```\n\n`npm run dev` starts both frontend and backend. Then open:\n\n| Service | URL |\n| --- | --- |\n| Frontend | http://localhost:5173 |\n| Backend API | http://localhost:3003 |\n| API docs | http://localhost:3003/docs.html |\n\n## Environment variables\n\nAfter copying `backend/.env.example` to `backend/.env`, fill in:\n\n- `JWT_SECRET`: signing key for admin login tokens\n- `ADMIN_USERNAME` / `ADMIN_PASSWORD`: administrator credentials\n- `DEEPSEEK_API_KEY`: key for the AI assistant feature\n\n## Troubleshooting\n\n- **Port in use**: stop whatever occupies port 5173 or 3003 and retry.\n- **Slow installs**: switch to a closer npm registry, then run `npm ci` again.\n- **Database**: the backend uses SQLite, and `backend/data.db` already ships initial data — no separate database server needed."
+      }
+    ],
     "noArticles": "No documents yet.",
     "breadcrumb": "Breadcrumb",
     "categoryNames": [
